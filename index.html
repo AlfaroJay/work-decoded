@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Work Decoded — Mockup 3: The Disruptor</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --ink:     #0E0E10;
+    --ink-2:   #1A1A1E;
+    --ink-3:   #252529;
+    --coral:   #FF5C3A;
+    --coral-dk:#D94522;
+    --electric:#00C8A0;
+    --sand:    #F0EBE1;
+    --sand-dk: #DDD5C8;
+    --gray:    #8A8A92;
+    --white:   #FFFFFF;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Space Grotesk', sans-serif; background: var(--ink); color: var(--white); }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(14,14,16,.9); backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,.07);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 6%; height: 68px;
+  }
+  .logo { font-family: 'Syne', sans-serif; font-size: 1.45rem; color: var(--white); letter-spacing: -.01em; }
+  .logo span { color: var(--coral); }
+  nav ul { list-style: none; display: flex; gap: 2rem; align-items: center; }
+  nav ul a { color: rgba(255,255,255,.55); text-decoration: none; font-size: .87rem; font-weight: 500; transition: color .2s; }
+  nav ul a:hover { color: var(--white); }
+  .nav-cta {
+    background: var(--coral) !important; color: var(--white) !important;
+    padding: .5rem 1.35rem; border-radius: 6px; font-weight: 600 !important;
+    transition: background .2s !important;
+  }
+  .nav-cta:hover { background: var(--coral-dk) !important; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh; background: var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    padding: 6rem 6% 5rem;
+    position: relative; overflow: hidden;
+  }
+  .hero-bg-glow {
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 50% at 75% 30%, rgba(255,92,58,.12) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(0,200,160,.08) 0%, transparent 60%);
+  }
+  .hero-grid {
+    display: grid; grid-template-columns: 1fr 420px;
+    gap: 5rem; align-items: center; width: 100%; max-width: 1200px;
+    position: relative; z-index: 2;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: .6rem;
+    font-size: .78rem; font-weight: 600; text-transform: uppercase; letter-spacing: .12em;
+    color: var(--electric); margin-bottom: 1.75rem;
+  }
+  .hero-eyebrow::before { content: ''; width: 24px; height: 2px; background: var(--electric); }
+  .hero h1 {
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: clamp(1.8rem, 3vw, 2.2rem); line-height: 1.05;
+    color: var(--white); margin-bottom: 1.5rem; letter-spacing: -.02em;
+  }
+  .hero h1 .accent { color: var(--coral); }
+  .hero h1 .strike {
+    position: relative; color: var(--gray);
+  }
+  .hero h1 .strike::after {
+    content: ''; position: absolute; left: 0; top: 50%;
+    width: 100%; height: 3px; background: var(--coral);
+  }
+  .hero-p { font-size: 1.08rem; color: rgba(255,255,255,.6); line-height: 1.8; max-width: 540px; margin-bottom: 2.5rem; }
+  .hero-btns { display: flex; gap: 1rem; align-items: center; }
+  .btn-fire {
+    background: var(--coral); color: var(--white); font-weight: 700;
+    padding: 1rem 2.25rem; border-radius: 6px; text-decoration: none;
+    font-size: .98rem; letter-spacing: .01em;
+    transition: background .2s, transform .15s, box-shadow .2s;
+    box-shadow: 0 0 30px rgba(255,92,58,.35);
+  }
+  .btn-fire:hover { background: var(--coral-dk); transform: translateY(-2px); box-shadow: 0 0 50px rgba(255,92,58,.5); }
+  .btn-ghost {
+    border: 1px solid rgba(255,255,255,.2); color: rgba(255,255,255,.7);
+    padding: 1rem 2rem; border-radius: 6px; text-decoration: none;
+    font-size: .95rem; font-weight: 500; transition: border-color .2s, color .2s;
+  }
+  .btn-ghost:hover { border-color: rgba(255,255,255,.5); color: var(--white); }
+  .hero-stats { display: flex; gap: 2.5rem; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,.08); }
+  .stat .num { font-family: 'Syne', sans-serif; font-size: 2.2rem; color: var(--white); font-weight: 800; letter-spacing: -.02em; }
+  .stat .num span { color: var(--coral); }
+  .stat .lbl { font-size: .77rem; color: var(--gray); text-transform: uppercase; letter-spacing: .06em; }
+
+  .hero-card {
+    background: var(--ink-3); border: 1px solid rgba(255,255,255,.09);
+    border-radius: 20px; overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,.6);
+  }
+  .hero-card-photo {
+    width: 100%; aspect-ratio: 4/5;
+    background: linear-gradient(160deg, rgba(255,92,58,.15) 0%, rgba(0,200,160,.08) 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: var(--gray); gap: .6rem; font-size: .85rem;
+    border-bottom: 1px solid rgba(255,255,255,.07);
+  }
+  .hero-card-photo .ph-icon { font-size: 3rem; opacity: .3; }
+  .hero-card-info { padding: 1.25rem 1.5rem; }
+  .hero-card-info h3 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--white); margin-bottom: .25rem; }
+  .hero-card-info p { font-size: .8rem; color: var(--gray); }
+  .hero-card-tag { display: inline-block; background: rgba(255,92,58,.2); color: var(--coral); font-size: .7rem; font-weight: 600; padding: .25rem .6rem; border-radius: 4px; margin-top: .5rem; }
+
+  /* ── MARQUEE BAND ── */
+  .marquee-band {
+    background: var(--coral); padding: .9rem 0; overflow: hidden; white-space: nowrap;
+  }
+  .marquee-inner { display: inline-flex; animation: marquee 18s linear infinite; }
+  .marquee-inner span {
+    font-family: 'Syne', sans-serif; font-size: .9rem; font-weight: 700;
+    color: var(--white); text-transform: uppercase; letter-spacing: .08em;
+    padding: 0 2.5rem;
+  }
+  .marquee-inner span.dot { color: rgba(255,255,255,.5); padding: 0 1rem; }
+  @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+  /* ── TRUTH SECTION ── */
+  .truth { background: var(--ink-2); padding: 6rem 6%; }
+  .truth-inner { display: flex; flex-direction: column; gap: 3rem; align-items: start; }
+  .truth-left h2 {
+    font-family: 'Syne', sans-serif; font-size: clamp(2rem, 3vw, 2.8rem);
+    font-weight: 800; line-height: 1.1; letter-spacing: -.02em; margin-bottom: 1.4rem;
+    color: var(--white);
+  }
+  .truth-left h2 em { color: var(--coral); font-style: normal; }
+  .truth-left p { font-size: 1rem; color: rgba(255,255,255,.55); line-height: 1.85; margin-bottom: 1rem; }
+  .truth-left a { color: var(--electric); text-decoration: none; font-weight: 600; font-size: .93rem; }
+  .truth-right { display: flex; flex-direction: column; gap: 1.5rem; }
+  .card-style-toggle { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .card-style-toggle span { font-size: 0.8rem; color: rgba(255,255,255,.5); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  .card-style-toggle button { padding: 0.5rem 1.2rem; border: 1px solid rgba(255,255,255,.2); background: transparent; color: rgba(255,255,255,.6); border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 600; transition: all 0.2s; }
+  .card-style-toggle button.active { background: rgba(255,92,58,.3); border-color: var(--coral); color: var(--coral); }
+  .card-style-toggle button:hover { border-color: rgba(255,255,255,.4); }
+
+  .truth-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+
+  /* ── CARD UI MODES ── */
+
+  /* OPTION 1: White Relief - illuminated text effect */
+  .truth-cards.mode-option1 .truth-card {
+    background: rgba(255,92,58,.05);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .truth-cards.mode-option1 .truth-card-wrapper:hover .truth-card {
+    background: rgba(255,92,58,.05);
+  }
+
+  .truth-cards.mode-option1 .tc-num {
+    transition: all 0.4s ease;
+    color: rgba(255,92,58,.2);
+  }
+
+  .truth-cards.mode-option1 .truth-card-wrapper:hover .tc-num {
+    color: rgba(255,255,255,.3);
+  }
+
+  .truth-cards.mode-option1 .tc-body h4 {
+    transition: all 0.4s ease;
+    color: rgba(255,255,255,.5);
+  }
+
+  .truth-cards.mode-option1 .truth-card-wrapper:hover .tc-body h4 {
+    color: var(--white);
+    text-shadow: 0 0 16px rgba(255,255,255,.6);
+    font-weight: 800;
+  }
+
+  .truth-cards.mode-option1 .tc-body p {
+    transition: all 0.4s ease;
+    color: rgba(255,255,255,.3);
+  }
+
+  .truth-cards.mode-option1 .truth-card-wrapper:hover .tc-body p {
+    color: rgba(255,255,255,.9);
+    text-shadow: 0 0 12px rgba(255,255,255,.4);
+  }
+
+  /* OPTION 2: Expand - subtle scale with text illumination */
+  .truth-cards.mode-option2 .truth-card {
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform: scale(1);
+  }
+
+  .truth-cards.mode-option2 .truth-card-wrapper:hover .truth-card {
+    transform: scale(1.04);
+  }
+
+  .truth-cards.mode-option2 .tc-body h4 {
+    transition: all 0.4s ease;
+    color: rgba(255,255,255,.5);
+  }
+
+  .truth-cards.mode-option2 .truth-card-wrapper:hover .tc-body h4 {
+    color: var(--white);
+    text-shadow: 0 0 16px rgba(255,255,255,.6);
+  }
+
+  .truth-cards.mode-option2 .tc-body p {
+    transition: all 0.4s ease;
+    color: rgba(255,255,255,.3);
+  }
+
+  .truth-cards.mode-option2 .truth-card-wrapper:hover .tc-body p {
+    color: rgba(255,255,255,.85);
+    text-shadow: 0 0 12px rgba(255,255,255,.4);
+  }
+
+  /* OPTION 3: Flip - subtle rotation with text illumination */
+  .truth-cards.mode-option3 .truth-card-wrapper {
+    perspective: 1000px;
+  }
+
+  .truth-cards.mode-option3 .truth-card {
+    transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    transform-style: preserve-3d;
+    transform: rotateY(0deg);
+  }
+
+  .truth-cards.mode-option3 .truth-card-wrapper:hover .truth-card {
+    transform: rotateY(8deg);
+  }
+
+  .truth-cards.mode-option3 .tc-num {
+    transition: all 0.6s ease;
+    color: rgba(255,92,58,.2);
+  }
+
+  .truth-cards.mode-option3 .truth-card-wrapper:hover .tc-num {
+    color: rgba(255,255,255,.3);
+  }
+
+  .truth-cards.mode-option3 .tc-body h4 {
+    transition: all 0.6s ease;
+    color: rgba(255,255,255,.5);
+  }
+
+  .truth-cards.mode-option3 .truth-card-wrapper:hover .tc-body h4 {
+    color: var(--white);
+    text-shadow: 0 0 16px rgba(255,255,255,.6);
+  }
+
+  .truth-cards.mode-option3 .tc-body p {
+    transition: all 0.6s ease;
+    color: rgba(255,255,255,.3);
+  }
+
+  .truth-cards.mode-option3 .truth-card-wrapper:hover .tc-body p {
+    color: rgba(255,255,255,.85);
+    text-shadow: 0 0 12px rgba(255,255,255,.4);
+  }
+  .truth-card-wrapper {
+    position: relative; 
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    height: 280px;
+  }
+  
+  .truth-card {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    padding: 1.4rem 1.5rem;
+    border: 1px solid rgba(255,92,58,.15);
+    background: rgba(255,92,58,.05);
+  }
+
+  .tc-num {
+    font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800;
+    color: rgba(255,92,58,.4); line-height: 1; min-width: 50px; flex-shrink: 0;
+    transition: color 0.3s ease;
+  }
+
+  .truth-card-wrapper:hover .tc-num {
+    color: var(--coral);
+  }
+
+  .tc-body { display: flex; flex-direction: column; gap: 0.5rem; }
+
+  .tc-body h4 { 
+    font-size: .95rem; font-weight: 700; color: var(--white); 
+    margin-bottom: .3rem; 
+    transition: color 0.3s ease, transform 0.3s ease;
+  }
+
+  .truth-card-wrapper:hover .tc-body h4 {
+    color: var(--coral);
+    transform: translateX(4px);
+  }
+
+  .tc-body p { 
+    font-size: .84rem; color: var(--gray); line-height: 1.65;
+    transition: color 0.3s ease, opacity 0.3s ease;
+    opacity: 0.7;
+  }
+
+  .truth-card-wrapper:hover .tc-body p {
+    color: rgba(255,255,255,.75);
+    opacity: 1;
+  }
+
+  /* ── SOLUTION ── */
+  .solution { background: var(--ink-2); padding: 6rem 6%; }
+  .solution-container { max-width: 1200px; margin: 0 auto; }
+  
+  .solution-header {
+    text-align: center; margin-bottom: 4rem;
+  }
+  
+  .solution-header h2 {
+    font-family: 'Syne', sans-serif; font-size: clamp(2rem, 3vw, 2.8rem);
+    font-weight: 800; letter-spacing: -.02em; color: var(--white);
+    line-height: 1.2;
+  }
+  
+  .solution-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; }
+  
+  .solution-card {
+    background: rgba(255,92,58,.05); border: 1px solid rgba(255,92,58,.15);
+    border-radius: 12px; padding: 2rem 1.5rem; 
+    text-align: center; transition: all 0.3s ease;
+    display: flex; flex-direction: column; gap: 1rem;
+  }
+  
+  .solution-card:hover {
+    background: rgba(255,92,58,.12);
+    border-color: rgba(255,92,58,.3);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 32px rgba(255,92,58,.15);
+  }
+  
+  .sc-icon { 
+    font-size: 2.5rem;
+  }
+  
+  .sc-icon svg {
+    width: 56px;
+    height: 56px;
+    color: var(--coral);
+    transition: all 0.3s ease;
+  }
+  
+  .solution-card:hover .sc-icon svg {
+    color: var(--coral);
+    filter: drop-shadow(0 8px 20px rgba(255,92,58,.35));
+    transform: scale(1.1) translateY(-2px);
+  }
+  
+  .solution-card h3 {
+    font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700;
+    color: var(--white); letter-spacing: -.01em;
+  }
+  
+  .solution-card p {
+    font-size: 0.9rem; color: rgba(255,255,255,.65); line-height: 1.6;
+  }
+  
+  .solution-card:hover h3 { color: var(--coral); }
+  .solution-card:hover p { color: rgba(255,255,255,.85); }
+
+  /* ── SERVICES ── */
+  .services { background: var(--ink); padding: 6rem 6%; }
+  .s-eyebrow {
+    font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .14em;
+    color: var(--electric); margin-bottom: .6rem;
+  }
+  .s-h2 {
+    font-family: 'Syne', sans-serif; font-size: clamp(2rem, 3vw, 2.8rem);
+    font-weight: 800; letter-spacing: -.02em; margin-bottom: 3rem;
+    color: var(--white);
+  }
+  .s-h2 span { color: var(--coral); }
+  .svc-intro {
+    font-size: 1rem; color: rgba(255,255,255,.65); line-height: 1.75;
+    margin-bottom: 3rem;
+  }
+  .svc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.07); border-radius: 14px; overflow: hidden; }
+  .svc-item {
+    background: var(--ink-2); padding: 2rem 1.75rem;
+    transition: background .2s;
+  }
+  .svc-item:hover { background: var(--ink-3); }
+  .svc-item .si-num { font-family: 'Syne', sans-serif; font-size: .75rem; font-weight: 700; color: var(--coral); letter-spacing: .08em; margin-bottom: .75rem; }
+  .svc-item h3 { font-size: 1rem; font-weight: 700; color: var(--white); margin-bottom: .4rem; }
+  .svc-item p { font-size: .83rem; color: var(--gray); line-height: 1.65; }
+  .svc-grid-hidden {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+    background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.07);
+    border-radius: 14px; overflow: hidden; max-height: 0; opacity: 0;
+    transition: max-height 0.4s ease, opacity 0.4s ease;
+  }
+  .svc-grid-hidden.expanded {
+    max-height: 1200px; opacity: 1; margin-bottom: 2rem;
+  }
+  .svc-footer {
+    margin-top: 3rem; text-align: center; display: flex;
+    flex-direction: column; align-items: center; gap: 1.25rem;
+  }
+  .svc-footer p { font-size: 1rem; color: rgba(255,255,255,.7); }
+  .svc-link {
+    color: var(--coral); text-decoration: none; font-weight: 600;
+    transition: color .2s; cursor: pointer; display: inline-flex; align-items: center;
+    gap: .4rem;
+  }
+  .svc-link:hover { color: var(--coral-dk); }
+
+  /* ── ABOUT ── */
+  .about { background: var(--sand); padding: 6rem 6%; }
+  .about-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+  .about-img-col { position: relative; }
+  .about-photo {
+    width: 100%; aspect-ratio: 4/5; border-radius: 16px;
+    background: linear-gradient(160deg, #c8d5d3, #d5c5b8);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: #888; font-size: .85rem; text-align: center; gap: .5rem;
+    border: 2px dashed rgba(0,0,0,.12);
+  }
+  .about-photo .ph-icon { font-size: 2.8rem; opacity: .3; }
+  .about-ribbon {
+    position: absolute; bottom: -1.5rem; left: 50%; transform: translateX(-50%);
+    background: var(--coral); color: var(--white);
+    padding: .7rem 2rem; border-radius: 40px;
+    font-size: .85rem; font-weight: 700; white-space: nowrap;
+    box-shadow: 0 6px 20px rgba(255,92,58,.4);
+  }
+  .about-text { color: var(--ink); }
+  .about-eyebrow { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; color: var(--coral); margin-bottom: .6rem; }
+  .about-text h2 { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 3vw, 2.6rem); font-weight: 800; letter-spacing: -.02em; color: var(--ink); margin-bottom: 1.25rem; line-height: 1.1; }
+  .about-text p { font-size: .98rem; color: #555; line-height: 1.85; margin-bottom: 1rem; }
+  .about-creds { display: flex; flex-wrap: wrap; gap: .65rem; margin-top: 1.5rem; }
+  .cred-chip { background: var(--ink); color: var(--white); font-size: .8rem; font-weight: 600; padding: .45rem 1rem; border-radius: 6px; }
+
+  /* ── TESTIMONIALS ── */
+  .testimonials { background: var(--ink-2); padding: 6rem 6%; }
+  .testi-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2.5rem; }
+  .testi-header h2 { font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 2.5vw, 2.4rem); font-weight: 800; letter-spacing: -.02em; }
+  .testi-header p { font-size: .87rem; color: var(--gray); max-width: 280px; text-align: right; line-height: 1.6; }
+  .testi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+  .tcard {
+    background: var(--ink-3); border: 1px solid rgba(255,255,255,.07);
+    border-radius: 14px; padding: 1.75rem;
+    transition: border-color .2s;
+  }
+  .tcard:hover { border-color: rgba(255,92,58,.25); }
+  .tcard-quote { font-size: 2.5rem; color: var(--coral); opacity: .4; line-height: .8; margin-bottom: .75rem; font-family: Georgia, serif; }
+  .tcard p { font-size: .92rem; color: rgba(255,255,255,.72); line-height: 1.75; font-style: italic; margin-bottom: 1.25rem; }
+  .tcard-author { display: flex; align-items: center; gap: .75rem; }
+  .tcard-av { width: 40px; height: 40px; border-radius: 10px; background: rgba(255,92,58,.2); display: flex; align-items: center; justify-content: center; font-size: .7rem; font-weight: 700; color: var(--coral); flex-shrink: 0; }
+  .tcard-name { font-size: .88rem; font-weight: 700; color: var(--white); }
+  .tcard-role { font-size: .76rem; color: var(--gray); }
+
+  /* ── PRICING ── */
+  .pricing { background: var(--ink); padding: 6rem 6%; }
+  .pricing-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-top: 2.5rem; }
+  .ptier {
+    background: var(--ink-3); border: 1px solid rgba(255,255,255,.08);
+    border-radius: 16px; padding: 2.25rem 2rem;
+    transition: border-color .2s, transform .2s;
+  }
+  .ptier:hover { border-color: rgba(255,255,255,.15); transform: translateY(-4px); }
+  .ptier.hot {
+    background: var(--coral); border-color: var(--coral);
+    transform: scale(1.04);
+    box-shadow: 0 20px 60px rgba(255,92,58,.3);
+  }
+  .ptier.hot:hover { transform: scale(1.04) translateY(-4px); }
+  .hot-badge { background: rgba(255,255,255,.2); color: var(--white); font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; padding: .3rem .7rem; border-radius: 4px; display: inline-block; margin-bottom: 1rem; }
+  .ptier-name { font-size: .85rem; font-weight: 600; color: rgba(255,255,255,.55); text-transform: uppercase; letter-spacing: .08em; margin-bottom: .4rem; }
+  .ptier.hot .ptier-name { color: rgba(255,255,255,.7); }
+  .ptier-price { font-family: 'Syne', sans-serif; font-size: 2.8rem; font-weight: 800; color: var(--white); letter-spacing: -.03em; margin: .5rem 0 .25rem; }
+  .ptier-price span { font-family: 'Space Grotesk', sans-serif; font-size: .9rem; font-weight: 400; opacity: .5; }
+  .ptier-desc { font-size: .85rem; color: rgba(255,255,255,.5); line-height: 1.65; margin: .75rem 0 1.25rem; }
+  .ptier.hot .ptier-desc { color: rgba(255,255,255,.75); }
+  .ptier-list { list-style: none; margin-bottom: 1.75rem; border-top: 1px solid rgba(255,255,255,.08); padding-top: 1.25rem; }
+  .ptier-list li { font-size: .85rem; color: rgba(255,255,255,.65); padding: .45rem 0; display: flex; gap: .6rem; align-items: flex-start; }
+  .ptier.hot .ptier-list li { color: rgba(255,255,255,.85); }
+  .ptier-list li::before { content: '→'; color: var(--electric); font-weight: 700; flex-shrink: 0; }
+  .ptier.hot .ptier-list li::before { color: rgba(255,255,255,.6); }
+  .btn-tier {
+    display: block; text-align: center; padding: .9rem;
+    border: 1.5px solid rgba(255,255,255,.2); color: var(--white); border-radius: 8px;
+    text-decoration: none; font-weight: 700; font-size: .93rem;
+    transition: background .2s, border-color .2s;
+  }
+  .btn-tier:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.4); }
+  .ptier.hot .btn-tier { background: var(--white); color: var(--coral); border-color: var(--white); }
+  .ptier.hot .btn-tier:hover { background: rgba(255,255,255,.88); }
+  
+  /* Small brand button for inline package links */
+  .btn-tier-small {
+    display: inline-block; padding: .4rem .9rem; border-radius: 6px;
+    background: var(--coral); color: var(--ink); font-weight: 700; font-size: .8rem;
+    text-decoration: none; border: none; cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-tier-small:hover { background: var(--coral-dk); transform: translateY(-1px); }
+
+  /* ── PRICING UI TOGGLES ── */
+  .pricing-ui-toggle {
+    display: flex; gap: 1rem; justify-content: center; margin: 2.5rem 0 3rem;
+  }
+  .pricing-toggle-btn {
+    background: rgba(255,255,255,.08); color: rgba(255,255,255,.6);
+    border: 1px solid rgba(255,255,255,.15); padding: .65rem 1.5rem;
+    border-radius: 8px; font-size: .85rem; font-weight: 600;
+    cursor: pointer; transition: all .2s;
+  }
+  .pricing-toggle-btn:hover { background: rgba(255,255,255,.12); color: rgba(255,255,255,.8); }
+  .pricing-toggle-btn.active {
+    background: var(--coral); color: var(--white); border-color: var(--coral);
+  }
+
+  /* ── PRICING LAYOUTS ── */
+  .pricing-layout { display: none; }
+  .pricing-layout.active { display: block; }
+  .pricing-section-label { font-size: .85rem; font-weight: 700; text-transform: uppercase; color: var(--coral); margin: 3rem 0 1.5rem 0; letter-spacing: .08em; }
+
+  /* Option 1: Packages First */
+  .pkg-row { margin-bottom: 2rem; }
+  .singles-row { margin-top: 2rem; }
+  .pkg-card {
+    background: rgba(255,92,58,.08) !important; border: 1px solid rgba(255,92,58,.2) !important;
+  }
+  .single-card {
+    background: var(--ink-3) !important; border: 1px solid rgba(255,255,255,.08) !important;
+  }
+  .pkg-list { display: flex; flex-direction: column; gap: 1.5rem; margin: 1.5rem 0; }
+  .pkg-option {
+    background: rgba(0,0,0,.3); padding: 1rem 1.25rem; border-radius: 8px;
+    border-left: 2px solid var(--coral);
+  }
+  .pkg-sessions { font-weight: 700; color: var(--white); margin-bottom: .25rem; }
+  .pkg-price { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--coral); margin: .25rem 0 .5rem 0; }
+  .pkg-option small { color: rgba(255,255,255,.55); font-size: .8rem; display: block; margin-bottom: .75rem; }
+  .pkg-option.coming-soon { opacity: .5; border-left-color: rgba(255,255,255,.2); }
+
+  /* Option 2: Stacked Tiers */
+  .stacked-tier {
+    background: var(--ink-3); border: 1px solid rgba(255,255,255,.08);
+    border-radius: 16px; padding: 2.25rem 2rem; margin-bottom: 2rem;
+  }
+  .stacked-header { margin-bottom: 2rem; }
+  .stacked-header h3 { font-size: 1.1rem; font-weight: 700; color: var(--white); margin-bottom: .5rem; }
+  .stacked-header p { font-size: .9rem; color: rgba(255,255,255,.6); }
+  .stacked-content { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .stacked-packages { background: rgba(255,92,58,.08); border: 1px solid rgba(255,92,58,.2); padding: 1.5rem; border-radius: 12px; }
+  .stacked-singles { background: rgba(0,0,0,.3); padding: 1.5rem; border-radius: 12px; }
+  .pkg-label { font-size: .75rem; font-weight: 700; text-transform: uppercase; color: var(--coral); margin-bottom: 1rem; letter-spacing: .08em; }
+  .pkg-stack { display: flex; flex-direction: column; gap: .75rem; }
+  .pkg-item-stack { font-size: .85rem; color: rgba(255,255,255,.65); }
+  .pkg-item-stack a { display: inline-block; margin-left: .5rem; }
+  .single-price { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; color: var(--white); margin: 1rem 0 .75rem 0; }
+  .single-price span { font-family: 'Space Grotesk', sans-serif; font-size: .9rem; font-weight: 400; opacity: .5; }
+
+  /* Option 1: Package Details Expansion */
+  .pkg-heading { font-family: 'Syne', sans-serif; font-size: 1.25rem; font-weight: 700; color: var(--white); margin: 0 0 .5rem 0; }
+  .pkg-details-toggle {
+    background: transparent; border: 1px solid rgba(255,92,58,.3); color: var(--coral); padding: .5rem 1rem;
+    font-size: .85rem; font-weight: 600; border-radius: 6px; cursor: pointer;
+    transition: all 0.3s; margin: 1rem 0;
+  }
+  .pkg-details-toggle:hover { background: rgba(255,92,58,.08); border-color: rgba(255,92,58,.5); }
+  .pkg-details {
+    max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.4s ease, opacity 0.4s ease;
+  }
+  .pkg-details.expanded {
+    max-height: 400px; opacity: 1; margin: 1rem 0; padding: 1rem 0; border-top: 1px solid rgba(255,92,58,.2); border-bottom: 1px solid rgba(255,92,58,.2);
+  }
+  .pkg-details ul { margin-left: 1.5rem; margin-bottom: 1rem; }
+  .pkg-details li { font-size: .85rem; color: rgba(255,255,255,.75); margin-bottom: .5rem; line-height: 1.5; }
+
+  /* Option 1: Table View */
+  .pricing-table-wrapper { width: 100%; overflow-x: auto; margin: 2rem 0; }
+  .pricing-table {
+    width: 100%; border-collapse: collapse; background: var(--ink-2);
+    border: 1px solid rgba(255,255,255,.08); border-radius: 12px; overflow: hidden;
+  }
+  .pricing-table thead {
+    background: rgba(255,92,58,.08); border-bottom: 1px solid rgba(255,92,58,.2);
+  }
+  .pricing-table th {
+    padding: 1.25rem; text-align: left; font-family: 'Syne', sans-serif;
+    font-size: .95rem; font-weight: 700; color: var(--white); text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+  .pricing-table th.price-col { text-align: center; }
+  .pricing-table tbody tr {
+    border-bottom: 1px solid rgba(255,255,255,.08); transition: background 0.2s;
+  }
+  .pricing-table tbody tr:last-child { border-bottom: none; }
+  .pricing-table tbody tr:hover { background: rgba(255,255,255,.02); }
+  .pricing-table td {
+    padding: 1.5rem 1.25rem; vertical-align: top;
+  }
+  .tier-label {
+    font-weight: 600; color: var(--white); min-width: 180px;
+  }
+  .tier-badge {
+    display: block; font-size: .75rem; color: rgba(255,255,255,.6);
+    font-weight: 400; margin-top: .35rem;
+  }
+  .price-cell {
+    text-align: center; padding: 1.5rem 1rem;
+  }
+  .price-cell.best-value {
+    background: rgba(255,92,58,.08); border-left: 2px solid var(--coral); border-right: 2px solid var(--coral);
+  }
+  .price { font-family: 'Syne', sans-serif; font-size: 1.75rem; font-weight: 800;
+    color: var(--white); margin-bottom: .25rem; }
+  .savings { font-size: .75rem; color: var(--coral); font-weight: 600; margin-bottom: .4rem; }
+  .validity { font-size: .75rem; color: rgba(255,255,255,.6); margin-bottom: 1rem; }
+  .badge-best {
+    display: inline-block; background: var(--coral); color: var(--ink);
+    padding: .35rem .75rem; border-radius: 4px; font-size: .7rem; font-weight: 800;
+    text-transform: uppercase; margin-bottom: .75rem;
+  }
+  .coming-soon { font-size: .9rem; color: rgba(255,255,255,.5); font-style: italic; }
+  .btn-table {
+    display: inline-block; background: var(--coral); color: var(--ink); padding: .5rem 1.25rem;
+    border-radius: 6px; font-weight: 600; font-size: .85rem; text-decoration: none;
+    transition: all 0.2s; cursor: pointer; border: none;
+  }
+  .btn-table:hover { background: var(--coral-dk); transform: scale(1.05); }
+
+  @media (max-width: 1024px) {
+    .pricing-table th, .pricing-table td { padding: 1rem .75rem; font-size: .9rem; }
+    .price { font-size: 1.5rem; }
+  }
+  @media (max-width: 768px) {
+    .pricing-table-wrapper { margin: 1rem -6%; width: calc(100% + 12%); }
+    .pricing-table th, .pricing-table td { padding: .75rem .6rem; font-size: .75rem; }
+    .tier-label { min-width: 120px; }
+    .price { font-size: 1.25rem; }
+    .savings { font-size: .65rem; }
+    .badge-best { padding: .25rem .5rem; font-size: .65rem; }
+    .btn-table { padding: .4rem 1rem; font-size: .75rem; }
+  }
+
+  /* Option 3: Expandable */
+  .expandable-tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+  .expandable-tier {
+    background: var(--ink-3); border: 1px solid rgba(255,255,255,.08);
+    border-radius: 16px; padding: 1.75rem; display: flex; flex-direction: column;
+  }
+  .tier-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; gap: 1rem; }
+  .tier-header h3 { font-size: 1rem; font-weight: 700; color: var(--white); margin-bottom: .25rem; }
+  .tier-desc { font-size: .8rem; color: rgba(255,255,255,.6); }
+  .single-price { font-size: 1.25rem; font-weight: 700; color: var(--coral); text-align: right; }
+  .expand-btn {
+    width: 100%; padding: .75rem; background: rgba(255,92,58,.1); border: 1px solid rgba(255,92,58,.2);
+    color: var(--coral); border-radius: 8px; font-weight: 600; font-size: .85rem;
+    cursor: pointer; transition: all .2s; margin-bottom: 1rem;
+  }
+  .expand-btn:hover { background: rgba(255,92,58,.15); border-color: rgba(255,92,58,.4); }
+  .expand-btn.expanded { background: rgba(255,92,58,.2); border-color: rgba(255,92,58,.5); }
+  .expandable-packages {
+    max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.4s ease, opacity 0.4s ease;
+    margin-bottom: 1rem;
+  }
+  .expandable-packages.expanded {
+    max-height: 600px; opacity: 1; padding: 1rem 0; border-top: 1px solid rgba(255,92,58,.2); border-bottom: 1px solid rgba(255,92,58,.2);
+  }
+  .expandable-packages .pkg-item { font-size: .8rem; color: rgba(255,255,255,.65); margin-bottom: .75rem; }
+  .expandable-packages .pkg-item.coming-soon { opacity: .5; font-style: italic; }
+  
+  .single-session-info {
+    margin-top: 1rem; padding: .75rem; background: rgba(0,200,160,.08);
+    border-left: 2px solid var(--electric); border-radius: 6px;
+  }
+  .single-session-info p { font-size: .8rem; color: rgba(255,255,255,.75); margin: 0; }
+  .single-session-info strong { color: var(--electric); }
+
+  /* ── HOW IT WORKS ── */
+  .how-it-works { background: var(--ink); padding: 6rem 6%; }
+  .hiw-inner { max-width: 1200px; margin: 0 auto; }
+  .hiw-inner .s-eyebrow { margin-bottom: .6rem; text-align: center; }
+  .hiw-inner h2 { text-align: center; font-family: 'Syne', sans-serif; font-size: clamp(2rem, 3vw, 2.8rem); font-weight: 800; letter-spacing: -.02em; margin-bottom: 4rem; color: var(--white); }
+  .hiw-inner h2 span { color: var(--coral); }
+  .hiw-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem; }
+  .hiw-step {
+    text-align: center;
+    position: relative;
+  }
+  .hiw-step::after {
+    content: ''; position: absolute; top: 40px; left: calc(100% + 1.5rem); width: 3rem; height: 2px;
+    background: rgba(255,92,58,.3);
+  }
+  .hiw-step:last-child::after { display: none; }
+  .hiw-num { font-family: 'Syne', sans-serif; font-size: 2.5rem; font-weight: 800; color: var(--coral); margin-bottom: 1rem; display: inline-block; }
+  .hiw-step h3 { font-size: 1.15rem; font-weight: 700; color: var(--white); margin-bottom: .75rem; }
+  .hiw-step p { font-size: .95rem; color: rgba(255,255,255,.65); line-height: 1.7; }
+
+  /* ── FAQ ── */
+  .faq-section { background: var(--ink-2); padding: 7rem 6%; }
+  .faq-section .container { max-width: 1100px; margin: 0 auto; }
+  .faq-section h2 { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 800; letter-spacing: -.02em; margin-bottom: 3rem; color: var(--white); }
+  .faq-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+  .faq-item {
+    background: var(--ink-3); border: 1px solid rgba(255,255,255,.08);
+    border-radius: 12px; padding: 2rem;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .faq-item:hover { border-color: rgba(255,92,58,.3); box-shadow: 0 0 20px rgba(255,92,58,.1); }
+  .faq-item h3 { font-size: 1.05rem; font-weight: 700; color: var(--white); margin-bottom: 1rem; }
+  .faq-item p { font-size: .95rem; color: rgba(255,255,255,.65); line-height: 1.7; }
+
+  /* ── BOOKING ── */
+  .booking { background: var(--ink-2); padding: 7rem 6%; }
+  .booking-inner { max-width: 900px; margin: 0 auto; text-align: center; }
+  .booking-inner .s-eyebrow { margin-bottom: .75rem; }
+  .booking-inner h2 { font-family: 'Syne', sans-serif; font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 800; letter-spacing: -.02em; margin-bottom: 1.25rem; line-height: 1.1; }
+  .booking-inner h2 span { color: var(--coral); }
+  .booking-inner p { font-size: 1.05rem; color: rgba(255,255,255,.55); max-width: 600px; margin: 0 auto 3rem; line-height: 1.8; }
+  .booking-form {
+    background: var(--ink-3); border: 1px solid rgba(255,255,255,.08);
+    border-radius: 20px; padding: 2.5rem 3rem;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+  }
+  .bf-field { display: flex; flex-direction: column; gap: .4rem; }
+  .bf-field label { font-size: .77rem; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: .08em; }
+  .bf-field input, .bf-field select {
+    padding: .85rem 1.1rem; background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1); border-radius: 8px;
+    color: var(--white); font-size: .93rem; font-family: 'Space Grotesk', sans-serif;
+    outline: none; transition: border-color .2s;
+  }
+  .bf-field input:focus, .bf-field select:focus { border-color: var(--coral); }
+  .bf-field input::placeholder { color: rgba(255,255,255,.25); }
+  .bf-field select option { background: var(--ink-3); }
+  .bf-submit {
+    grid-column: 1 / -1; padding: 1.1rem;
+    background: var(--coral); border: none; border-radius: 8px;
+    color: var(--white); font-family: 'Space Grotesk', sans-serif;
+    font-size: 1rem; font-weight: 700; cursor: pointer;
+    transition: background .2s, transform .15s, box-shadow .2s;
+    box-shadow: 0 0 25px rgba(255,92,58,.3);
+    letter-spacing: .02em;
+  }
+  .bf-submit:hover { background: var(--coral-dk); transform: translateY(-2px); box-shadow: 0 0 40px rgba(255,92,58,.4); }
+  .booking-note { font-size: .8rem; color: rgba(255,255,255,.3); margin-top: 1.25rem; }
+
+  /* ── FOOTER ── */
+  footer { background: #070709; padding: 4rem 6% 2rem; }
+  .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 3rem; margin-bottom: 3rem; }
+  .ft-logo { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--white); display: block; margin-bottom: .75rem; }
+  .ft-logo span { color: var(--coral); }
+  .ft-tagline { font-size: .85rem; color: rgba(255,255,255,.35); line-height: 1.75; max-width: 280px; }
+  .ft-col h4 { font-size: .72rem; text-transform: uppercase; letter-spacing: .14em; color: rgba(255,255,255,.3); margin-bottom: .9rem; }
+  .ft-col ul { list-style: none; }
+  .ft-col ul li { margin-bottom: .45rem; }
+  .ft-col a { font-size: .85rem; color: rgba(255,255,255,.45); text-decoration: none; transition: color .2s; }
+  .ft-col a:hover { color: var(--coral); }
+  .footer-base { border-top: 1px solid rgba(255,255,255,.06); padding-top: 1.5rem; display: flex; justify-content: space-between; font-size: .76rem; color: rgba(255,255,255,.2); }
+
+  /* ══ RESPONSIVE ══ */
+
+  /* Tablet */
+  @media (max-width: 1024px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .hero { min-height: auto; padding: 4.5rem 6% 4rem; }
+    .hero-card { max-width: 360px; }
+    .hero-stats { flex-wrap: wrap; gap: 1.5rem; }
+    .marquee-band { display: none; } /* optional: hide on tablet to reduce noise */
+    .truth-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .truth-cards { grid-template-columns: repeat(2, 1fr); }
+    .svc-grid { grid-template-columns: repeat(2, 1fr); }
+    .about-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .about-photo { max-width: 340px; margin: 0 auto; }
+    .about-ribbon { position: static; transform: none; margin-top: 1.5rem; display: inline-block; }
+    .testi-row { grid-template-columns: 1fr; max-width: 520px; }
+    .pricing-row { grid-template-columns: 1fr; max-width: 420px; margin: 2.5rem auto 0; }
+    .ptier.hot { transform: scale(1); }
+    .booking-form { grid-template-columns: 1fr; }
+    .bf-submit { grid-column: 1; }
+    .footer-top { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    /* Nav */
+    nav { padding: 0 5%; flex-wrap: wrap; height: auto; min-height: 68px; }
+    nav ul { display: none; width: 100%; flex-direction: column; gap: 0; padding: .5rem 0 1rem; }
+    nav ul.open { display: flex; }
+    nav ul a { padding: .75rem 0; border-bottom: 1px solid rgba(255,255,255,.07); font-size: .95rem; color: rgba(255,255,255,.75); }
+    nav ul li:last-child a { border-bottom: none; }
+    .nav-cta { border-bottom: none !important; border-radius: 6px; text-align: center; margin-top: .5rem; }
+    .nav-toggle { display: flex; }
+
+    /* Hero */
+    .hero { padding: 3.5rem 5% 3rem; }
+    .hero h1 { font-size: 2rem; }
+    .hero-p { font-size: .95rem; }
+    .hero-btns { flex-direction: column; align-items: flex-start; }
+    .btn-fire, .btn-ghost { width: 100%; max-width: 320px; text-align: center; font-size: .88rem; padding: .85rem 1.75rem; white-space: nowrap; }
+    .hero-stats { gap: 1.5rem; padding-top: 1.5rem; }
+    .hero-card { display: none; } /* Hero card hidden on mobile — photo slot preserved for real content */
+
+    /* Truth */
+    .truth { padding: 3.5rem 5%; }
+    .truth-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+    .truth-left h2 { font-size: 1.8rem; }
+    .truth-cards { grid-template-columns: 1fr; }
+    .truth-card-wrapper { height: auto; cursor: pointer; }
+    .truth-card, .truth-card-back { position: relative; width: 100%; height: auto; display: flex !important; }
+    .truth-card-back { display: none !important; }
+    .truth-card-wrapper.expanded .truth-card { display: none !important; }
+    .truth-card-wrapper.expanded .truth-card-back { display: flex !important; }
+    .truth-card, .truth-card-back { padding: 1.2rem 1rem; font-size: 0.9rem; }
+    .tc-num { font-size: 1.5rem; }
+    .truth-card-back h5 { font-size: 0.95rem; }
+    .truth-card-back p { font-size: 0.85rem; }
+    .truth-card-back a { font-size: 0.75rem; padding: 0.45rem 0.85rem; }
+
+    /* Services */
+    .services { padding: 3.5rem 5%; }
+    .svc-grid { grid-template-columns: 1fr; }
+    .s-h2 { font-size: 1.8rem; }
+
+    /* About */
+    .about { padding: 3.5rem 5%; }
+    .about-inner { grid-template-columns: 1fr; gap: 2rem; }
+    .about-text h2 { font-size: 1.8rem; }
+    .about-ribbon { position: static; transform: none; margin-top: 1.25rem; display: block; text-align: center; }
+    .about-photo { max-width: 100%; }
+    .about-creds { gap: .5rem; }
+
+    /* Testimonials */
+    .testimonials { padding: 3.5rem 5%; }
+    .testi-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .testi-header p { text-align: left; max-width: 100%; }
+    .testi-row { grid-template-columns: 1fr; }
+
+    /* Pricing */
+    .pricing { padding: 3.5rem 5%; }
+    .pricing-row { grid-template-columns: 1fr; }
+    .ptier.hot { transform: none; }
+
+    /* Booking */
+    .booking { padding: 4rem 5%; }
+    .booking-form { grid-template-columns: 1fr; padding: 1.5rem; }
+    .bf-field[style] { grid-column: 1; }
+    .bf-submit { grid-column: 1; }
+
+    /* Footer */
+    .footer-top { grid-template-columns: 1fr; gap: 2rem; }
+    .footer-base { flex-direction: column; gap: .5rem; text-align: center; font-size: .72rem; }
+    footer { padding: 3rem 5% 1.5rem; }
+  }
+
+  /* ── HAMBURGER BUTTON ── */
+  .nav-toggle {
+    display: none;
+    background: none; border: none; cursor: pointer;
+    flex-direction: column; justify-content: center; gap: 5px;
+    padding: .35rem; margin-left: auto;
+  }
+  .nav-toggle span {
+    display: block; width: 24px; height: 2px;
+    background: rgba(255,255,255,.7); border-radius: 2px;
+    transition: transform .25s, opacity .25s;
+  }
+  .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-toggle.open span:nth-child(2) { opacity: 0; }
+  .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* ── LABEL ── */
+  .design-label {
+    position: fixed; bottom: 20px; right: 20px; z-index: 999;
+    background: var(--coral); color: var(--white);
+    padding: .5rem 1rem; border-radius: 6px;
+    font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    box-shadow: 0 0 20px rgba(255,92,58,.4);
+    font-family: 'Space Grotesk', sans-serif;
+  }
+</style>
+</head>
+<body>
+
+<div class="design-label">Mockup 3 · The Disruptor</div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Work<span>Decoded</span></div>
+  <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <ul id="nav-menu">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#booking" class="nav-cta">Book Free Call</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-bg-glow"></div>
+  <div class="hero-grid">
+    <div>
+      <div class="hero-eyebrow">HR Consulting & Career Advocacy</div>
+      <!-- Headline Toggles -->
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+        <button onclick="setHeadline(1)" class="headline-toggle active" data-option="1" style="padding: 0.5rem 1rem; background: rgba(255,92,58,.3); border: 1px solid var(--coral); color: var(--coral); border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 600; transition: all 0.2s;">Option 1</button>
+        <button onclick="setHeadline(2)" class="headline-toggle" data-option="2" style="padding: 0.5rem 1rem; background: transparent; border: 1px solid rgba(255,255,255,.2); color: rgba(255,255,255,.6); border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 600; transition: all 0.2s;">Option 2</button>
+        <button onclick="setHeadline(3)" class="headline-toggle" data-option="3" style="padding: 0.5rem 1rem; background: transparent; border: 1px solid rgba(255,255,255,.2); color: rgba(255,255,255,.6); border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 600; transition: all 0.2s;">Option 3</button>
+      </div>
+      <h1 id="headline">
+        Workplace Challenges with <span class="accent">Confidence</span>
+      </h1>
+      <p class="hero-p">Expert guidance for early and mid-career professionals dealing with HR issues, difficult conversations, and career decisions</p>
+      <div class="hero-btns">
+        <a href="#booking" class="btn-fire">Book Your Free Discovery Call</a>
+        <a href="#services" class="btn-ghost">See All Services</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><div class="num">500<span>+</span></div><div class="lbl">Professionals Helped</div></div>
+        <div class="stat"><div class="num">12</div><div class="lbl">Core Services</div></div>
+        <div class="stat"><div class="num">MBA</div><div class="lbl">Certified Expert</div></div>
+      </div>
+    </div>
+    <div class="hero-card">
+      <div class="hero-card-photo">
+        <div class="ph-icon">📸</div>
+        <div style="font-size:.8rem;opacity:.45;text-align:center;padding:0 1.5rem">Michelle Williams<br/>Photo Placeholder</div>
+      </div>
+      <div class="hero-card-info">
+        <h3>Michelle Williams, MBA</h3>
+        <p>Founder · Work Decoded</p>
+        <span class="hero-card-tag">Available for Discovery Calls</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- TRUTH -->
+<section class="truth" id="problem">
+  <div class="truth-inner">
+    <div class="truth-left">
+      <h2>You Shouldn't Have to Navigate <em>This Alone</em></h2>
+      <p>Every HR professional is trained to minimize liability for the organization. The advice they give employees — when they give it at all — is designed with the company's interests first.</p>
+      <p>Work Decoded is the counter to that. Expert-level HR knowledge, deployed entirely in your favor.</p>
+      <a href="#booking">Get your strategy now →</a>
+    </div>
+    <div class="truth-right">
+      <!-- Card UI Toggle -->
+      <div class="card-style-toggle">
+        <span>Card Style:</span>
+        <button onclick="switchCardUI('option1')" class="card-ui-toggle active" data-ui="option1">Option 1: White Relief</button>
+        <button onclick="switchCardUI('option2')" class="card-ui-toggle" data-ui="option2">Option 2: Expand</button>
+        <button onclick="switchCardUI('option3')" class="card-ui-toggle" data-ui="option3">Option 3: Wiggle</button>
+      </div>
+
+      <div class="truth-cards mode-option1">
+        <div class="truth-card-wrapper" onclick="this.classList.toggle('flipped')">
+          <div class="truth-card">
+            <div class="tc-num">01</div>
+            <div class="tc-body"><h4>"Your boss just mentioned a performance improvement plan"</h4><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p></div>
+          </div>
+        </div>
+        <div class="truth-card-wrapper" onclick="this.classList.toggle('flipped')">
+        <div class="truth-card">
+          <div class="tc-num">02</div>
+          <div class="tc-body"><h4>"HR scheduled a meeting and you have no idea what to expect"</h4><p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p></div>
+        </div>
+      </div>
+      <div class="truth-card-wrapper" onclick="this.classList.toggle('flipped')">
+        <div class="truth-card">
+          <div class="tc-num">03</div>
+          <div class="tc-body"><h4>"You're dealing with a toxic workplace but can't afford to just quit"</h4><p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p></div>
+        </div>
+      </div>
+      <div class="truth-card-wrapper" onclick="this.classList.toggle('flipped')">
+        <div class="truth-card">
+          <div class="tc-num">04</div>
+          <div class="tc-body"><h4>"You got a job offer but the salary feels low"</h4><p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p></div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section class="solution" id="solution">
+  <div class="solution-container">
+    <div class="solution-header">
+      <h2>Work Decoded Gives You the Insider Knowledge You Need</h2>
+    </div>
+    
+    <div class="solution-grid">
+      <div class="solution-card">
+        <div class="sc-icon">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Speech bubbles for conversation -->
+            <circle cx="32" cy="32" r="26" stroke="currentColor" stroke-width="2"/>
+            <path d="M18 26c0-2.2 1.8-4 4-4h20c2.2 0 4 1.8 4 4v10c0 2.2-1.8 4-4 4h-8l-4 3v-3h-8c-2.2 0-4-1.8-4-4V26z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            <circle cx="24" cy="34" r="1.5" fill="currentColor"/>
+            <circle cx="32" cy="34" r="1.5" fill="currentColor"/>
+            <circle cx="40" cy="34" r="1.5" fill="currentColor"/>
+          </svg>
+        </div>
+        <h3>Real Talk, No Corporate Speak</h3>
+        <p>We translate HR jargon and workplace politics into straight answers you can actually use.</p>
+      </div>
+      
+      <div class="solution-card">
+        <div class="sc-icon">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Eye for perspective -->
+            <circle cx="32" cy="32" r="26" stroke="currentColor" stroke-width="2"/>
+            <ellipse cx="32" cy="32" rx="10" ry="8" stroke="currentColor" stroke-width="2"/>
+            <circle cx="32" cy="32" r="5" stroke="currentColor" stroke-width="2"/>
+            <circle cx="32" cy="32" r="2.5" fill="currentColor"/>
+            <path d="M18 28l-6-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M46 28l6-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>Insider Perspective</h3>
+        <p>We've seen both sides of the table and know how the game is really played.</p>
+      </div>
+      
+      <div class="solution-card">
+        <div class="sc-icon">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Football play diagram for actionable -->
+            <circle cx="32" cy="32" r="26" stroke="currentColor" stroke-width="2"/>
+            <path d="M48 28l-8 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M48 28l-4 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M48 28l-4 -6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M40 28l-8 -8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M32 20l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M24 28l-8 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="44" cy="28" r="2" fill="currentColor"/>
+          </svg>
+        </div>
+        <h3>Actionable Strategies</h3>
+        <p>Walk away with concrete next steps, not vague advice.</p>
+      </div>
+      
+      <div class="solution-card">
+        <div class="sc-icon">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Handshake for advocate -->
+            <circle cx="32" cy="32" r="26" stroke="currentColor" stroke-width="2"/>
+            <path d="M18 28c-1.5 0-2.5 1-2.5 2.5v8c0 1.5 1 2.5 2.5 2.5h6l4-2.5v-10l-4-2.5h-6z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M46 28c1.5 0 2.5 1 2.5 2.5v8c0 1.5-1 2.5-2.5 2.5h-6l-4-2.5v-10l4-2.5h6z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M26 34h12" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <path d="M24 32l4 2l-4 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M40 32l-4 2l4 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3>Your Advocate, Not Theirs</h3>
+        <p>HR works for the company. We work for you.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="s-eyebrow">What We Do</div>
+  <h2 class="s-h2">How We <span>Help</span></h2>
+  <p class="svc-intro">All Work Decoded consultants are certified HR professionals—PHR/SHRM-CP certified Consultants and SPHR/SHRM-SCP certified Senior Consultants. You're getting insider knowledge from credentialed professionals who understand employment law, HR best practices, and workplace dynamics.</p>
+  <div class="svc-grid">
+    <div class="svc-item"><div class="si-num">01</div><h3>Workplace Crisis Consulting</h3><p>Rapid-response strategy for hostile environments, investigations, and urgent HR situations.</p></div>
+    <div class="svc-item"><div class="si-num">02</div><h3>Document Review & Strategy</h3><p>PIPs, severance offers, NDAs, and offer letters reviewed before you commit to anything.</p></div>
+    <div class="svc-item"><div class="si-num">03</div><h3>Demand Letter Drafting</h3><p>Strategic letters that put your employer on notice and protect your legal position.</p></div>
+  </div>
+  <div class="svc-grid-hidden" id="svc-grid-hidden">
+    <div class="svc-item"><div class="si-num">04</div><h3>Severance Negotiation</h3><p>Enhanced packages, extended benefits, clean references — know what to ask and how.</p></div>
+    <div class="svc-item"><div class="si-num">05</div><h3>Investigation Prep</h3><p>Know exactly what to say, what not to say, and how to document everything before HR calls.</p></div>
+    <div class="svc-item"><div class="si-num">06</div><h3>Career Advancement Coaching</h3><p>Strategic visibility, promotion positioning, and executive presence for ambitious professionals.</p></div>
+    <div class="svc-item"><div class="si-num">07</div><h3>Resume & LinkedIn Overhaul</h3><p>ATS-ready, achievement-driven materials that land interviews at your target companies.</p></div>
+    <div class="svc-item"><div class="si-num">08</div><h3>Interview Coaching</h3><p>Behavioral frameworks, salary negotiation, and confidence under pressure.</p></div>
+    <div class="svc-item"><div class="si-num">09</div><h3>EEO & Discrimination Guidance</h3><p>Understand your rights, evaluate your options, and decide your next move with clarity.</p></div>
+    <div class="svc-item"><div class="si-num">10</div><h3>Executive Consulting</h3><p>People strategy and leadership advisory for HR leaders and senior executives.</p></div>
+    <div class="svc-item"><div class="si-num">11</div><h3>New Manager Coaching</h3><p>HR fluency, people skills, and leadership confidence for new and emerging managers.</p></div>
+    <div class="svc-item"><div class="si-num">12</div><h3>1:1 Strategy Sessions</h3><p>Flexible single sessions for any workplace challenge — no retainer required.</p></div>
+  </div>
+  <div class="svc-footer">
+    <p>We offer <strong>12 comprehensive services</strong> designed to cover every workplace challenge.</p>
+    <a href="#" class="svc-link" id="svc-toggle">View All Services →</a>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-inner">
+    <div class="about-img-col">
+      <div class="about-photo">
+        <div class="ph-icon">📸</div>
+        <div style="font-size:.82rem;opacity:.4;text-align:center;padding:0 1.5rem">Michelle Williams<br/>Photo Placeholder</div>
+      </div>
+      <div class="about-ribbon">Michelle Williams, MBA</div>
+    </div>
+    <div class="about-text">
+      <div class="about-eyebrow">The Founder</div>
+      <h2>Hi, I'm Michelle Williams</h2>
+      <p>For over 20 years, I worked in HR and operations management—the person sitting across the table making hiring decisions, managing performance issues, and navigating workplace politics from the inside. I've seen how the game is played, and I know what HR is really thinking.</p>
+      <p>This is what I learned: HR works for the company, not for you. Even with the best intentions, their job is to protect the organization. That's why I founded Work Decoded—to level the playing field.</p>
+      <p>Now, I work exclusively for employees. I help early and mid-career professionals like you decode workplace challenges, advocate for themselves with confidence, and make strategic career moves without getting burned.</p>
+      <p>Whether you're facing a difficult conversation, navigating an HR issue, or trying to figure out your next move, I've got the insider knowledge you need—and I'm on your side.</p>
+      <div class="about-creds">
+        <span class="cred-chip">MBA</span>
+        <span class="cred-chip">10+ Years in HR</span>
+        <span class="cred-chip">500+ Clients</span>
+        <span class="cred-chip">WorkDecodedHQ.com</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="testimonials">
+  <div class="testi-header">
+    <h2>The Work Speaks.</h2>
+    <p>Placeholder testimonials — to be replaced with Michelle's actual client results.</p>
+  </div>
+  <div class="testi-row">
+    <div class="tcard">
+      <div class="tcard-quote">"</div>
+      <p>I had 48 hours to respond to a termination offer. Michelle got on a call that night, walked me through every clause, and helped me negotiate an extra two months of pay and keep my equity. I didn't even know I could ask for that.</p>
+      <div class="tcard-author">
+        <div class="tcard-av">AM</div>
+        <div><div class="tcard-name">A. Mitchell</div><div class="tcard-role">Director of Product</div></div>
+      </div>
+    </div>
+    <div class="tcard">
+      <div class="tcard-quote">"</div>
+      <p>I was being retaliated against after filing a complaint and had no idea what to do. Michelle built my documentation strategy, drafted the demand letter, and helped me resolve the situation without needing an attorney.</p>
+      <div class="tcard-author">
+        <div class="tcard-av">JW</div>
+        <div><div class="tcard-name">J. Washington</div><div class="tcard-role">Operations Lead, Healthcare</div></div>
+      </div>
+    </div>
+    <div class="tcard">
+      <div class="tcard-quote">"</div>
+      <p>Three years at the same level. Michelle looked at my positioning and told me exactly what was wrong and how to fix it. I got the promotion six months later. This isn't coaching — it's strategy.</p>
+      <div class="tcard-author">
+        <div class="tcard-av">BR</div>
+        <div><div class="tcard-name">B. Reynolds</div><div class="tcard-role">Senior Engineer → Engineering Manager</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-it-works" id="how-it-works">
+  <div class="hiw-inner">
+    <div class="s-eyebrow">Simple 3-Step Process</div>
+    <h2>Getting Started Is <span>Simple</span></h2>
+    <div class="hiw-steps">
+      <div class="hiw-step">
+        <div class="hiw-num">01</div>
+        <h3>Book a Free Discovery Call</h3>
+        <p>Tell us about your situation in a completely confidential conversation. No commitment, no sales pitch—just an honest assessment.</p>
+      </div>
+      <div class="hiw-step">
+        <div class="hiw-num">02</div>
+        <h3>Get Matched With Your Consultant</h3>
+        <p>We match you with the right certified consultant based on your specific challenge and needs.</p>
+      </div>
+      <div class="hiw-step">
+        <div class="hiw-num">03</div>
+        <h3>Get Your Action Plan</h3>
+        <p>In your first 30-minute session, receive expert guidance and a clear, actionable next steps you can implement immediately.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="s-eyebrow">Investment</div>
+  <h2 class="s-h2">Transparent Pricing. <span>No Surprises.</span></h2>
+  
+  <div class="pricing-ui-toggle">
+    <button class="pricing-toggle-btn active" data-layout="option1">Option 1: Packages First</button>
+    <button class="pricing-toggle-btn" data-layout="option2">Option 2: Stacked View</button>
+    <button class="pricing-toggle-btn" data-layout="option3">Option 3: Expandable</button>
+  </div>
+
+  <!-- OPTION 1: TABLE VIEW (UPSELL STYLE) -->
+  <div class="pricing-layout option1 active">
+    <div class="pricing-table-wrapper">
+      <table class="pricing-table">
+        <thead>
+          <tr>
+            <th>Consultant Level</th>
+            <th class="price-col">3 Sessions</th>
+            <th class="price-col">5 Sessions</th>
+            <th class="price-col">10 Sessions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="tier-row">
+            <td class="tier-label">
+              <strong>Consultant</strong>
+              <span class="tier-badge">PHR/SHRM-CP</span>
+            </td>
+            <td class="price-cell">
+              <div class="price">$270</div>
+              <div class="savings">save $30</div>
+              <div class="validity">6 months</div>
+            </td>
+            <td class="price-cell">
+              <div class="price">$450</div>
+              <div class="savings">save $50</div>
+              <div class="validity">9 months</div>
+            </td>
+            <td class="price-cell best-value">
+              <div class="badge-best">Best Value</div>
+              <div class="price">$850</div>
+              <div class="savings">save $150</div>
+              <div class="validity">12 months</div>
+            </td>
+          </tr>
+          <tr class="tier-row">
+            <td class="tier-label">
+              <strong>Senior Consultant</strong>
+              <span class="tier-badge">SPHR/SHRM-SCP</span>
+            </td>
+            <td class="price-cell">
+              <div class="price">$337.50</div>
+              <div class="savings">save $37.50</div>
+              <div class="validity">6 months</div>
+            </td>
+            <td class="price-cell">
+              <div class="price">$562.50</div>
+              <div class="savings">save $62.50</div>
+              <div class="validity">9 months</div>
+            </td>
+            <td class="price-cell best-value">
+              <div class="badge-best">Best Value</div>
+              <div class="price">$1,062.50</div>
+              <div class="savings">save $187.50</div>
+              <div class="validity">12 months</div>
+            </td>
+          </tr>
+          <tr class="tier-row">
+            <td class="tier-label">
+              <strong>Premium/Complex</strong>
+              <span class="tier-badge">High-Stakes</span>
+            </td>
+            <td class="price-cell">
+              <div class="price">$405</div>
+              <div class="savings">save $45</div>
+              <div class="validity">6 months</div>
+            </td>
+            <td class="price-cell">
+              <div class="price">$675</div>
+              <div class="savings">save $75</div>
+              <div class="validity">9 months</div>
+            </td>
+            <td class="price-cell">
+              <div class="coming-soon">Coming Soon</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pricing-section-label">Single Sessions</div>
+    <div class="pricing-row singles-row">
+      <div class="ptier single-card">
+        <div class="ptier-name">Consultant</div>
+        <div class="ptier-level">PHR/SHRM-CP Certified</div>
+        <p class="ptier-desc">General career guidance, resume review, interview prep, basic workplace navigation</p>
+        <div class="ptier-price">$100 <span>/ 30 min</span></div>
+        <a href="#booking" class="btn-tier">Book a Session</a>
+      </div>
+      <div class="ptier single-card">
+        <div class="ptier-name">Senior Consultant</div>
+        <div class="ptier-level">SPHR/SHRM-SCP Certified</div>
+        <p class="ptier-desc">Complex workplace situations, salary negotiation, performance issues</p>
+        <div class="ptier-price">$125 <span>/ 30 min</span></div>
+        <a href="#booking" class="btn-tier">Book a Session</a>
+      </div>
+      <div class="ptier single-card">
+        <div class="ptier-name">Premium/Complex</div>
+        <div class="ptier-level">For High-Stakes Situations</div>
+        <p class="ptier-desc">PIPs, severance negotiations, investigations, high-stakes situations</p>
+        <div class="ptier-price">$150 <span>/ 30 min</span></div>
+        <a href="#booking" class="btn-tier">Book a Session</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTION 2: STACKED VIEW (EACH SERVICE LEVEL) -->
+  <div class="pricing-layout option2">
+    <div class="stacked-tier">
+      <div class="stacked-header">
+        <h3>Consultant — PHR/SHRM-CP Certified</h3>
+        <p>General career guidance, resume review, interview prep, basic workplace navigation</p>
+      </div>
+      <div class="stacked-content">
+        <div class="stacked-packages">
+          <div class="pkg-label">Packages (Save 10-15%)</div>
+          <div class="pkg-stack">
+            <div class="pkg-item-stack"><strong>3 Sessions:</strong> $270 (save $30) — 6 months</div>
+            <div class="pkg-item-stack"><strong>5 Sessions:</strong> $450 (save $50) — 9 months</div>
+            <div class="pkg-item-stack"><strong>10 Sessions:</strong> $850 (save $150) — 12 months</div>
+          </div>
+        </div>
+        <div class="stacked-singles">
+          <div class="pkg-label">Single Session</div>
+          <div class="single-price">$100 <span>/ 30 min</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stacked-tier">
+      <div class="stacked-header">
+        <h3>Senior Consultant — SPHR/SHRM-SCP Certified</h3>
+        <p>Complex workplace situations, salary negotiation, performance issues</p>
+      </div>
+      <div class="stacked-content">
+        <div class="stacked-packages">
+          <div class="pkg-label">Packages (Save 10-15%)</div>
+          <div class="pkg-stack">
+            <div class="pkg-item-stack"><strong>3 Sessions:</strong> $337.50 (save $37.50) — 6 months</div>
+            <div class="pkg-item-stack"><strong>5 Sessions:</strong> $562.50 (save $62.50) — 9 months</div>
+            <div class="pkg-item-stack"><strong>10 Sessions:</strong> $1,062.50 (save $187.50) — 12 months</div>
+          </div>
+        </div>
+        <div class="stacked-singles">
+          <div class="pkg-label">Single Session</div>
+          <div class="single-price">$125 <span>/ 30 min</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stacked-tier">
+      <div class="stacked-header">
+        <h3>Premium/Complex — For High-Stakes Situations</h3>
+        <p>PIPs, severance negotiations, investigations, high-stakes situations</p>
+      </div>
+      <div class="stacked-content">
+        <div class="stacked-packages">
+          <div class="pkg-label">Packages (Save 10-15%)</div>
+          <div class="pkg-stack">
+            <div class="pkg-item-stack"><strong>3 Sessions:</strong> $405 (save $45) — 6 months</div>
+            <div class="pkg-item-stack"><strong>5 Sessions:</strong> $675 (save $75) — 9 months</div>
+            <div class="pkg-item-stack coming-soon"><strong>10 Sessions:</strong> Coming Soon</div>
+          </div>
+        </div>
+        <div class="stacked-singles">
+          <div class="pkg-label">Single Session</div>
+          <div class="single-price">$150 <span>/ 30 min</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTION 3: EXPANDABLE (PACKAGES/SINGLES EXPANDABLE) -->
+  <div class="pricing-layout option3">
+    <div class="expandable-tiers">
+      <div class="expandable-tier">
+        <div class="tier-header">
+          <div>
+            <h3>Consultant</h3>
+            <p class="tier-desc">PHR/SHRM-CP Certified — General career guidance, resume review, interview prep</p>
+          </div>
+          <div class="single-price">$100/30 min</div>
+        </div>
+        <button class="expand-btn" data-tier="exp-consultant">▼ View Packages</button>
+        <div class="expandable-packages" id="exp-consultant">
+          <div class="pkg-item"><strong>3 Sessions:</strong> $270 (save $30, valid 6m)</div>
+          <div class="pkg-item"><strong>5 Sessions:</strong> $450 (save $50, valid 9m)</div>
+          <div class="pkg-item"><strong>10 Sessions:</strong> $850 (save $150, valid 12m)</div>
+        </div>
+        <div class="single-session-info">
+          <p><strong>Or book single sessions</strong> at $100 per 30 minutes</p>
+        </div>
+      </div>
+
+      <div class="expandable-tier">
+        <div class="tier-header">
+          <div>
+            <h3>Senior Consultant</h3>
+            <p class="tier-desc">SPHR/SHRM-SCP Certified — Complex situations, salary negotiation, performance issues</p>
+          </div>
+          <div class="single-price">$125/30 min</div>
+        </div>
+        <button class="expand-btn" data-tier="exp-senior">▼ View Packages</button>
+        <div class="expandable-packages" id="exp-senior">
+          <div class="pkg-item"><strong>3 Sessions:</strong> $337.50 (save $37.50, valid 6m)</div>
+          <div class="pkg-item"><strong>5 Sessions:</strong> $562.50 (save $62.50, valid 9m)</div>
+          <div class="pkg-item"><strong>10 Sessions:</strong> $1,062.50 (save $187.50, valid 12m)</div>
+        </div>
+        <div class="single-session-info">
+          <p><strong>Or book single sessions</strong> at $125 per 30 minutes</p>
+        </div>
+      </div>
+
+      <div class="expandable-tier">
+        <div class="tier-header">
+          <div>
+            <h3>Premium/Complex</h3>
+            <p class="tier-desc">For High-Stakes — PIPs, severance negotiations, investigations</p>
+          </div>
+          <div class="single-price">$150/30 min</div>
+        </div>
+        <button class="expand-btn" data-tier="exp-premium">▼ View Packages</button>
+        <div class="expandable-packages" id="exp-premium">
+          <div class="pkg-item"><strong>3 Sessions:</strong> $405 (save $45, valid 6m)</div>
+          <div class="pkg-item"><strong>5 Sessions:</strong> $675 (save $75, valid 9m)</div>
+          <div class="pkg-item coming-soon">10 Sessions: Coming Soon</div>
+        </div>
+        <div class="single-session-info">
+          <p><strong>Or book single sessions</strong> at $150 per 30 minutes</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="container">
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-grid">
+      <div class="faq-item">
+        <h3>How quickly can I get an appointment?</h3>
+        <p>Most clients can book within 24-48 hours. For urgent situations, we do our best to accommodate same-day or next-day appointments.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>What if I'm not sure which service I need?</h3>
+        <p>No worries! Complete our intake form and describe your situation. We'll match you with the right consultant and service level.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Is my consultation confidential?</h3>
+        <p>Absolutely. All consultations are completely confidential. We will never share your information with your employer or any third party.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Do you provide legal advice?</h3>
+        <p>Work Decoded provides workplace advocacy and career guidance. We are not attorneys and do not provide legal advice. If your situation involves potential legal issues, we'll let you know and recommend you consult with an employment attorney.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>What if my situation is really urgent?</h3>
+        <p>Select "urgent" on your intake form and we'll prioritize your assignment and booking.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Who will I be working with?</h3>
+        <p>All Work Decoded consultants are certified HR professionals (PHR/SHRM-CP or SPHR/SHRM-SCP) with 5-10+ years of experience. You'll be matched based on your specific situation and needs, and you can view consultant profiles and select your preferred consultant when booking.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>What if I need more than one session?</h3>
+        <p>Many clients benefit from ongoing support, especially through complex situations. Our session packages offer 10-15% savings for multiple sessions, and you can work with the same consultant throughout.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Do you offer refunds?</h3>
+        <p>Single sessions are non-refundable once completed. Packages are non-refundable, but unused sessions may be transferred. If we determine we cannot help with your situation after reviewing your intake form, we will issue a full refund before the session takes place.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKING -->
+<section class="booking" id="booking">
+  <div class="booking-inner">
+    <div class="s-eyebrow">Start Here</div>
+    <h2>Ready to Decode <span>Your Workplace Situation?</span></h2>
+    <p>Not sure where to start? Let's chat about your situation and find the right path forward. Book a free 15 minute discovery call.</p>
+    <div class="booking-form">
+      <div class="bf-field">
+        <label>First Name</label>
+        <input type="text" placeholder="Your first name"/>
+      </div>
+      <div class="bf-field">
+        <label>Last Name</label>
+        <input type="text" placeholder="Your last name"/>
+      </div>
+      <div class="bf-field">
+        <label>Email</label>
+        <input type="email" placeholder="you@email.com"/>
+      </div>
+      <div class="bf-field">
+        <label>Phone (Optional)</label>
+        <input type="tel" placeholder="(000) 000-0000"/>
+      </div>
+      <div class="bf-field" style="grid-column:1/-1">
+        <label>What brings you here?</label>
+        <select>
+          <option value="">Select your situation…</option>
+          <option>PIP / Performance Management</option>
+          <option>Termination / Severance</option>
+          <option>Discrimination / Harassment</option>
+          <option>Workplace Investigation</option>
+          <option>Career Advancement / Promotion</option>
+          <option>Job Search / Resume / LinkedIn</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <button class="bf-submit">Book My Free Discovery Call →</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <span class="ft-logo">Work<span>Decoded</span></span>
+      <p class="ft-tagline">The workplace playbook they don't give you. Expert HR consulting and career advocacy — entirely on your side.</p>
+    </div>
+    <div class="ft-col">
+      <h4>Services</h4>
+      <ul>
+        <li><a href="#">Crisis Consulting</a></li>
+        <li><a href="#">Document Review</a></li>
+        <li><a href="#">Severance Negotiation</a></li>
+        <li><a href="#">Career Coaching</a></li>
+        <li><a href="#">Resume & LinkedIn</a></li>
+      </ul>
+    </div>
+    <div class="ft-col">
+      <h4>Connect</h4>
+      <ul>
+        <li><a href="#">WorkDecodedHQ.com</a></li>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">LinkedIn</a></li>
+        <li><a href="#">Book a Discovery Call</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-base">
+    <span>© 2026 Work Decoded · Michelle Williams, MBA · All rights reserved</span>
+    <span>Built by the creative geniuses at AlphaCreative</span>
+  </div>
+</footer>
+
+<script>
+  const toggle = document.querySelector('.nav-toggle');
+  const menu   = document.getElementById('nav-menu');
+  toggle.addEventListener('click', () => {
+    const open = menu.classList.toggle('open');
+    toggle.classList.toggle('open', open);
+    toggle.setAttribute('aria-expanded', open);
+  });
+  menu.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      menu.classList.remove('open');
+      toggle.classList.remove('open');
+      toggle.setAttribute('aria-expanded', false);
+    });
+  });
+
+  // Headline toggle functionality
+  const headlines = {
+    1: 'Workplace Challenges with <span class="accent">Confidence</span>',
+    2: 'The Workplace Playbook<br/><span class="accent">They Won\'t</span> Give You',
+    3: 'Feeling Stuck at Work?<br/>Let\'s Decode What\'s Really <span class="accent">Happening</span>'
+  };
+
+  function setHeadline(option) {
+    const headlineEl = document.getElementById('headline');
+    headlineEl.innerHTML = headlines[option];
+    
+    // Update button states
+    document.querySelectorAll('.headline-toggle').forEach(btn => {
+      if (btn.dataset.option === String(option)) {
+        btn.style.background = 'rgba(255,92,58,.3)';
+        btn.style.borderColor = 'var(--coral)';
+        btn.style.color = 'var(--coral)';
+      } else {
+        btn.style.background = 'transparent';
+        btn.style.borderColor = 'rgba(255,255,255,.2)';
+        btn.style.color = 'rgba(255,255,255,.6)';
+      }
+    });
+  }
+
+  // Card UI mode switcher
+  function switchCardUI(mode) {
+    const cardsContainer = document.querySelector('.truth-cards');
+    
+    // Remove all mode classes
+    cardsContainer.classList.remove('mode-option1', 'mode-option2', 'mode-option3');
+    
+    // Add the selected mode
+    cardsContainer.classList.add(`mode-${mode}`);
+    
+    // Update button states
+    document.querySelectorAll('.card-ui-toggle').forEach(btn => {
+      if (btn.dataset.ui === mode) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
+
+  // Initialize with option1
+  switchCardUI('option1');
+
+  // Truth card interaction - flip on desktop, expand/collapse on mobile
+  document.querySelectorAll('.truth-card-wrapper').forEach(card => {
+    card.addEventListener('click', (e) => {
+      // Prevent clicking links from triggering expand
+      if (e.target.closest('a')) return;
+      
+      const isMobile = window.matchMedia('(max-width: 768px)').matches;
+      
+      if (isMobile) {
+        // Mobile: toggle expanded state
+        card.classList.toggle('expanded');
+        // Close other cards
+        document.querySelectorAll('.truth-card-wrapper').forEach(otherCard => {
+          if (otherCard !== card) {
+            otherCard.classList.remove('expanded');
+          }
+        });
+      } else {
+        // Desktop: use flip state
+        card.classList.toggle('flipped');
+      }
+    });
+  });
+
+  // Services expand/collapse functionality
+  const svcToggle = document.getElementById('svc-toggle');
+  const svcGridHidden = document.getElementById('svc-grid-hidden');
+  let svcExpanded = false;
+
+  svcToggle.addEventListener('click', (e) => {
+    e.preventDefault();
+    svcExpanded = !svcExpanded;
+    
+    if (svcExpanded) {
+      svcGridHidden.classList.add('expanded');
+      svcToggle.textContent = 'Show Less ↑';
+    } else {
+      svcGridHidden.classList.remove('expanded');
+      svcToggle.textContent = 'View All Services →';
+    }
+  });
+
+  // Pricing UI toggle functionality
+  document.querySelectorAll('.pricing-toggle-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const layout = btn.dataset.layout;
+      
+      // Update active button
+      document.querySelectorAll('.pricing-toggle-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      // Update active layout
+      document.querySelectorAll('.pricing-layout').forEach(layout => layout.classList.remove('active'));
+      document.querySelector(`.pricing-layout.${layout}`).classList.add('active');
+    });
+  });
+
+  // Package details toggle for Option 1
+  document.querySelectorAll('.pkg-details-toggle').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const packageId = btn.dataset.package;
+      const detailsDiv = document.getElementById(packageId);
+      
+      btn.classList.toggle('expanded');
+      detailsDiv.classList.toggle('expanded');
+      
+      if (detailsDiv.classList.contains('expanded')) {
+        btn.textContent = 'Hide Details ▲';
+      } else {
+        btn.textContent = 'See Details ▼';
+      }
+    });
+  });
+
+  // Expandable pricing for Option 3
+  document.querySelectorAll('.expand-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const tier = btn.dataset.tier;
+      const packagesDiv = document.getElementById(tier);
+      
+      btn.classList.toggle('expanded');
+      packagesDiv.classList.toggle('expanded');
+      
+      if (packagesDiv.classList.contains('expanded')) {
+        btn.textContent = '▲ Hide Packages';
+      } else {
+        btn.textContent = '▼ View Packages';
+      }
+    });
+  });
+</script>
+</body>
+</html>
