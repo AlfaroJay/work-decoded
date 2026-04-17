@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --wd-navy: #1a2744;
+  --wd-gold: #c5a55a;
+  --wd-cream: #faf8f5;
+  --wd-charcoal: #2d2d2d;
+  --wd-mist: #e8edf2;
+}
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--wd-cream);
+  color: var(--wd-charcoal);
+}
+
+h1, h2, h3 {
+  font-family: Georgia, serif;
+  color: var(--wd-navy);
+}
