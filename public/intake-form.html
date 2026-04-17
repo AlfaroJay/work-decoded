@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Work Decoded — Client Intake Form</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2rem 1rem;color:#e8e8e8}
+.wd{max-width:740px;margin:0 auto}
+.wd-header{padding-bottom:1rem;margin-bottom:1.5rem;text-align:center}
+.wd-logo{font-size:28px;font-weight:700;color:#fff;letter-spacing:1px;text-transform:uppercase}
+.wd-logo .red{color:#e63946}
+.wd-tagline{font-size:12px;color:#999;margin-top:4px;letter-spacing:0.4px}
+.wd-intro{font-size:13px;color:#40c9a2;margin-bottom:1.5rem;line-height:1.7;padding:14px 18px;background:#242424;border-radius:10px;border:1px solid #333}
+.wd-intro strong{color:#fff}
+.section{background:#242424;border:1px solid #333;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+.section-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;color:#fff;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid #333}
+.field{margin-bottom:1rem}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:13px;font-weight:500;color:#ccc;margin-bottom:6px}
+.req{color:#e63946;margin-left:2px}
+.field input,.field select,.field textarea{width:100%;font-size:14px;padding:10px 12px;border:1px solid #444;border-radius:8px;background:#1a1a1a;color:#e8e8e8;font-family:'Helvetica Neue',Arial,sans-serif}
+.field textarea{resize:vertical;min-height:80px;line-height:1.5}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:#40c9a2;box-shadow:0 0 0 2px rgba(64,201,162,0.2)}
+.field select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23999' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.field select option{background:#1a1a1a;color:#e8e8e8}
+.field input::placeholder,.field textarea::placeholder{color:#666}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.hint{font-size:11px;color:#777;margin-top:4px;line-height:1.4}
+.char-count{font-size:11px;color:#666;text-align:right;margin-top:3px}
+
+/* Tier grid — 4 tiers */
+.tier-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:4px}
+.tier-card{border:1px solid #444;border-radius:12px;padding:14px;cursor:pointer;transition:all 0.15s;background:#1a1a1a}
+.tier-card:hover{border-color:#40c9a2}
+.tier-card.selected{border:2px solid #40c9a2;background:#1e2e2a}
+.tier-card.crisis-card:hover{border-color:#e63946}
+.tier-card.crisis-card.selected{border:2px solid #e63946;background:#2a1e1e}
+.tier-card.discovery-card.selected{border:2px solid #40c9a2;background:#1e2e2a}
+.tier-name{font-size:13px;font-weight:600;color:#fff;margin-bottom:4px}
+.tier-price{font-size:20px;font-weight:600;color:#40c9a2;margin-bottom:2px}
+.tier-price.crisis-price{color:#e63946}
+.tier-price.free-price{color:#40c9a2}
+.tier-sub{font-size:11px;color:#888}
+.tier-note{font-size:11px;color:#e63946;margin-top:6px;line-height:1.4}
+.tier-badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;margin-top:6px}
+.tier-badge.badge-crisis{background:rgba(230,57,70,0.15);color:#e63946;border:1px solid rgba(230,57,70,0.3)}
+.tier-badge.badge-free{background:rgba(64,201,162,0.15);color:#40c9a2;border:1px solid rgba(64,201,162,0.3)}
+
+/* Packages */
+.pkg-section{margin-top:1rem;display:none}
+.pkg-section.visible{display:block}
+.pkg-title{font-size:12px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
+.pkg-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pkg-card{border:1px solid #444;border-radius:8px;padding:10px 12px;cursor:pointer;background:#1a1a1a}
+.pkg-card:hover{border-color:#40c9a2}
+.pkg-card.selected{border:2px solid #40c9a2;background:#1e2e2a}
+.pkg-label{font-size:13px;font-weight:500;color:#e8e8e8}
+.pkg-price{font-size:15px;font-weight:600;color:#40c9a2;margin-top:2px}
+.pkg-save{font-size:11px;color:#40c9a2;margin-top:1px}
+.pkg-single{font-size:11px;color:#777;margin-top:1px}
+
+/* Radio / checkbox */
+.radio-group{display:flex;flex-direction:column;gap:6px}
+.radio-group label{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:400;cursor:pointer;color:#ccc}
+.radio-group input{width:auto;accent-color:#40c9a2}
+
+/* Urgency */
+.urgency-bar{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.urgency-btn{flex:1;min-width:120px;padding:8px 4px;border:1px solid #444;border-radius:8px;font-size:12px;cursor:pointer;text-align:center;background:#1a1a1a;color:#888;font-family:'Helvetica Neue',Arial,sans-serif}
+.urgency-btn.sel-low{border-color:#40c9a2;background:rgba(64,201,162,0.1);color:#40c9a2;font-weight:500}
+.urgency-btn.sel-med{border-color:#f0a500;background:rgba(240,165,0,0.1);color:#f0a500;font-weight:500}
+.urgency-btn.sel-high{border-color:#e63946;background:rgba(230,57,70,0.1);color:#e63946;font-weight:500}
+
+/* Consent */
+.consent-box{background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:12px;max-height:120px;overflow-y:auto;font-size:12px;color:#999;line-height:1.6;margin-bottom:10px}
+.consent-box a{color:#40c9a2;text-decoration:underline}
+.consent-check{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:#ccc;cursor:pointer}
+.consent-check input{width:auto;accent-color:#40c9a2;margin-top:2px}
+
+/* Summary */
+.summary-bar{background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:10px 14px;font-size:13px;color:#ccc;margin-top:1rem;display:none}
+.summary-bar.visible{display:flex;justify-content:space-between;align-items:center}
+.summary-total{font-size:16px;font-weight:600;color:#40c9a2}
+.summary-total.crisis-total{color:#e63946}
+
+/* ===== DATE/TIME PICKER ===== */
+.schedule-section{display:none;margin-top:1rem}
+.schedule-section.visible{display:block}
+.schedule-intro{font-size:13px;color:#999;margin-bottom:1rem;line-height:1.5}
+.date-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:1.25rem}
+.date-btn{padding:10px 4px;border:1px solid #444;border-radius:8px;background:#1a1a1a;color:#ccc;font-size:12px;text-align:center;cursor:pointer;font-family:'Helvetica Neue',Arial,sans-serif;line-height:1.4}
+.date-btn:hover{border-color:#40c9a2}
+.date-btn.selected{border:2px solid #40c9a2;background:#1e2e2a;color:#fff;font-weight:500}
+.date-btn .day-name{font-size:11px;color:#888;display:block}
+.date-btn.selected .day-name{color:#40c9a2}
+.time-label{font-size:12px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
+.time-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.time-btn{padding:8px 4px;border:1px solid #444;border-radius:6px;background:#1a1a1a;color:#ccc;font-size:13px;text-align:center;cursor:pointer;font-family:'Helvetica Neue',Arial,sans-serif}
+.time-btn:hover{border-color:#40c9a2}
+.time-btn.selected{border:2px solid #40c9a2;background:#1e2e2a;color:#fff;font-weight:500}
+.time-btn.unavailable{opacity:0.3;cursor:not-allowed;text-decoration:line-through}
+.time-loading{text-align:center;padding:20px;color:#888;font-size:13px}
+.time-loading .spinner{display:inline-block;width:16px;height:16px;border:2px solid #444;border-top-color:#40c9a2;border-radius:50%;animation:spin 0.8s linear infinite;margin-right:8px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+.selected-datetime{background:#1e2e2a;border:1px solid #40c9a2;border-radius:8px;padding:12px;margin-top:1rem;font-size:13px;color:#40c9a2;display:none}
+.selected-datetime.visible{display:block}
+.no-slots{text-align:center;padding:16px;color:#888;font-size:13px;line-height:1.5}
+
+/* Buttons */
+.submit-row{display:flex;gap:12px;margin-top:1.5rem;align-items:center}
+.btn-primary{background:#40c9a2;color:#1a1a1a;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Helvetica Neue',Arial,sans-serif;transition:background 0.15s}
+.btn-primary:hover{background:#35b08d}
+.btn-primary:disabled{background:#555;color:#888;cursor:wait}
+.btn-secondary{background:transparent;color:#ccc;border:1px solid #444;padding:12px 24px;border-radius:8px;font-size:14px;cursor:pointer;font-family:'Helvetica Neue',Arial,sans-serif}
+.btn-secondary:hover{border-color:#888}
+.submit-status{font-size:12px;color:#888;margin-left:4px}
+.submit-error{background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.3);border-radius:8px;padding:10px 14px;color:#e63946;font-size:13px;margin-top:10px;display:none}
+
+/* Success */
+.success-screen{display:none;text-align:center;padding:3rem 1.5rem}
+.success-screen.visible{display:block}
+.success-icon{font-size:48px;margin-bottom:1rem}
+.success-title{font-size:20px;font-weight:600;color:#fff;margin-bottom:0.5rem}
+.success-msg{font-size:14px;color:#999;line-height:1.6;max-width:500px;margin:0 auto}
+
+.footer{text-align:center;font-size:11px;color:#555;margin-top:2rem;padding-top:1rem;border-top:1px solid #333}
+.footer a{color:#40c9a2;text-decoration:none}
+
+@media(max-width:600px){
+  .two-col{grid-template-columns:1fr}
+  .tier-grid{grid-template-columns:1fr 1fr}
+  .pkg-grid{grid-template-columns:1fr}
+  .date-grid{grid-template-columns:repeat(5,1fr)}
+  .time-grid{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+<div class="wd">
+  <div class="wd-header">
+    <div class="wd-logo">Work<span class="red">Decoded</span>HQ</div>
+    <div class="wd-tagline">The workplace playbook they don't give you</div>
+  </div>
+
+  <!-- FORM CONTAINER (hidden on success) -->
+  <div id="form-container">
+  <div class="wd-intro">
+    Welcome! Please complete this form before your session. Your responses are <strong>confidential</strong> and will only be shared with your assigned Work Decoded consultant to ensure they arrive fully prepared to support you.
+  </div>
+
+  <!-- SECTION 1: CONTACT INFO -->
+  <div class="section">
+    <div class="section-title">Your information</div>
+    <div class="two-col">
+      <div class="field"><label>First name <span class="req">*</span></label><input type="text" id="fname" placeholder="First name"/></div>
+      <div class="field"><label>Last name <span class="req">*</span></label><input type="text" id="lname" placeholder="Last name"/></div>
+    </div>
+    <div class="two-col">
+      <div class="field"><label>Email address <span class="req">*</span></label><input type="email" id="email" placeholder="you@email.com"/></div>
+      <div class="field"><label>Phone number</label><input type="tel" id="phone" placeholder="(000) 000-0000"/></div>
+    </div>
+    <div class="field">
+      <label>Are you a returning client?</label>
+      <div class="radio-group" style="flex-direction:row;gap:20px;margin-top:4px">
+        <label><input type="radio" name="returning" value="yes" onchange="togglePreferred(true)"> Yes</label>
+        <label><input type="radio" name="returning" value="no" onchange="togglePreferred(false)"> No</label>
+      </div>
+    </div>
+    <div class="field" id="preferred-field" style="display:none">
+      <label>Preferred consultant (if you have one)</label>
+      <input type="text" id="preferred" placeholder="Consultant's name"/>
+      <div class="hint">Leave blank if you have no preference — we'll match you based on availability and expertise.</div>
+    </div>
+    <div class="field">
+      <label>How did you hear about Work Decoded? <span class="req">*</span></label>
+      <select id="referral">
+        <option value="">Select one</option>
+        <option>Google / web search</option>
+        <option>LinkedIn</option>
+        <option>Instagram</option>
+        <option>Facebook</option>
+        <option>Referred by a friend or colleague</option>
+        <option>Podcast or media feature</option>
+        <option>Work Decoded website</option>
+        <option>Other</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- SECTION 2: EMPLOYMENT STATUS -->
+  <div class="section">
+    <div class="section-title">Your employment situation</div>
+    <div class="two-col">
+      <div class="field">
+        <label>Current employment status <span class="req">*</span></label>
+        <select id="emp-status">
+          <option value="">Select one</option>
+          <option>Employed full-time</option>
+          <option>Employed part-time</option>
+          <option>On leave (medical, FMLA, etc.)</option>
+          <option>Recently terminated</option>
+          <option>Resigned / planning to resign</option>
+          <option>Self-employed / contractor</option>
+          <option>Unemployed</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Industry <span class="req">*</span></label>
+        <select id="industry">
+          <option value="">Select one</option>
+          <option>Technology</option>
+          <option>Healthcare</option>
+          <option>Government / Public sector</option>
+          <option>Nonprofit</option>
+          <option>Finance / Banking</option>
+          <option>Education</option>
+          <option>Retail / Hospitality</option>
+          <option>Legal</option>
+          <option>Media / Communications</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Company size</label>
+      <div class="radio-group" style="flex-direction:row;flex-wrap:wrap;gap:12px;margin-top:4px">
+        <label><input type="radio" name="co-size" value="1-50"> 1–50</label>
+        <label><input type="radio" name="co-size" value="51-200"> 51–200</label>
+        <label><input type="radio" name="co-size" value="201-1000"> 201–1,000</label>
+        <label><input type="radio" name="co-size" value="1000+"> 1,000+</label>
+        <label><input type="radio" name="co-size" value="unknown"> Not sure</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: WORKPLACE ISSUE (urgency drives scheduling dates) -->
+  <div class="section">
+    <div class="section-title">Your workplace issue</div>
+    <div class="field">
+      <label>Primary area of concern <span class="req">*</span></label>
+      <select id="issue-type">
+        <option value="">Select one</option>
+        <option>Performance improvement plan (PIP)</option>
+        <option>Salary negotiation / compensation</option>
+        <option>Resume review / interview prep</option>
+        <option>Career transition</option>
+        <option>HR meeting preparation</option>
+        <option>Workplace investigation</option>
+        <option>Severance / separation negotiation</option>
+        <option>Harassment or discrimination</option>
+        <option>Toxic workplace / exit planning</option>
+        <option>Retaliation concern</option>
+        <option>Work-life balance / boundaries</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Briefly describe your situation <span class="req">*</span></label>
+      <textarea id="situation" maxlength="600" placeholder="Share as much or as little as you're comfortable with. This helps your consultant prepare." oninput="updateCount(this,'sit-count')"></textarea>
+      <div class="char-count"><span id="sit-count">0</span>/600</div>
+    </div>
+    <div class="field">
+      <label>Urgency level <span class="req">*</span></label>
+      <div class="urgency-bar">
+        <button type="button" class="urgency-btn" onclick="setUrgency('low',this)">Low — no immediate deadline</button>
+        <button type="button" class="urgency-btn" onclick="setUrgency('medium',this)">Medium — within 2 weeks</button>
+        <button type="button" class="urgency-btn" onclick="setUrgency('high',this)">High — within 48–72 hours</button>
+        <button type="button" class="urgency-btn" onclick="setUrgency('crisis',this)">Crisis — today or tomorrow</button>
+      </div>
+      <div class="hint" id="urgency-hint" style="display:none"></div>
+    </div>
+    <div class="field">
+      <label>Have you taken any prior HR or legal action related to this issue?</label>
+      <div class="radio-group" style="flex-direction:row;gap:20px;margin-top:4px">
+        <label><input type="radio" name="prior-action" value="yes" onchange="togglePriorDetail(true)"> Yes</label>
+        <label><input type="radio" name="prior-action" value="no" onchange="togglePriorDetail(false)"> No</label>
+        <label><input type="radio" name="prior-action" value="unsure" onchange="togglePriorDetail(false)"> Not sure</label>
+      </div>
+    </div>
+    <div class="field" id="prior-detail-field" style="display:none">
+      <label>Please briefly describe the prior action taken</label>
+      <textarea id="prior-detail" maxlength="300" placeholder="e.g. Filed an HR complaint, consulted an attorney, EEOC filing..." oninput="updateCount(this,'prior-count')"></textarea>
+      <div class="char-count"><span id="prior-count">0</span>/300</div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: SESSION TYPE + SCHEDULING -->
+  <div class="section">
+    <div class="section-title">Session selection</div>
+    <div class="field">
+      <label>Select your consultation type <span class="req">*</span></label>
+      <div class="tier-grid">
+        <div class="tier-card discovery-card" id="card-discovery" onclick="selectTier('discovery')">
+          <div class="tier-name">Discovery Call</div>
+          <div class="tier-price free-price">Free</div>
+          <div class="tier-sub">15-minute call</div>
+          <div class="tier-badge badge-free">No charge</div>
+        </div>
+        <div class="tier-card" id="card-standard" onclick="selectTier('standard')">
+          <div class="tier-name">Standard</div>
+          <div class="tier-price">$100</div>
+          <div class="tier-sub">per 30-min session</div>
+        </div>
+        <div class="tier-card" id="card-premier" onclick="selectTier('premier')">
+          <div class="tier-name">Premier</div>
+          <div class="tier-price">$125</div>
+          <div class="tier-sub">per 30-min session</div>
+        </div>
+        <div class="tier-card crisis-card" id="card-crisis" onclick="selectTier('crisis')">
+          <div class="tier-name">Crisis</div>
+          <div class="tier-price crisis-price">$175</div>
+          <div class="tier-sub">per 30-min session</div>
+          <div class="tier-badge badge-crisis">Within 24 hours</div>
+          <div class="tier-note">No packages available. Single sessions only.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Packages (Standard/Premier only) -->
+    <div class="pkg-section" id="pkg-section">
+      <div class="pkg-title">Session packages — save 10%</div>
+      <div class="pkg-grid" id="pkg-grid"></div>
+      <div class="hint" style="margin-top:6px">Packages are billed upfront at a discounted rate. Sessions do not expire.</div>
+    </div>
+
+    <div class="summary-bar" id="summary-bar">
+      <span id="summary-label">1 session selected</span>
+      <span class="summary-total" id="summary-total"></span>
+    </div>
+
+    <!-- DATE/TIME PICKER (appears after tier selection, dates driven by urgency) -->
+    <div class="schedule-section" id="schedule-section">
+      <div class="section-title" style="margin-top:0.5rem">Choose your date & time <span class="req">*</span></div>
+      <div class="schedule-intro" id="schedule-intro">All times are shown in Eastern Time (ET). Sessions are available Monday through Friday, 9:00 AM – 5:00 PM.</div>
+      <div class="date-grid" id="date-grid"></div>
+      <div id="time-container"></div>
+      <div class="selected-datetime" id="selected-datetime"></div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: CONSENT -->
+  <div class="section">
+    <div class="section-title">Privacy & consent</div>
+    <div class="consent-box">
+      <strong>Privacy Notice & Client Services Agreement</strong><br><br>
+      Work Decoded is committed to protecting your privacy. The information you provide on this form is strictly confidential and will only be shared with your assigned consultant to prepare for your session. It will not be sold, shared with your employer, or disclosed to any third party except as required by law.<br><br>
+      Your session notes are stored securely in Work Decoded's internal records system and may be accessed by Work Decoded's founder for quality assurance and continuity of care purposes only.<br><br>
+      By submitting this form you acknowledge that Work Decoded consultants are independent HR professionals providing strategic guidance, not legal advice. For legal matters, you are encouraged to consult a licensed attorney.<br><br>
+      You may request deletion of your records at any time by contacting <a href="mailto:support@workdecodedhq.com">support@workdecodedhq.com</a>.<br><br>
+      For the full <a href="https://workdecodedhq.com/privacy" target="_blank">Privacy Notice</a> and <a href="https://workdecodedhq.com/client-services-agreement" target="_blank">Client Services Agreement</a>, please click the respective links to review before consenting.
+    </div>
+    <label class="consent-check">
+      <input type="checkbox" id="consent"/>
+      <span>I have read and agree to Work Decoded's Privacy Notice and Client Services Agreement. I understand that this form is confidential and that my consultant will use it solely to prepare for my session. <span class="req">*</span></span>
+    </label>
+  </div>
+
+  <div class="submit-row">
+    <button class="btn-primary" id="btn-submit" onclick="submitForm()">Submit intake form</button>
+    <button class="btn-secondary" onclick="clearForm()">Clear form</button>
+    <span class="submit-status" id="submit-status"></span>
+  </div>
+  <div class="submit-error" id="submit-error"></div>
+  </div><!-- /form-container -->
+
+  <!-- SUCCESS SCREEN -->
+  <div class="success-screen" id="success-screen">
+    <div class="success-icon">&#10003;</div>
+    <div class="success-title">You're all set!</div>
+    <div class="success-msg" id="success-msg">
+      Your intake form has been submitted and your session is booked. You'll receive a calendar invite at your email shortly. If you need to reschedule, contact <a href="mailto:support@workdecodedhq.com" style="color:#40c9a2">support@workdecodedhq.com</a>.
+    </div>
+  </div>
+
+  <div class="footer">Work Decoded &middot; <a href="https://workdecodedhq.com">WorkDecodedHQ.com</a> &middot; support@workdecodedhq.com</div>
+</div>
+
+<script>
+/* ============================================================
+   WORK DECODED INTAKE FORM
+   ------------------------------------------------------------
+   FLOW: client fills form → selects tier → picks date/time
+   from available slots → submits → payload POSTs to Zapier
+   Catch Hook → Zapier creates Airtable record + Google
+   Calendar event → client sees confirmation.
+
+   CONFIGURATION — fill these in once accounts are live.
+   ============================================================ */
+const CONFIG = {
+  // Zapier Catch Hook URL for the intake Zap.
+  ZAPIER_INTAKE_WEBHOOK: 'https://hooks.zapier.com/hooks/catch/27132993/uj9mk1d/',
+
+  // Availability API endpoint (your Vercel-deployed Next.js app).
+  // Returns { date, slots: [{ time: "HH:MM", available: bool }] }
+  // Pass ?date=YYYY-MM-DD&duration=15 or &duration=30
+  AVAILABILITY_API: 'https://work-decoded.vercel.app/api/availability',
+
+  // Google Calendar ID for creating events via Zapier
+  GOOGLE_CALENDAR_ID: 'hello@workdecodedhq.com'
+};
+
+/* ------------------------------------------------------------
+   STATE
+   ------------------------------------------------------------ */
+let selectedTier = null, selectedPkg = null, urgencySelected = null;
+let selectedDate = null, selectedTime = null;
+let availabilityCache = {};
+
+const TIERS = ['discovery','standard','premier','crisis'];
+const prices = { discovery: 0, standard: 100, premier: 125, crisis: 175 };
+const durations = { discovery: 15, standard: 30, premier: 30, crisis: 30 };
+
+const pkgData = {
+  standard: [
+    { label: '3-session package', sessions: 3, unit: 100, discount: 0.10, key: '3pack' },
+    { label: '5-session package', sessions: 5, unit: 100, discount: 0.10, key: '5pack' }
+  ],
+  premier: [
+    { label: '3-session package', sessions: 3, unit: 125, discount: 0.10, key: '3pack' },
+    { label: '5-session package', sessions: 5, unit: 125, discount: 0.10, key: '5pack' }
+  ]
+};
+
+/* ------------------------------------------------------------
+   TIER / PACKAGE SELECTION
+   ------------------------------------------------------------ */
+function selectTier(tier) {
+  selectedTier = tier; selectedPkg = null;
+  selectedDate = null; selectedTime = null;
+  availabilityCache = {};
+
+  TIERS.forEach(t => document.getElementById('card-'+t).classList.remove('selected'));
+  document.getElementById('card-'+tier).classList.add('selected');
+
+  const st = document.getElementById('summary-total');
+  st.className = 'summary-total' + (tier === 'crisis' ? ' crisis-total' : '');
+
+  if (tier === 'discovery') {
+    document.getElementById('pkg-section').classList.remove('visible');
+    updateSummary('Free discovery call (15 min)', 'Free');
+  } else if (tier === 'crisis') {
+    document.getElementById('pkg-section').classList.remove('visible');
+    updateSummary('1 crisis session', '$175');
+  } else {
+    document.getElementById('pkg-section').classList.add('visible');
+    buildPackages(tier);
+    updateSummary('1 ' + tier + ' session', '$' + prices[tier]);
+  }
+  document.getElementById('summary-bar').classList.add('visible');
+
+  // Show date picker only if urgency is already selected (urgency drives the date range)
+  document.getElementById('time-container').innerHTML = '';
+  document.getElementById('selected-datetime').classList.remove('visible');
+  if (urgencySelected) {
+    document.getElementById('schedule-section').classList.add('visible');
+    buildDateGrid();
+  } else {
+    // Prompt user to select urgency first
+    document.getElementById('schedule-section').classList.add('visible');
+    document.getElementById('date-grid').innerHTML =
+      '<div class="no-slots" style="grid-column:1/-1">Please select an urgency level above to see available dates.</div>';
+  }
+}
+
+function buildPackages(tier) {
+  const grid = document.getElementById('pkg-grid'); grid.innerHTML = '';
+  pkgData[tier].forEach((pkg, i) => {
+    const total = pkg.sessions * pkg.unit * (1 - pkg.discount);
+    const saved = (pkg.sessions * pkg.unit * pkg.discount).toFixed(2);
+    const perSession = (total / pkg.sessions).toFixed(2);
+    const div = document.createElement('div');
+    div.className = 'pkg-card'; div.id = 'pkg-' + i;
+    div.onclick = () => selectPkg(i, pkg, total, tier);
+    div.innerHTML = '<div class="pkg-label">' + pkg.label + '</div>'
+      + '<div class="pkg-price">$' + total.toFixed(2) + '</div>'
+      + '<div class="pkg-save">Save $' + saved + ' (10% off)</div>'
+      + '<div class="pkg-single">$' + perSession + '/session</div>';
+    grid.appendChild(div);
+  });
+}
+
+function selectPkg(i, pkg, total, tier) {
+  selectedPkg = pkg.key;
+  document.querySelectorAll('.pkg-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('pkg-' + i).classList.add('selected');
+  updateSummary(pkg.label + ' (' + tier + ')', '$' + total.toFixed(2));
+}
+
+function updateSummary(label, price) {
+  document.getElementById('summary-label').textContent = label;
+  document.getElementById('summary-total').textContent = price;
+}
+
+/* ------------------------------------------------------------
+   DATE GRID — urgency-driven: crisis=today+2, high=3, low/med=10
+   ------------------------------------------------------------ */
+function buildDateGrid() {
+  const grid = document.getElementById('date-grid');
+  grid.innerHTML = '';
+
+  // Determine how many days to show based on urgency
+  const urgency = urgencySelected || 'medium'; // default to medium if somehow not set
+  let days;
+  if (urgency === 'crisis') {
+    days = getCrisisBusinessDays();       // today (if biz hours left) + next 2 biz days
+  } else if (urgency === 'high') {
+    days = getNextBusinessDays(3);        // next 3 biz days (starting tomorrow)
+  } else {
+    days = getNextBusinessDays(10);       // low/medium: next 10 biz days
+  }
+
+  // Update the schedule intro text based on urgency
+  const intro = document.getElementById('schedule-intro');
+  const introText = {
+    low:     'All times are shown in Eastern Time (ET). Sessions are available Monday – Friday, 9 AM – 5 PM.',
+    medium:  'All times are shown in Eastern Time (ET). Sessions are available Monday – Friday, 9 AM – 5 PM.',
+    high:    'Showing the nearest available dates for high-urgency scheduling. All times Eastern (ET).',
+    crisis:  'Showing the earliest available slots for crisis-level urgency — including today if hours remain. All times Eastern (ET).'
+  };
+  intro.textContent = introText[urgency];
+
+  // Adjust grid columns if fewer days
+  grid.style.gridTemplateColumns = 'repeat(' + Math.min(days.length, 5) + ', 1fr)';
+
+  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  days.forEach(d => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'date-btn';
+    const dateStr = formatDateISO(d);
+    btn.dataset.date = dateStr;
+
+    // Mark today with a label
+    const isToday = formatDateISO(d) === formatDateISO(new Date());
+    const label = isToday ? 'Today' : dayNames[d.getDay()];
+
+    btn.innerHTML = '<span class="day-name">' + label + '</span>'
+      + monthNames[d.getMonth()] + ' ' + d.getDate();
+    btn.onclick = () => selectDate(dateStr, btn);
+    grid.appendChild(btn);
+  });
+}
+
+function getNextBusinessDays(count) {
+  const days = [];
+  const d = new Date();
+  // Start from tomorrow
+  d.setDate(d.getDate() + 1);
+  while (days.length < count) {
+    const day = d.getDay();
+    if (day !== 0 && day !== 6) { // skip weekends
+      days.push(new Date(d));
+    }
+    d.setDate(d.getDate() + 1);
+  }
+  return days;
+}
+
+function getCrisisBusinessDays() {
+  // Crisis: include today if it's a weekday and before 4 PM ET (last 30-min slot starts at 4:30),
+  // then next 2 business days
+  const days = [];
+  const now = new Date();
+
+  // Check if today is a weekday and there's still time for at least one slot
+  // Convert current time to ET approximation (UTC-4 or UTC-5 depending on DST)
+  const etOffset = isDST(now) ? -4 : -5;
+  const utcHour = now.getUTCHours();
+  const etHour = (utcHour + etOffset + 24) % 24;
+
+  const isWeekday = now.getDay() !== 0 && now.getDay() !== 6;
+  const hasTimeLeft = etHour < 16; // before 4 PM ET means at least one 30-min slot possible
+
+  if (isWeekday && hasTimeLeft) {
+    days.push(new Date(now)); // today
+  }
+
+  // Add next 2 business days
+  const d = new Date(now);
+  d.setDate(d.getDate() + 1);
+  let added = 0;
+  while (added < 2) {
+    const day = d.getDay();
+    if (day !== 0 && day !== 6) {
+      days.push(new Date(d));
+      added++;
+    }
+    d.setDate(d.getDate() + 1);
+  }
+  return days;
+}
+
+function isDST(date) {
+  // US Eastern DST: second Sunday in March through first Sunday in November
+  const jan = new Date(date.getFullYear(), 0, 1).getTimezoneOffset();
+  const jul = new Date(date.getFullYear(), 6, 1).getTimezoneOffset();
+  return date.getTimezoneOffset() < Math.max(jan, jul);
+}
+
+function formatDateISO(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return y + '-' + m + '-' + dd;
+}
+
+/* ------------------------------------------------------------
+   TIME SLOTS — fetch availability then render
+   ------------------------------------------------------------ */
+async function selectDate(dateStr, btnEl) {
+  selectedDate = dateStr;
+  selectedTime = null;
+  document.getElementById('selected-datetime').classList.remove('visible');
+
+  // Highlight selected date
+  document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('selected'));
+  btnEl.classList.add('selected');
+
+  const container = document.getElementById('time-container');
+  const dur = durations[selectedTier];
+
+  // Check cache first
+  const cacheKey = dateStr + '-' + dur;
+  if (availabilityCache[cacheKey]) {
+    renderTimeSlots(availabilityCache[cacheKey]);
+    return;
+  }
+
+  // Show loading
+  container.innerHTML = '<div class="time-loading"><span class="spinner"></span>Checking availability...</div>';
+
+  try {
+    const url = CONFIG.AVAILABILITY_API + '?date=' + dateStr + '&duration=' + dur;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('API returned ' + res.status);
+    const data = await res.json();
+    availabilityCache[cacheKey] = data.slots || [];
+    renderTimeSlots(data.slots || []);
+  } catch (e) {
+    console.warn('Availability API error, showing all slots:', e);
+    // Fallback: generate all slots locally if API unavailable
+    const fallbackSlots = generateFallbackSlots(dur);
+    availabilityCache[cacheKey] = fallbackSlots;
+    renderTimeSlots(fallbackSlots);
+  }
+}
+
+function generateFallbackSlots(durationMin) {
+  // Generate 9am-5pm ET slots at the given interval
+  const slots = [];
+  for (let h = 9; h < 17; h++) {
+    for (let m = 0; m < 60; m += durationMin) {
+      // Don't create a slot if it would run past 5pm
+      if (h * 60 + m + durationMin > 17 * 60) continue;
+      const time = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
+      slots.push({ time, available: true });
+    }
+  }
+  return slots;
+}
+
+function renderTimeSlots(slots) {
+  const container = document.getElementById('time-container');
+  const available = slots.filter(s => s.available);
+
+  if (available.length === 0) {
+    container.innerHTML = '<div class="no-slots">No available slots on this date. Please choose another day.</div>';
+    return;
+  }
+
+  let html = '<div class="time-label">Available times</div><div class="time-grid">';
+  slots.forEach(slot => {
+    const cls = slot.available ? 'time-btn' : 'time-btn unavailable';
+    const onclick = slot.available ? ' onclick="selectTime(\'' + slot.time + '\', this)"' : '';
+    html += '<button type="button" class="' + cls + '"' + onclick + '>' + formatTime12(slot.time) + '</button>';
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function selectTime(time, btnEl) {
+  selectedTime = time;
+  document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
+  btnEl.classList.add('selected');
+
+  // Show confirmation
+  const dt = document.getElementById('selected-datetime');
+  const dur = durations[selectedTier];
+  const dateObj = new Date(selectedDate + 'T' + time + ':00');
+  const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  dt.innerHTML = '&#10003; <strong>' + dayNames[dateObj.getDay()] + ', '
+    + monthNames[dateObj.getMonth()] + ' ' + dateObj.getDate() + '</strong> at <strong>'
+    + formatTime12(time) + ' ET</strong> (' + dur + ' minutes)';
+  dt.classList.add('visible');
+}
+
+function formatTime12(time24) {
+  const [h, m] = time24.split(':').map(Number);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  return h12 + ':' + String(m).padStart(2,'0') + ' ' + ampm;
+}
+
+/* ------------------------------------------------------------
+   URGENCY, TOGGLES, HELPERS
+   ------------------------------------------------------------ */
+function setUrgency(level, el) {
+  urgencySelected = level;
+  document.querySelectorAll('.urgency-btn').forEach(b => b.className = 'urgency-btn');
+  const map = { low: 'sel-low', medium: 'sel-med', high: 'sel-high', crisis: 'sel-high' };
+  el.classList.add(map[level]);
+
+  // Reset date/time selections when urgency changes (dates will differ)
+  selectedDate = null;
+  selectedTime = null;
+  availabilityCache = {};
+  document.getElementById('time-container').innerHTML = '';
+  document.getElementById('selected-datetime').classList.remove('visible');
+
+  // Show urgency hint
+  const hint = document.getElementById('urgency-hint');
+  const hints = {
+    low:     'You\'ll see the next 10 business days when you select a session type below.',
+    medium:  'You\'ll see the next 10 business days when you select a session type below.',
+    high:    'We\'ll show the nearest 3 business days so you can get help quickly.',
+    crisis:  'Crisis session auto-selected — we\'ll show today (if slots remain) plus the next 2 business days.'
+  };
+  hint.textContent = hints[level];
+  hint.style.display = 'block';
+
+  // Crisis urgency → auto-lock the Crisis tier
+  if (level === 'crisis') {
+    // Disable non-crisis tier cards visually and functionally
+    ['discovery','standard','premier'].forEach(t => {
+      const card = document.getElementById('card-' + t);
+      card.style.opacity = '0.35';
+      card.style.pointerEvents = 'none';
+    });
+    document.getElementById('card-crisis').style.opacity = '';
+    document.getElementById('card-crisis').style.pointerEvents = '';
+    // Auto-select crisis tier
+    selectTier('crisis');
+  } else {
+    // Re-enable all tier cards for non-crisis urgency
+    TIERS.forEach(t => {
+      const card = document.getElementById('card-' + t);
+      card.style.opacity = '';
+      card.style.pointerEvents = '';
+    });
+    // If crisis was previously auto-selected, clear it so user picks freely
+    if (selectedTier === 'crisis') {
+      selectedTier = null; selectedPkg = null;
+      TIERS.forEach(t => document.getElementById('card-'+t).classList.remove('selected'));
+      document.getElementById('pkg-section').classList.remove('visible');
+      document.getElementById('summary-bar').classList.remove('visible');
+      document.getElementById('schedule-section').classList.remove('visible');
+    } else if (selectedTier) {
+      // Non-crisis tier already selected, just rebuild date grid with new urgency range
+      document.getElementById('schedule-section').classList.add('visible');
+      buildDateGrid();
+    }
+  }
+}
+
+function togglePreferred(show)   { document.getElementById('preferred-field').style.display    = show ? 'block' : 'none'; }
+function togglePriorDetail(show) { document.getElementById('prior-detail-field').style.display = show ? 'block' : 'none'; }
+function updateCount(el, id)     { document.getElementById(id).textContent = el.value.length; }
+
+function generateClientId() {
+  if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+    return window.crypto.randomUUID();
+  }
+  const buf = new Uint8Array(16);
+  (window.crypto || window.msCrypto).getRandomValues(buf);
+  buf[6] = (buf[6] & 0x0f) | 0x40;
+  buf[8] = (buf[8] & 0x3f) | 0x80;
+  const hex = Array.from(buf, b => b.toString(16).padStart(2, '0')).join('');
+  return hex.slice(0,8)+'-'+hex.slice(8,12)+'-'+hex.slice(12,16)+'-'+hex.slice(16,20)+'-'+hex.slice(20);
+}
+
+function quotedTotal(tier, pkg) {
+  if (tier === 'discovery') return 0;
+  if (tier === 'crisis') return 175;
+  const unit = prices[tier];
+  if (!pkg) return unit;
+  const sessions = pkg === '3pack' ? 3 : 5;
+  return +(sessions * unit * 0.9).toFixed(2);
+}
+
+function val(id)      { return (document.getElementById(id).value || '').trim(); }
+function radioVal(n)  { const el = document.querySelector('input[name="' + n + '"]:checked'); return el ? el.value : ''; }
+
+/* ------------------------------------------------------------
+   SUBMIT: validate → POST to Zapier → show confirmation
+   ------------------------------------------------------------ */
+async function submitForm() {
+  const errorEl  = document.getElementById('submit-error');
+  const statusEl = document.getElementById('submit-status');
+  const btn      = document.getElementById('btn-submit');
+  errorEl.style.display = 'none';
+  errorEl.textContent = '';
+
+  // --- Validation ---
+  const required = [
+    { id:'fname', label:'First name' }, { id:'lname', label:'Last name' },
+    { id:'email', label:'Email address' }, { id:'referral', label:'How you heard about us' },
+    { id:'emp-status', label:'Employment status' }, { id:'industry', label:'Industry' },
+    { id:'issue-type', label:'Primary area of concern' }, { id:'situation', label:'Situation description' }
+  ];
+  const missing = required.filter(f => !val(f.id)).map(f => f.label);
+  if (!selectedTier)                                missing.push('Consultation type');
+  if (!selectedDate || !selectedTime)               missing.push('Appointment date and time');
+  if (!urgencySelected)                             missing.push('Urgency level');
+  if (!document.getElementById('consent').checked)  missing.push('Privacy & consent agreement');
+  if (missing.length) {
+    alert('Please complete the following required fields:\n\n' + missing.join('\n'));
+    return;
+  }
+
+  // --- Build payload ---
+  const clientId = generateClientId();
+  const total    = quotedTotal(selectedTier, selectedPkg);
+  const dur      = durations[selectedTier];
+
+  // Build ISO datetime for the appointment (ET = America/New_York)
+  const appointmentDatetime = selectedDate + 'T' + selectedTime + ':00';
+
+  const payload = {
+    clientId,
+    submittedAt: new Date().toISOString(),
+    contact: {
+      firstName:   val('fname'),
+      lastName:    val('lname'),
+      email:       val('email'),
+      phone:       val('phone'),
+      returning:   radioVal('returning'),
+      preferredConsultant: val('preferred'),
+      referralSource: val('referral')
+    },
+    employment: {
+      status:    val('emp-status'),
+      industry:  val('industry'),
+      companySize: radioVal('co-size')
+    },
+    issue: {
+      primaryConcern:  val('issue-type'),
+      situation:       val('situation'),
+      urgency:         urgencySelected,
+      priorAction:     radioVal('prior-action'),
+      priorActionDetail: val('prior-detail')
+    },
+    selection: {
+      tier:             selectedTier,
+      package:          selectedPkg || 'single',
+      quotedTotal:      total,
+      durationMinutes:  dur
+    },
+    appointment: {
+      date:     selectedDate,
+      time:     selectedTime,
+      datetime: appointmentDatetime,
+      timezone: 'America/New_York',
+      durationMinutes: dur
+    },
+    consent: {
+      given: true,
+      consentedAt: new Date().toISOString()
+    },
+    // Pass calendar ID so Zapier can create the event
+    _meta: {
+      calendarId: CONFIG.GOOGLE_CALENDAR_ID
+    }
+  };
+
+  // --- POST to Zapier ---
+  btn.disabled = true;
+  statusEl.textContent = 'Submitting...';
+
+  try {
+    const res = await fetch(CONFIG.ZAPIER_INTAKE_WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+      body: JSON.stringify(payload),
+      keepalive: true
+    });
+    if (!res.ok) throw new Error('Webhook returned ' + res.status);
+  } catch (e) {
+    console.error('Intake webhook failed:', e);
+    errorEl.textContent =
+      'We had trouble submitting your form. Please try again, or email support@workdecodedhq.com and we\'ll get you scheduled directly.';
+    errorEl.style.display = 'block';
+    btn.disabled = false;
+    statusEl.textContent = '';
+    return;
+  }
+
+  // --- Show success screen ---
+  document.getElementById('form-container').style.display = 'none';
+  const ss = document.getElementById('success-screen');
+  ss.classList.add('visible');
+
+  const dateObj = new Date(selectedDate + 'T' + selectedTime + ':00');
+  const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const niceDate = dayNames[dateObj.getDay()] + ', ' + monthNames[dateObj.getMonth()] + ' ' + dateObj.getDate();
+
+  document.getElementById('success-msg').innerHTML =
+    'Your intake form has been submitted and your <strong>' + selectedTier + ' session</strong> is booked for <strong>'
+    + niceDate + ' at ' + formatTime12(selectedTime) + ' ET</strong>.<br><br>'
+    + 'You\'ll receive a calendar invite at <strong>' + val('email') + '</strong> shortly. '
+    + 'If you need to reschedule, contact <a href="mailto:support@workdecodedhq.com" style="color:#40c9a2">support@workdecodedhq.com</a>.';
+}
+
+/* ------------------------------------------------------------
+   CLEAR FORM
+   ------------------------------------------------------------ */
+function clearForm() {
+  if (!confirm('Clear all fields and start over?')) return;
+  document.querySelectorAll('input:not([type=radio]):not([type=checkbox]),select,textarea').forEach(el => el.value = '');
+  document.querySelectorAll('input[type=radio],input[type=checkbox]').forEach(el => el.checked = false);
+  TIERS.forEach(t => {
+    const card = document.getElementById('card-'+t);
+    card.classList.remove('selected');
+    card.style.opacity = '';
+    card.style.pointerEvents = '';
+  });
+  document.getElementById('pkg-section').classList.remove('visible');
+  document.getElementById('summary-bar').classList.remove('visible');
+  document.getElementById('schedule-section').classList.remove('visible');
+  document.getElementById('preferred-field').style.display = 'none';
+  document.getElementById('prior-detail-field').style.display = 'none';
+  document.getElementById('submit-error').style.display = 'none';
+  document.getElementById('selected-datetime').classList.remove('visible');
+  document.querySelectorAll('.urgency-btn').forEach(b => b.className = 'urgency-btn');
+  document.getElementById('urgency-hint').style.display = 'none';
+  ['sit-count','prior-count'].forEach(id => document.getElementById(id).textContent = '0');
+  document.getElementById('submit-status').textContent = '';
+  document.getElementById('btn-submit').disabled = false;
+  document.getElementById('time-container').innerHTML = '';
+  selectedTier = null; selectedPkg = null; urgencySelected = null;
+  selectedDate = null; selectedTime = null; availabilityCache = {};
+}
+</script>
+</body>
+</html>
