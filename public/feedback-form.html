@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Work Decoded — Consultant Post-Session Feedback</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2rem 1rem;color:#e8e8e8}
+.wd{max-width:740px;margin:0 auto}
+.wd-header{padding-bottom:1rem;margin-bottom:1.5rem;text-align:center}
+.wd-logo{font-size:28px;font-weight:700;color:#fff;letter-spacing:1px;text-transform:uppercase}
+.wd-logo .red{color:#e63946}
+.wd-tagline{font-size:12px;color:#999;margin-top:4px;letter-spacing:0.4px}
+.wd-intro{font-size:13px;color:#40c9a2;margin-bottom:1.5rem;line-height:1.7;padding:14px 18px;background:#242424;border-radius:10px;border:1px solid #333}
+.wd-intro strong{color:#fff}
+.section{background:#242424;border:1px solid #333;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+.section-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;color:#fff;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid #333}
+.field{margin-bottom:1rem}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:13px;font-weight:500;color:#ccc;margin-bottom:6px}
+.req{color:#e63946;margin-left:2px}
+.field input,.field select,.field textarea{width:100%;font-size:14px;padding:10px 12px;border:1px solid #444;border-radius:8px;background:#1a1a1a;color:#e8e8e8;font-family:'Helvetica Neue',Arial,sans-serif}
+.field textarea{resize:vertical;min-height:100px;line-height:1.5}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:#40c9a2;box-shadow:0 0 0 2px rgba(64,201,162,0.2)}
+.field select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23999' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.field select option{background:#1a1a1a;color:#e8e8e8}
+.field input::placeholder,.field textarea::placeholder{color:#666}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.hint{font-size:11px;color:#777;margin-top:4px;line-height:1.4}
+.char-count{font-size:11px;color:#666;text-align:right;margin-top:3px}
+.toggle-row{display:flex;align-items:center;gap:12px;margin-top:6px}
+.toggle{position:relative;width:44px;height:24px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#444;border-radius:24px;transition:0.2s}
+.toggle-slider:before{content:"";position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:#888;border-radius:50%;transition:0.2s}
+.toggle input:checked+.toggle-slider{background:#40c9a2}
+.toggle input:checked+.toggle-slider:before{transform:translateX(20px);background:#fff}
+.toggle-label{font-size:13px;color:#ccc}
+.followup-fields{display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid #333}
+.followup-fields.visible{display:block}
+.pill-group{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.pill-btn{padding:7px 14px;border:1px solid #444;border-radius:20px;font-size:12px;cursor:pointer;background:#1a1a1a;color:#888;font-family:'Helvetica Neue',Arial,sans-serif;transition:all 0.15s}
+.pill-btn:hover{border-color:#40c9a2;color:#ccc}
+.pill-btn.selected{border-color:#40c9a2;background:rgba(64,201,162,0.1);color:#40c9a2;font-weight:500}
+.pill-btn.concern{border-color:#e63946;background:rgba(230,57,70,0.1);color:#e63946;font-weight:500}
+.risk-group{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.risk-btn{padding:7px 14px;border:1px solid #444;border-radius:20px;font-size:12px;cursor:pointer;background:#1a1a1a;color:#888;font-family:'Helvetica Neue',Arial,sans-serif;transition:all 0.15s}
+.risk-btn:hover{border-color:#f0a500;color:#ccc}
+.risk-btn.selected{border-color:#e63946;background:rgba(230,57,70,0.1);color:#e63946;font-weight:500}
+.status-bar{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.status-btn{flex:1;min-width:100px;padding:8px 4px;border:1px solid #444;border-radius:8px;font-size:12px;cursor:pointer;text-align:center;background:#1a1a1a;color:#888;font-family:'Helvetica Neue',Arial,sans-serif}
+.status-btn.sel-completed{border-color:#40c9a2;background:rgba(64,201,162,0.1);color:#40c9a2;font-weight:500}
+.status-btn.sel-noshow{border-color:#e63946;background:rgba(230,57,70,0.1);color:#e63946;font-weight:500}
+.status-btn.sel-rescheduled{border-color:#f0a500;background:rgba(240,165,0,0.1);color:#f0a500;font-weight:500}
+.status-btn.sel-canceled{border-color:#888;background:rgba(136,136,136,0.1);color:#888;font-weight:500}
+.submit-row{display:flex;gap:12px;margin-top:1.5rem;align-items:center}
+.btn-primary{background:#40c9a2;color:#1a1a1a;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Helvetica Neue',Arial,sans-serif;transition:background 0.15s}
+.btn-primary:hover{background:#35b08d}
+.btn-primary:disabled{background:#555;color:#888;cursor:wait}
+.btn-secondary{background:transparent;color:#ccc;border:1px solid #444;padding:12px 24px;border-radius:8px;font-size:14px;cursor:pointer;font-family:'Helvetica Neue',Arial,sans-serif}
+.btn-secondary:hover{border-color:#888}
+.submit-status{font-size:12px;color:#888;margin-left:4px}
+.submit-error{background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.3);border-radius:8px;padding:10px 14px;color:#e63946;font-size:13px;margin-top:10px;display:none}
+.success-screen{display:none;text-align:center;padding:3rem 1.5rem}
+.success-screen.visible{display:block}
+.success-icon{font-size:48px;margin-bottom:1rem}
+.success-title{font-size:20px;font-weight:600;color:#fff;margin-bottom:0.5rem}
+.success-msg{font-size:14px;color:#999;line-height:1.6;max-width:500px;margin:0 auto}
+.footer{text-align:center;font-size:11px;color:#555;margin-top:2rem;padding-top:1rem;border-top:1px solid #333}
+.footer a{color:#40c9a2;text-decoration:none}
+@media(max-width:600px){.two-col{grid-template-columns:1fr}.pill-group{gap:4px}.status-bar{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="wd" id="formContainer">
+  <div class="wd-header"><div class="wd-logo">WORK<span class="red">.</span>DECODED</div><div class="wd-tagline">Consultant Post-Session Feedback</div></div>
+  <div class="wd-intro">Complete this form after each client session. Your notes help us provide continuity of care and flag any follow-up actions needed. <strong>All fields marked with * are required.</strong></div>
+  <form id="feedbackForm" novalidate>
+    <div class="section"><div class="section-title">Session Identification</div><div class="two-col"><div class="field"><label>Your Email<span class="req">*</span></label><input type="email" id="consultantEmail" placeholder="you@workdecodedhq.com" required><div class="hint">Must match your consultant account email</div></div><div class="field"><label>Session ID<span class="req">*</span></label><input type="number" id="sessionId" placeholder="e.g. 14" required min="1"><div class="hint">From the Sessions table in Airtable</div></div></div></div>
+    <div class="section"><div class="section-title">Session Outcome</div><div class="field"><label>Session Status<span class="req">*</span></label><div class="status-bar" id="statusBar"><button type="button" class="status-btn" data-val="Completed" onclick="pickStatus(this)">Completed</button><button type="button" class="status-btn" data-val="No-show" onclick="pickStatus(this)">No-show</button><button type="button" class="status-btn" data-val="Rescheduled" onclick="pickStatus(this)">Rescheduled</button><button type="button" class="status-btn" data-val="Canceled" onclick="pickStatus(this)">Canceled</button></div><input type="hidden" id="sessionStatus" required></div><div class="field"><label>Client Emotional State</label><div class="pill-group" id="emotionalState"><button type="button" class="pill-btn" data-val="Calm" onclick="pickPill(this,'emotionalState')">Calm</button><button type="button" class="pill-btn" data-val="Anxious" onclick="pickPill(this,'emotionalState')">Anxious</button><button type="button" class="pill-btn" data-val="Frustrated" onclick="pickPill(this,'emotionalState')">Frustrated</button><button type="button" class="pill-btn" data-val="Overwhelmed" onclick="pickPill(this,'emotionalState')">Overwhelmed</button><button type="button" class="pill-btn" data-val="Hopeful" onclick="pickPill(this,'emotionalState')">Hopeful</button><button type="button" class="pill-btn" data-val="Distressed" onclick="pickPill(this,'emotionalState')">Distressed</button><button type="button" class="pill-btn" data-val="Confident" onclick="pickPill(this,'emotionalState')">Confident</button><button type="button" class="pill-btn" data-val="Angry" onclick="pickPill(this,'emotionalState')">Angry</button></div><input type="hidden" id="emotionalStateVal"></div></div>
+    <div class="section"><div class="section-title">Session Notes</div><div class="field"><label>Session Summary<span class="req">*</span></label><textarea id="sessionNotes" placeholder="Summarize what was discussed, key concerns raised, and any guidance provided..." maxlength="2000" oninput="charCount(this,'sessionNotesCount',2000)" required></textarea><div class="char-count" id="sessionNotesCount">0 / 2,000</div><div class="hint">This may be shared with the client or referenced in future sessions</div></div><div class="field"><label>Guidance Provided</label><textarea id="guidanceProvided" placeholder="Specific recommendations, action items, or resources shared with the client..." maxlength="1500" oninput="charCount(this,'guidanceCount',1500)"></textarea><div class="char-count" id="guidanceCount">0 / 1,500</div></div><div class="field"><label>Private Consultant Notes</label><textarea id="consultantNotes" placeholder="Internal observations, strategy notes, or concerns not for client view..." maxlength="1500" oninput="charCount(this,'consultantNotesCount',1500)"></textarea><div class="char-count" id="consultantNotesCount">0 / 1,500</div><div class="hint">These notes are private and will not be shared with the client</div></div></div>
+    <div class="section"><div class="section-title">Risk Assessment</div><div class="field"><label>Risk Flags (select all that apply)</label><div class="risk-group" id="riskFlags"><button type="button" class="risk-btn" data-val="Retaliation concern" onclick="toggleRisk(this)">Retaliation concern</button><button type="button" class="risk-btn" data-val="Harassment escalation" onclick="toggleRisk(this)">Harassment escalation</button><button type="button" class="risk-btn" data-val="Legal action likely" onclick="toggleRisk(this)">Legal action likely</button><button type="button" class="risk-btn" data-val="Mental health concern" onclick="toggleRisk(this)">Mental health concern</button><button type="button" class="risk-btn" data-val="Urgent follow-up" onclick="toggleRisk(this)">Urgent follow-up</button><button type="button" class="risk-btn" data-val="None" onclick="toggleRisk(this)">None</button></div><input type="hidden" id="riskFlagsVal"></div></div>
+    <div class="section"><div class="section-title">Follow-Up</div><div class="field"><label>Is follow-up needed?</label><div class="toggle-row"><label class="toggle"><input type="checkbox" id="followUpNeeded" onchange="toggleFollowUp()"><span class="toggle-slider"></span></label><span class="toggle-label" id="followUpLabel">No follow-up needed</span></div><div class="followup-fields" id="followupFields"><div class="two-col"><div class="field"><label>Follow-Up Type<span class="req">*</span></label><select id="followUpType"><option value="">Select type...</option><option value="Schedule next session">Schedule next session</option><option value="Send resources">Send resources</option><option value="Check in via email">Check in via email</option><option value="Escalate to Michelle">Escalate to Michelle</option><option value="Refer to external resource">Refer to external resource</option><option value="Other">Other</option></select></div><div class="field"><label>Follow-Up Due Date</label><input type="date" id="followUpDue"></div></div><div class="field"><label>Follow-Up Notes</label><textarea id="followUpNotes" placeholder="Details about what follow-up is needed..." maxlength="500" oninput="charCount(this,'followUpNotesCount',500)" style="min-height:60px"></textarea><div class="char-count" id="followUpNotesCount">0 / 500</div></div></div></div></div>
+    <div class="section"><div class="section-title">Consultant Recommendation</div><div class="field"><label>Would a different consultant be a better fit for this client?</label><div class="toggle-row"><label class="toggle"><input type="checkbox" id="differentConsultant" onchange="toggleDiffConsultant()"><span class="toggle-slider"></span></label><span class="toggle-label" id="diffConsultantLabel">No — I'm a good fit</span></div><div class="followup-fields" id="diffConsultantFields"><div class="field"><label>Reason / Suggested Consultant</label><textarea id="diffConsultantNotes" placeholder="Why a different consultant might be better, and who you'd suggest..." maxlength="500" style="min-height:60px"></textarea></div></div></div></div>
+    <div class="submit-row"><button type="submit" class="btn-primary" id="submitBtn">Submit Feedback</button><button type="button" class="btn-secondary" onclick="document.getElementById('feedbackForm').reset();resetForm()">Clear Form</button><span class="submit-status" id="submitStatus"></span></div>
+    <div class="submit-error" id="submitError"></div>
+  </form>
+</div>
+<div class="wd success-screen" id="successScreen"><div class="success-icon">&#10003;</div><div class="success-title">Feedback Submitted</div><div class="success-msg">Your post-session notes have been recorded. The session record in Airtable will be updated shortly.<br><br><button class="btn-primary" onclick="location.reload()">Submit Another</button></div></div>
+<div class="footer">&copy; 2026 <a href="#">Work Decoded HQ</a> &mdash; Internal Consultant Portal</div>
+<script>
+function pickStatus(btn){document.querySelectorAll('#statusBar .status-btn').forEach(b=>{b.className='status-btn';});const val=btn.dataset.val;const cls={'Completed':'sel-completed','No-show':'sel-noshow','Rescheduled':'sel-rescheduled','Canceled':'sel-canceled'};btn.classList.add(cls[val]||'sel-completed');document.getElementById('sessionStatus').value=val;}
+function pickPill(btn,gid){document.querySelectorAll('#'+gid+' .pill-btn').forEach(b=>b.classList.remove('selected','concern'));const c=['Distressed','Angry','Overwhelmed'];btn.classList.add(c.includes(btn.dataset.val)?'concern':'selected');document.getElementById(gid+'Val').value=btn.dataset.val;}
+function toggleRisk(btn){if(btn.dataset.val==='None'){document.querySelectorAll('#riskFlags .risk-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');}else{document.querySelector('#riskFlags .risk-btn[data-val="None"]').classList.remove('selected');btn.classList.toggle('selected');}const s=[];document.querySelectorAll('#riskFlags .risk-btn.selected').forEach(b=>s.push(b.dataset.val));document.getElementById('riskFlagsVal').value=s.join(', ');}
+function toggleFollowUp(){const c=document.getElementById('followUpNeeded').checked;document.getElementById('followupFields').classList.toggle('visible',c);document.getElementById('followUpLabel').textContent=c?'Yes — follow-up needed':'No follow-up needed';}
+function toggleDiffConsultant(){const c=document.getElementById('differentConsultant').checked;document.getElementById('diffConsultantFields').classList.toggle('visible',c);document.getElementById('diffConsultantLabel').textContent=c?'Yes — consider reassigning':"No — I'm a good fit";}
+function charCount(el,cid,max){document.getElementById(cid).textContent=el.value.length.toLocaleString()+' / '+max.toLocaleString();}
+function resetForm(){document.querySelectorAll('.status-btn,.pill-btn,.risk-btn').forEach(b=>b.className=b.className.replace(/sel-\w+|selected|concern/g,'').trim());document.querySelectorAll('input[type=hidden]').forEach(i=>i.value='');document.getElementById('followupFields').classList.remove('visible');document.getElementById('diffConsultantFields').classList.remove('visible');document.getElementById('followUpLabel').textContent='No follow-up needed';document.getElementById('diffConsultantLabel').textContent="No — I'm a good fit";document.querySelectorAll('.char-count').forEach(c=>c.textContent=c.textContent.replace(/^\d+/,'0'));}
+document.getElementById('feedbackForm').addEventListener('submit',async function(e){e.preventDefault();const email=document.getElementById('consultantEmail').value.trim();const sid=document.getElementById('sessionId').value.trim();const st=document.getElementById('sessionStatus').value;const notes=document.getElementById('sessionNotes').value.trim();if(!email||!sid||!st||!notes){showError('Please complete all required fields.');return;}const p={consultantEmail:email,sessionId:parseInt(sid),sessionStatus:st,clientEmotionalState:document.getElementById('emotionalStateVal').value||'',sessionNotes:notes,guidanceProvided:document.getElementById('guidanceProvided').value.trim(),consultantNotes:document.getElementById('consultantNotes').value.trim(),riskFlags:document.getElementById('riskFlagsVal').value||'None',followUpNeeded:document.getElementById('followUpNeeded').checked,followUpType:document.getElementById('followUpType').value||'',followUpDue:document.getElementById('followUpDue').value||'',followUpNotes:document.getElementById('followUpNotes').value.trim(),differentConsultantForFollowUp:document.getElementById('differentConsultant').checked,differentConsultantNotes:document.getElementById('diffConsultantNotes').value.trim(),feedbackSubmittedAt:new Date().toISOString()};const btn=document.getElementById('submitBtn');btn.disabled=true;document.getElementById('submitStatus').textContent='Submitting...';hideError();try{const r=await fetch('https://hooks.zapier.com/hooks/catch/27132993/FEEDBACK_HOOK_ID/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});if(!r.ok)throw new Error(r.status);document.getElementById('formContainer').style.display='none';document.getElementById('successScreen').classList.add('visible');}catch(err){if(err.message.includes('Failed to fetch')){document.getElementById('formContainer').style.display='none';document.getElementById('successScreen').classList.add('visible');}else{showError('Error: '+err.message);btn.disabled=false;document.getElementById('submitStatus').textContent='';}}});
+function showError(m){const el=document.getElementById('submitError');el.textContent=m;el.style.display='block';}
+function hideError(){document.getElementById('submitError').style.display='none';}
+</script>
+</body>
+</html>
