@@ -831,51 +831,36 @@ async function submitForm() {
   // Build ISO datetime for the appointment (ET = America/New_York)
   const appointmentDatetime = selectedDate + 'T' + selectedTime + ':00';
 
+  // Flat payload — Zapier Catch Hook maps these field names directly
   const payload = {
     clientId,
-    submittedAt: new Date().toISOString(),
-    contact: {
-      firstName:   val('fname'),
-      lastName:    val('lname'),
-      email:       val('email'),
-      phone:       val('phone'),
-      returning:   radioVal('returning'),
-      preferredConsultant: val('preferred'),
-      referralSource: val('referral')
-    },
-    employment: {
-      status:    val('emp-status'),
-      industry:  val('industry'),
-      companySize: radioVal('co-size')
-    },
-    issue: {
-      primaryConcern:  val('issue-type'),
-      situation:       val('situation'),
-      urgency:         urgencySelected,
-      priorAction:     radioVal('prior-action'),
-      priorActionDetail: val('prior-detail')
-    },
-    selection: {
-      tier:             selectedTier,
-      package:          selectedPkg || 'single',
-      quotedTotal:      total,
-      durationMinutes:  dur
-    },
-    appointment: {
-      date:     selectedDate,
-      time:     selectedTime,
-      datetime: appointmentDatetime,
-      timezone: 'America/New_York',
-      durationMinutes: dur
-    },
-    consent: {
-      given: true,
-      consentedAt: new Date().toISOString()
-    },
-    // Pass calendar ID so Zapier can create the event
-    _meta: {
-      calendarId: CONFIG.GOOGLE_CALENDAR_ID
-    }
+    submittedAt:          new Date().toISOString(),
+    firstName:            val('fname'),
+    lastName:             val('lname'),
+    email:                val('email'),
+    phone:                val('phone'),
+    returning:            radioVal('returning'),
+    preferredConsultant:  val('preferred'),
+    referralSource:       val('referral'),
+    employmentStatus:     val('emp-status'),
+    industry:             val('industry'),
+    companySize:          radioVal('co-size'),
+    issueType:            val('issue-type'),
+    situation:            val('situation'),
+    urgency:              urgencySelected,
+    priorAction:          radioVal('prior-action'),
+    priorActionDetail:    val('prior-detail'),
+    selectedTier:         selectedTier,
+    selectedPackage:      selectedPkg || 'single',
+    quotedTotal:          total,
+    durationMinutes:      dur,
+    selectedDate:         selectedDate,
+    selectedTime:         selectedTime,
+    appointmentDatetime:  appointmentDatetime,
+    timezone:             'America/New_York',
+    consentGiven:         true,
+    consentedAt:          new Date().toISOString(),
+    calendarId:           CONFIG.GOOGLE_CALENDAR_ID
   };
 
   // --- POST to Zapier ---
