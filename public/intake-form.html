@@ -831,6 +831,11 @@ async function submitForm() {
   // Build ISO datetime for the appointment (ET = America/New_York)
   const appointmentDatetime = selectedDate + 'T' + selectedTime + ':00';
 
+  // Calculate end datetime (start + duration)
+  const [_sH, _sM] = selectedTime.split(':').map(Number);
+  const _eT = _sH * 60 + _sM + dur;
+  const endDatetime = selectedDate + 'T' + String(Math.floor(_eT/60)).padStart(2,'0') + ':' + String(_eT%60).padStart(2,'0') + ':00';
+
   // Flat payload — Zapier Catch Hook maps these field names directly
   const payload = {
     clientId,
@@ -857,6 +862,7 @@ async function submitForm() {
     selectedDate:         selectedDate,
     selectedTime:         selectedTime,
     appointmentDatetime:  appointmentDatetime,
+    endDatetime:          endDatetime,
     timezone:             'America/New_York',
     consentGiven:         true,
     consentedAt:          new Date().toISOString(),
