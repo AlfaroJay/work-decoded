@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Work Decoded â Consultant Post-Session Feedback</title>
+<title>Work Decoded &mdash; Consultant Post-Session Feedback</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2rem 1rem;color:#e8e8e8}
@@ -29,8 +29,6 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .hint{font-size:11px;color:#777;margin-top:4px;line-height:1.4}
 .char-count{font-size:11px;color:#666;text-align:right;margin-top:3px}
-
-/* Toggle switch for follow-up */
 .toggle-row{display:flex;align-items:center;gap:12px;margin-top:6px}
 .toggle{position:relative;width:44px;height:24px;flex-shrink:0}
 .toggle input{opacity:0;width:0;height:0}
@@ -39,38 +37,26 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 .toggle input:checked+.toggle-slider{background:#40c9a2}
 .toggle input:checked+.toggle-slider:before{transform:translateX(20px);background:#fff}
 .toggle-label{font-size:13px;color:#ccc}
-
-/* Conditional follow-up section */
 .followup-fields{display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid #333}
 .followup-fields.visible{display:block}
-
-/* Radio / checkbox */
 .radio-group{display:flex;flex-direction:column;gap:6px}
 .radio-group label{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:400;cursor:pointer;color:#ccc}
 .radio-group input{width:auto;accent-color:#40c9a2}
-
-/* Emotional state pills */
 .pill-group{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 .pill-btn{padding:7px 14px;border:1px solid #444;border-radius:20px;font-size:12px;cursor:pointer;background:#1a1a1a;color:#888;font-family:'Helvetica Neue',Arial,sans-serif;transition:all 0.15s}
 .pill-btn:hover{border-color:#40c9a2;color:#ccc}
 .pill-btn.selected{border-color:#40c9a2;background:rgba(64,201,162,0.1);color:#40c9a2;font-weight:500}
 .pill-btn.concern{border-color:#e63946;background:rgba(230,57,70,0.1);color:#e63946;font-weight:500}
-
-/* Risk flag pills */
 .risk-group{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 .risk-btn{padding:7px 14px;border:1px solid #444;border-radius:20px;font-size:12px;cursor:pointer;background:#1a1a1a;color:#888;font-family:'Helvetica Neue',Arial,sans-serif;transition:all 0.15s}
 .risk-btn:hover{border-color:#f0a500;color:#ccc}
 .risk-btn.selected{border-color:#e63946;background:rgba(230,57,70,0.1);color:#e63946;font-weight:500}
-
-/* Session status buttons */
 .status-bar{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
 .status-btn{flex:1;min-width:100px;padding:8px 4px;border:1px solid #444;border-radius:8px;font-size:12px;cursor:pointer;text-align:center;background:#1a1a1a;color:#888;font-family:'Helvetica Neue',Arial,sans-serif}
 .status-btn.sel-completed{border-color:#40c9a2;background:rgba(64,201,162,0.1);color:#40c9a2;font-weight:500}
 .status-btn.sel-noshow{border-color:#e63946;background:rgba(230,57,70,0.1);color:#e63946;font-weight:500}
 .status-btn.sel-rescheduled{border-color:#f0a500;background:rgba(240,165,0,0.1);color:#f0a500;font-weight:500}
 .status-btn.sel-canceled{border-color:#888;background:rgba(136,136,136,0.1);color:#888;font-weight:500}
-
-/* Buttons */
 .submit-row{display:flex;gap:12px;margin-top:1.5rem;align-items:center}
 .btn-primary{background:#40c9a2;color:#1a1a1a;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Helvetica Neue',Arial,sans-serif;transition:background 0.15s}
 .btn-primary:hover{background:#35b08d}
@@ -79,18 +65,14 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 .btn-secondary:hover{border-color:#888}
 .submit-status{font-size:12px;color:#888;margin-left:4px}
 .submit-error{background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.3);border-radius:8px;padding:10px 14px;color:#e63946;font-size:13px;margin-top:10px;display:none}
-
-/* Success */
 .success-screen{display:none;text-align:center;padding:3rem 1.5rem}
 .success-screen.visible{display:block}
 .success-icon{font-size:48px;margin-bottom:1rem}
 .success-title{font-size:20px;font-weight:600;color:#fff;margin-bottom:0.5rem}
 .success-msg{font-size:14px;color:#999;line-height:1.6;max-width:500px;margin:0 auto}
-
 .footer{text-align:center;font-size:11px;color:#555;margin-top:2rem;padding-top:1rem;border-top:1px solid #333}
 .footer a{color:#40c9a2;text-decoration:none}
-
-/* Client context bar (prepopulated from token) */
+/* Client context bar */
 .client-context{background:#2a2a2a;border:1px solid #40c9a2;border-radius:10px;padding:14px 18px;margin-bottom:1.5rem;display:none}
 .client-context.visible{display:block}
 .client-context-title{font-size:11px;text-transform:uppercase;letter-spacing:0.8px;color:#40c9a2;margin-bottom:8px;font-weight:600}
@@ -98,394 +80,404 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 .client-context-item{font-size:13px;color:#ccc}
 .client-context-item strong{color:#fff;font-weight:500}
 .client-context-loading{font-size:13px;color:#888;font-style:italic}
-
-/* Error screen for invalid tokens */
+.urgency-high{color:#f0a500}
+.urgency-crisis{color:#e63946;font-weight:600}
+.ctx-situation{margin-top:10px;padding-top:10px;border-top:1px solid #444;display:none}
+.ctx-situation-label{font-size:11px;text-transform:uppercase;letter-spacing:0.6px;color:#40c9a2;margin-bottom:4px;font-weight:600}
+.ctx-situation-text{font-size:13px;color:#ccc;line-height:1.5}
 .error-screen{display:none;text-align:center;padding:3rem 1.5rem}
 .error-screen.visible{display:block}
 .error-icon{font-size:48px;margin-bottom:1rem}
 .error-title{font-size:20px;font-weight:600;color:#e63946;margin-bottom:0.5rem}
 .error-msg{font-size:14px;color:#999;line-height:1.6;max-width:500px;margin:0 auto}
-
 @media(max-width:600px){
-  .two-col{grid-template-columns:1fr}
-  .pill-group{gap:4px}
-  .status-bar{flex-direction:column}
+.two-col{grid-template-columns:1fr}
+.pill-group{gap:4px}
+.status-bar{flex-direction:column}
 }
 </style>
 </head>
 <body>
-
 <div class="wd" id="formContainer">
-  <div class="wd-header">
-    <div class="wd-logo"><img src="WorkDecodedHQ_logo_white.png" alt="Work Decoded HQ"></div>
-    <div class="wd-tagline">Consultant Post-Session Feedback</div>
-  </div>
+<div class="wd-header">
+<div class="wd-logo"><img src="WorkDecodedHQ_logo_white.png" alt="Work Decoded HQ"></div>
+<div class="wd-tagline">Consultant Post-Session Feedback</div>
+</div>
 
-  <!-- Client context bar (populated from token) -->
-  <div class="client-context" id="clientContext">
-    <div class="client-context-title">Session Context</div>
-    <div class="client-context-row">
-      <div class="client-context-item"><strong>Client:</strong> <span id="ctxClientName">â</span></div>
-      <div class="client-context-item"><strong>Issue:</strong> <span id="ctxIssueType">â</span></div>
-      <div class="client-context-item"><strong>Session #</strong><span id="ctxSessionId">â</span></div>
-    </div>
-  </div>
+<!-- Client context bar (populated from token) -->
+<div class="client-context" id="clientContext">
+<div class="client-context-title">Session Context</div>
+<div class="client-context-row">
+<div class="client-context-item"><strong>Client:</strong> <span id="ctxClientName">&mdash;</span></div>
+<div class="client-context-item"><strong>Issue:</strong> <span id="ctxIssueType">&mdash;</span></div>
+<div class="client-context-item"><strong>Session #</strong><span id="ctxSessionId">&mdash;</span></div>
+</div>
+<div class="client-context-row" style="margin-top:8px">
+<div class="client-context-item"><strong>Urgency:</strong> <span id="ctxUrgency">&mdash;</span></div>
+<div class="client-context-item"><strong>Employment:</strong> <span id="ctxEmployment">&mdash;</span></div>
+<div class="client-context-item"><strong>Industry:</strong> <span id="ctxIndustry">&mdash;</span></div>
+</div>
+<div class="ctx-situation" id="ctxSituationWrap">
+<div class="ctx-situation-label">Client's Situation</div>
+<div class="ctx-situation-text" id="ctxSituation"></div>
+</div>
+</div>
 
-  <div class="wd-intro">
-    Complete this form after each client session. Your notes help us provide continuity of care and flag any follow-up actions needed. <strong>All fields marked with * are required.</strong>
-  </div>
+<div class="wd-intro">
+Complete this form after each client session. Your notes help us provide continuity of care and flag any follow-up actions needed. <strong>All fields marked with * are required.</strong>
+</div>
 
-  <form id="feedbackForm" novalidate>
-    <input type="hidden" id="sessionToken" value="">
+<form id="feedbackForm" novalidate>
+<input type="hidden" id="sessionToken" value="">
 
-    <!-- Section 1: Session Identification -->
-    <div class="section">
-      <div class="section-title">Session Identification</div>
-      <div class="field">
-        <label>Your Email<span class="req">*</span></label>
-        <input type="email" id="consultantEmail" placeholder="you@workdecodedhq.com" required>
-        <div class="hint">Must match your consultant account email</div>
-      </div>
-    </div>
+<!-- Section 1: Session Identification -->
+<div class="section">
+<div class="section-title">Session Identification</div>
+<div class="field">
+<label>Your Email<span class="req">*</span></label>
+<input type="email" id="consultantEmail" placeholder="you@workdecodedhq.com" required>
+<div class="hint">Must match your consultant account email</div>
+</div>
+</div>
 
-    <!-- Section 2: Session Outcome -->
-    <div class="section">
-      <div class="section-title">Session Outcome</div>
-      <div class="field">
-        <label>Session Status<span class="req">*</span></label>
-        <div class="status-bar" id="statusBar">
-          <button type="button" class="status-btn" data-val="Completed" onclick="pickStatus(this)">Completed</button>
-          <button type="button" class="status-btn" data-val="No-show" onclick="pickStatus(this)">No-show</button>
-          <button type="button" class="status-btn" data-val="Rescheduled" onclick="pickStatus(this)">Rescheduled</button>
-          <button type="button" class="status-btn" data-val="Canceled" onclick="pickStatus(this)">Canceled</button>
-        </div>
-        <input type="hidden" id="sessionStatus" required>
-      </div>
+<!-- Section 2: Session Outcome -->
+<div class="section">
+<div class="section-title">Session Outcome</div>
+<div class="field">
+<label>Session Status<span class="req">*</span></label>
+<div class="status-bar" id="statusBar">
+<button type="button" class="status-btn" data-val="Completed" onclick="pickStatus(this)">Completed</button>
+<button type="button" class="status-btn" data-val="No-show" onclick="pickStatus(this)">No-show</button>
+<button type="button" class="status-btn" data-val="Rescheduled" onclick="pickStatus(this)">Rescheduled</button>
+<button type="button" class="status-btn" data-val="Canceled" onclick="pickStatus(this)">Canceled</button>
+</div>
+<input type="hidden" id="sessionStatus" required>
+</div>
+<div class="field">
+<label>Client Emotional State</label>
+<div class="pill-group" id="emotionalState">
+<button type="button" class="pill-btn" data-val="Calm" onclick="pickPill(this,'emotionalState')">Calm</button>
+<button type="button" class="pill-btn" data-val="Anxious" onclick="pickPill(this,'emotionalState')">Anxious</button>
+<button type="button" class="pill-btn" data-val="Frustrated" onclick="pickPill(this,'emotionalState')">Frustrated</button>
+<button type="button" class="pill-btn" data-val="Overwhelmed" onclick="pickPill(this,'emotionalState')">Overwhelmed</button>
+<button type="button" class="pill-btn" data-val="Hopeful" onclick="pickPill(this,'emotionalState')">Hopeful</button>
+<button type="button" class="pill-btn" data-val="Distressed" onclick="pickPill(this,'emotionalState')">Distressed</button>
+<button type="button" class="pill-btn" data-val="Confident" onclick="pickPill(this,'emotionalState')">Confident</button>
+<button type="button" class="pill-btn" data-val="Angry" onclick="pickPill(this,'emotionalState')">Angry</button>
+</div>
+<input type="hidden" id="emotionalStateVal">
+</div>
+</div>
 
-      <div class="field">
-        <label>Client Emotional State</label>
-        <div class="pill-group" id="emotionalState">
-          <button type="button" class="pill-btn" data-val="Calm" onclick="pickPill(this,'emotionalState')">Calm</button>
-          <button type="button" class="pill-btn" data-val="Anxious" onclick="pickPill(this,'emotionalState')">Anxious</button>
-          <button type="button" class="pill-btn" data-val="Frustrated" onclick="pickPill(this,'emotionalState')">Frustrated</button>
-          <button type="button" class="pill-btn" data-val="Overwhelmed" onclick="pickPill(this,'emotionalState')">Overwhelmed</button>
-          <button type="button" class="pill-btn" data-val="Hopeful" onclick="pickPill(this,'emotionalState')">Hopeful</button>
-          <button type="button" class="pill-btn" data-val="Distressed" onclick="pickPill(this,'emotionalState')">Distressed</button>
-          <button type="button" class="pill-btn" data-val="Confident" onclick="pickPill(this,'emotionalState')">Confident</button>
-          <button type="button" class="pill-btn" data-val="Angry" onclick="pickPill(this,'emotionalState')">Angry</button>
-        </div>
-        <input type="hidden" id="emotionalStateVal">
-      </div>
-    </div>
+<!-- Section 3: Session Notes -->
+<div class="section">
+<div class="section-title">Session Notes</div>
+<div class="field">
+<label>Session Summary<span class="req">*</span></label>
+<textarea id="sessionNotes" placeholder="Summarize what was discussed, key concerns raised, and any guidance provided..." maxlength="2000" oninput="charCount(this,'sessionNotesCount',2000)" required></textarea>
+<div class="char-count" id="sessionNotesCount">0 / 2,000</div>
+<div class="hint">This may be shared with the client or referenced in future sessions</div>
+</div>
+<div class="field">
+<label>Guidance Provided</label>
+<textarea id="guidanceProvided" placeholder="Specific recommendations, action items, or resources shared with the client..." maxlength="1500" oninput="charCount(this,'guidanceCount',1500)"></textarea>
+<div class="char-count" id="guidanceCount">0 / 1,500</div>
+</div>
+<div class="field">
+<label>Private Consultant Notes</label>
+<textarea id="consultantNotes" placeholder="Internal observations, strategy notes, or concerns not for client view..." maxlength="1500" oninput="charCount(this,'consultantNotesCount',1500)"></textarea>
+<div class="char-count" id="consultantNotesCount">0 / 1,500</div>
+<div class="hint">These notes are private and will not be shared with the client</div>
+</div>
+</div>
 
-    <!-- Section 3: Session Notes -->
-    <div class="section">
-      <div class="section-title">Session Notes</div>
-      <div class="field">
-        <label>Session Summary<span class="req">*</span></label>
-        <textarea id="sessionNotes" placeholder="Summarize what was discussed, key concerns raised, and any guidance provided..." maxlength="2000" oninput="charCount(this,'sessionNotesCount',2000)" required></textarea>
-        <div class="char-count" id="sessionNotesCount">0 / 2,000</div>
-        <div class="hint">This may be shared with the client or referenced in future sessions</div>
-      </div>
+<!-- Section 4: Risk Flags -->
+<div class="section">
+<div class="section-title">Risk Assessment</div>
+<div class="field">
+<label>Risk Flags (select all that apply)</label>
+<div class="risk-group" id="riskFlags">
+<button type="button" class="risk-btn" data-val="Retaliation concern" onclick="toggleRisk(this)">Retaliation concern</button>
+<button type="button" class="risk-btn" data-val="Harassment escalation" onclick="toggleRisk(this)">Harassment escalation</button>
+<button type="button" class="risk-btn" data-val="Legal action likely" onclick="toggleRisk(this)">Legal action likely</button>
+<button type="button" class="risk-btn" data-val="Mental health concern" onclick="toggleRisk(this)">Mental health concern</button>
+<button type="button" class="risk-btn" data-val="Urgent follow-up" onclick="toggleRisk(this)">Urgent follow-up</button>
+<button type="button" class="risk-btn" data-val="None" onclick="toggleRisk(this)">None</button>
+</div>
+<input type="hidden" id="riskFlagsVal">
+</div>
+</div>
 
-      <div class="field">
-        <label>Guidance Provided</label>
-        <textarea id="guidanceProvided" placeholder="Specific recommendations, action items, or resources shared with the client..." maxlength="1500" oninput="charCount(this,'guidanceCount',1500)"></textarea>
-        <div class="char-count" id="guidanceCount">0 / 1,500</div>
-      </div>
+<!-- Section 5: Follow-Up -->
+<div class="section">
+<div class="section-title">Follow-Up</div>
+<div class="field">
+<label>Is follow-up needed?</label>
+<div class="toggle-row">
+<label class="toggle">
+<input type="checkbox" id="followUpNeeded" onchange="toggleFollowUp()">
+<span class="toggle-slider"></span>
+</label>
+<span class="toggle-label" id="followUpLabel">No follow-up needed</span>
+</div>
+<div class="followup-fields" id="followupFields">
+<div class="two-col">
+<div class="field">
+<label>Follow-Up Needed<span class="req">*</span></label>
+<select id="followUpType">
+<option value="">Select type...</option>
+<option value="Schedule next session">Schedule next session</option>
+<option value="Send resources">Send resources</option>
+<option value="Check in via email">Check in via email</option>
+<option value="Escalate to Michelle">Escalate to Michelle</option>
+<option value="Refer to external resource">Refer to external resource</option>
+<option value="Other">Other</option>
+</select>
+</div>
+<div class="field">
+<label>Follow-Up Due Date</label>
+<input type="date" id="followUpDue">
+</div>
+</div>
+<div class="field">
+<label>Follow-Up Notes</label>
+<textarea id="followUpNotes" placeholder="Details about what follow-up is needed..." maxlength="500" oninput="charCount(this,'followUpNotesCount',500)" style="min-height:60px"></textarea>
+<div class="char-count" id="followUpNotesCount">0 / 500</div>
+</div>
+</div>
+</div>
+</div>
 
-      <div class="field">
-        <label>Private Consultant Notes</label>
-        <textarea id="consultantNotes" placeholder="Internal observations, strategy notes, or concerns not for client view..." maxlength="1500" oninput="charCount(this,'consultantNotesCount',1500)"></textarea>
-        <div class="char-count" id="consultantNotesCount">0 / 1,500</div>
-        <div class="hint">These notes are private and will not be shared with the client</div>
-      </div>
-    </div>
+<!-- Section 6: Different Consultant Recommendation -->
+<div class="section">
+<div class="section-title">Consultant Recommendation</div>
+<div class="field">
+<label>Would a different consultant be a better fit for this client?</label>
+<div class="toggle-row">
+<label class="toggle">
+<input type="checkbox" id="differentConsultant" onchange="toggleDiffConsultant()">
+<span class="toggle-slider"></span>
+</label>
+<span class="toggle-label" id="diffConsultantLabel">No &mdash; I'm a good fit</span>
+</div>
+<div class="followup-fields" id="diffConsultantFields">
+<div class="field">
+<label>Reason / Suggested Consultant</label>
+<textarea id="diffConsultantNotes" placeholder="Why a different consultant might be better, and who you'd suggest..." maxlength="500" style="min-height:60px"></textarea>
+</div>
+</div>
+</div>
+</div>
 
-    <!-- Section 4: Risk Flags -->
-    <div class="section">
-      <div class="section-title">Risk Assessment</div>
-      <div class="field">
-        <label>Risk Flags (select all that apply)</label>
-        <div class="risk-group" id="riskFlags">
-          <button type="button" class="risk-btn" data-val="Retaliation concern" onclick="toggleRisk(this)">Retaliation concern</button>
-          <button type="button" class="risk-btn" data-val="Harassment escalation" onclick="toggleRisk(this)">Harassment escalation</button>
-          <button type="button" class="risk-btn" data-val="Legal action likely" onclick="toggleRisk(this)">Legal action likely</button>
-          <button type="button" class="risk-btn" data-val="Mental health concern" onclick="toggleRisk(this)">Mental health concern</button>
-          <button type="button" class="risk-btn" data-val="Urgent follow-up" onclick="toggleRisk(this)">Urgent follow-up</button>
-          <button type="button" class="risk-btn" data-val="None" onclick="toggleRisk(this)">None</button>
-        </div>
-        <input type="hidden" id="riskFlagsVal">
-      </div>
-    </div>
-
-    <!-- Section 5: Follow-Up -->
-    <div class="section">
-      <div class="section-title">Follow-Up</div>
-      <div class="field">
-        <label>Is follow-up needed?</label>
-        <div class="toggle-row">
-          <label class="toggle">
-            <input type="checkbox" id="followUpNeeded" onchange="toggleFollowUp()">
-            <span class="toggle-slider"></span>
-          </label>
-          <span class="toggle-label" id="followUpLabel">No follow-up needed</span>
-        </div>
-
-        <div class="followup-fields" id="followupFields">
-          <div class="two-col">
-            <div class="field">
-              <label>Follow-Up Needed<span class="req">*</span></label>
-              <select id="followUpType">
-                <option value="">Select type...</option>
-                <option value="Schedule next session">Schedule next session</option>
-                <option value="Send resources">Send resources</option>
-                <option value="Check in via email">Check in via email</option>
-                <option value="Escalate to Michelle">Escalate to Michelle</option>
-                <option value="Refer to external resource">Refer to external resource</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Follow-Up Due Date</label>
-              <input type="date" id="followUpDue">
-            </div>
-          </div>
-          <div class="field">
-            <label>Follow-Up Notes</label>
-            <textarea id="followUpNotes" placeholder="Details about what follow-up is needed..." maxlength="500" oninput="charCount(this,'followUpNotesCount',500)" style="min-height:60px"></textarea>
-            <div class="char-count" id="followUpNotesCount">0 / 500</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Section 6: Different Consultant Recommendation -->
-    <div class="section">
-      <div class="section-title">Consultant Recommendation</div>
-      <div class="field">
-        <label>Would a different consultant be a better fit for this client?</label>
-        <div class="toggle-row">
-          <label class="toggle">
-            <input type="checkbox" id="differentConsultant" onchange="toggleDiffConsultant()">
-            <span class="toggle-slider"></span>
-          </label>
-          <span class="toggle-label" id="diffConsultantLabel">No â I'm a good fit</span>
-        </div>
-        <div class="followup-fields" id="diffConsultantFields">
-          <div class="field">
-            <label>Reason / Suggested Consultant</label>
-            <textarea id="diffConsultantNotes" placeholder="Why a different consultant might be better, and who you'd suggest..." maxlength="500" style="min-height:60px"></textarea>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Submit -->
-    <div class="submit-row">
-      <button type="submit" class="btn-primary" id="submitBtn">Submit Feedback</button>
-      <button type="button" class="btn-secondary" onclick="document.getElementById('feedbackForm').reset();resetForm()">Clear Form</button>
-      <span class="submit-status" id="submitStatus"></span>
-    </div>
-    <div class="submit-error" id="submitError"></div>
-
-  </form>
+<!-- Submit -->
+<div class="submit-row">
+<button type="submit" class="btn-primary" id="submitBtn">Submit Feedback</button>
+<button type="button" class="btn-secondary" onclick="document.getElementById('feedbackForm').reset();resetForm()">Clear Form</button>
+<span class="submit-status" id="submitStatus"></span>
+</div>
+<div class="submit-error" id="submitError"></div>
+</form>
 </div>
 
 <!-- Success Screen -->
 <div class="wd success-screen" id="successScreen">
-  <div class="success-icon">&#10003;</div>
-  <div class="success-title">Feedback Submitted</div>
-  <div class="success-msg">
-    Your post-session notes have been recorded. The session record in Airtable will be updated shortly.<br><br>
-    <button class="btn-primary" onclick="location.reload()">Submit Another</button>
-  </div>
+<div class="success-icon">&#10003;</div>
+<div class="success-title">Feedback Submitted</div>
+<div class="success-msg">
+Your post-session notes have been recorded. The session record in Airtable will be updated shortly.<br><br>
+<button class="btn-primary" onclick="location.reload()">Submit Another</button>
+</div>
 </div>
 
 <div class="footer">
-  &copy; 2026 <a href="#">Work Decoded HQ</a> &mdash; Internal Consultant Portal
+&copy; 2026 <a href="#">Work Decoded HQ</a> &mdash; Internal Consultant Portal
 </div>
 
 <script>
 /* ===== STATUS PICKER ===== */
 function pickStatus(btn){
-  document.querySelectorAll('#statusBar .status-btn').forEach(b=>{
-    b.className='status-btn';
-  });
-  const val=btn.dataset.val;
-  const cls={'Completed':'sel-completed','No-show':'sel-noshow','Rescheduled':'sel-rescheduled','Canceled':'sel-canceled'};
-  btn.classList.add(cls[val]||'sel-completed');
-  document.getElementById('sessionStatus').value=val;
+document.querySelectorAll('#statusBar .status-btn').forEach(b=>{
+b.className='status-btn';
+});
+const val=btn.dataset.val;
+const cls={'Completed':'sel-completed','No-show':'sel-noshow','Rescheduled':'sel-rescheduled','Canceled':'sel-canceled'};
+btn.classList.add(cls[val]||'sel-completed');
+document.getElementById('sessionStatus').value=val;
 }
 
 /* ===== PILL PICKER (single select) ===== */
 function pickPill(btn,groupId){
-  document.querySelectorAll('#'+groupId+' .pill-btn').forEach(b=>b.classList.remove('selected','concern'));
-  const concerns=['Distressed','Angry','Overwhelmed'];
-  btn.classList.add(concerns.includes(btn.dataset.val)?'concern':'selected');
-  document.getElementById(groupId+'Val').value=btn.dataset.val;
+document.querySelectorAll('#'+groupId+' .pill-btn').forEach(b=>b.classList.remove('selected','concern'));
+const concerns=['Distressed','Angry','Overwhelmed'];
+btn.classList.add(concerns.includes(btn.dataset.val)?'concern':'selected');
+document.getElementById(groupId+'Val').value=btn.dataset.val;
 }
 
 /* ===== RISK FLAGS (multi-select) ===== */
 function toggleRisk(btn){
-  if(btn.dataset.val==='None'){
-    document.querySelectorAll('#riskFlags .risk-btn').forEach(b=>b.classList.remove('selected'));
-    btn.classList.add('selected');
-  } else {
-    document.querySelector('#riskFlags .risk-btn[data-val="None"]').classList.remove('selected');
-    btn.classList.toggle('selected');
-  }
-  const selected=[];
-  document.querySelectorAll('#riskFlags .risk-btn.selected').forEach(b=>selected.push(b.dataset.val));
-  document.getElementById('riskFlagsVal').value=selected.join(', ');
+if(btn.dataset.val==='None'){
+document.querySelectorAll('#riskFlags .risk-btn').forEach(b=>b.classList.remove('selected'));
+btn.classList.add('selected');
+} else {
+document.querySelector('#riskFlags .risk-btn[data-val="None"]').classList.remove('selected');
+btn.classList.toggle('selected');
+}
+const selected=[];
+document.querySelectorAll('#riskFlags .risk-btn.selected').forEach(b=>selected.push(b.dataset.val));
+document.getElementById('riskFlagsVal').value=selected.join(', ');
 }
 
 /* ===== FOLLOW-UP TOGGLE ===== */
 function toggleFollowUp(){
-  const checked=document.getElementById('followUpNeeded').checked;
-  document.getElementById('followupFields').classList.toggle('visible',checked);
-  document.getElementById('followUpLabel').textContent=checked?'Yes â follow-up needed':'No follow-up needed';
+const checked=document.getElementById('followUpNeeded').checked;
+document.getElementById('followupFields').classList.toggle('visible',checked);
+document.getElementById('followUpLabel').textContent=checked?'Yes — follow-up needed':'No follow-up needed';
 }
 
 /* ===== DIFFERENT CONSULTANT TOGGLE ===== */
 function toggleDiffConsultant(){
-  const checked=document.getElementById('differentConsultant').checked;
-  document.getElementById('diffConsultantFields').classList.toggle('visible',checked);
-  document.getElementById('diffConsultantLabel').textContent=checked?'Yes â consider reassigning':'No â I\'m a good fit';
+const checked=document.getElementById('differentConsultant').checked;
+document.getElementById('diffConsultantFields').classList.toggle('visible',checked);
+document.getElementById('diffConsultantLabel').textContent=checked?'Yes — consider reassigning':'No — I\'m a good fit';
 }
 
 /* ===== CHAR COUNT ===== */
 function charCount(el,countId,max){
-  const c=el.value.length;
-  document.getElementById(countId).textContent=c.toLocaleString()+' / '+max.toLocaleString();
+const c=el.value.length;
+document.getElementById(countId).textContent=c.toLocaleString()+' / '+max.toLocaleString();
 }
 
 /* ===== RESET ===== */
 function resetForm(){
-  document.querySelectorAll('.status-btn,.pill-btn,.risk-btn').forEach(b=>b.className=b.className.replace(/sel-\w+|selected|concern/g,'').trim());
-  document.querySelectorAll('input[type=hidden]').forEach(i=>i.value='');
-  document.getElementById('followupFields').classList.remove('visible');
-  document.getElementById('diffConsultantFields').classList.remove('visible');
-  document.getElementById('followUpLabel').textContent='No follow-up needed';
-  document.getElementById('diffConsultantLabel').textContent="No â I'm a good fit";
-  document.querySelectorAll('.char-count').forEach(c=>c.textContent=c.textContent.replace(/^\d+/,'0'));
+document.querySelectorAll('.status-btn,.pill-btn,.risk-btn').forEach(b=>b.className=b.className.replace(/sel-\w+|selected|concern/g,'').trim());
+document.querySelectorAll('input[type=hidden]').forEach(i=>i.value='');
+document.getElementById('followupFields').classList.remove('visible');
+document.getElementById('diffConsultantFields').classList.remove('visible');
+document.getElementById('followUpLabel').textContent='No follow-up needed';
+document.getElementById('diffConsultantLabel').textContent="No — I'm a good fit";
+document.querySelectorAll('.char-count').forEach(c=>c.textContent=c.textContent.replace(/^\d+/,'0'));
 }
 
 /* ===== TOKEN & PREPOPULATION ===== */
 (async function(){
-  const params=new URLSearchParams(window.location.search);
-  const token=params.get('t');
+const params=new URLSearchParams(window.location.search);
+const token=params.get('t');
+if(!token){ return; }
 
-  if(!token){
-    // No token â show form without prepopulation (manual mode)
-    return;
-  }
+document.getElementById('sessionToken').value=token;
 
-  // Store token for submission
-  document.getElementById('sessionToken').value=token;
+try{
+const res=await fetch('/api/session?t='+encodeURIComponent(token));
+if(!res.ok){
+if(res.status===404){
+document.getElementById('formContainer').style.display='none';
+showError('Session not found. The link may be invalid or expired.');
+return;
+}
+throw new Error('Lookup failed');
+}
 
-  // Fetch session context
-  try{
-    const res=await fetch('/api/session?t='+encodeURIComponent(token));
-    if(!res.ok){
-      if(res.status===404){
-        document.getElementById('formContainer').style.display='none';
-        // Show error screen if we add one, or just show the form empty
-        showError('Session not found. The link may be invalid or expired.');
-        return;
-      }
-      throw new Error('Lookup failed');
-    }
-    const data=await res.json();
+const data=await res.json();
 
-    // Populate context bar
-    if(data.clientName) document.getElementById('ctxClientName').textContent=data.clientName;
-    if(data.issueType) document.getElementById('ctxIssueType').textContent=data.issueType;
-    if(data.sessionId) document.getElementById('ctxSessionId').textContent=data.sessionId;
-    document.getElementById('clientContext').classList.add('visible');
-  } catch(err){
-    console.warn('Could not load session context:',err);
-    // Form still works â just without prepopulation
-  }
+// Populate context bar - row 1
+if(data.clientName) document.getElementById('ctxClientName').textContent=data.clientName;
+if(data.issueType) document.getElementById('ctxIssueType').textContent=data.issueType;
+if(data.sessionId) document.getElementById('ctxSessionId').textContent=data.sessionId;
+
+// Populate context bar - row 2 (intake context)
+if(data.urgency){
+const urgEl=document.getElementById('ctxUrgency');
+urgEl.textContent=data.urgency;
+if(data.urgency==='Crisis') urgEl.className='urgency-crisis';
+else if(data.urgency==='High') urgEl.className='urgency-high';
+}
+if(data.employmentStatus) document.getElementById('ctxEmployment').textContent=data.employmentStatus;
+if(data.industry) document.getElementById('ctxIndustry').textContent=data.industry;
+
+// Populate situation description
+if(data.situationSummary){
+document.getElementById('ctxSituation').textContent=data.situationSummary;
+document.getElementById('ctxSituationWrap').style.display='block';
+}
+
+document.getElementById('clientContext').classList.add('visible');
+} catch(err){
+console.warn('Could not load session context:',err);
+}
 })();
 
 /* ===== FORM SUBMISSION ===== */
 document.getElementById('feedbackForm').addEventListener('submit', async function(e){
-  e.preventDefault();
+e.preventDefault();
 
-  // Validation
-  const email=document.getElementById('consultantEmail').value.trim();
-  const token=document.getElementById('sessionToken').value;
-  const status=document.getElementById('sessionStatus').value;
-  const notes=document.getElementById('sessionNotes').value.trim();
+const email=document.getElementById('consultantEmail').value.trim();
+const token=document.getElementById('sessionToken').value;
+const status=document.getElementById('sessionStatus').value;
+const notes=document.getElementById('sessionNotes').value.trim();
 
-  if(!email||!status||!notes){
-    showError('Please complete all required fields: Email, Session Status, and Session Summary.');
-    return;
-  }
-  if(!token){
-    showError('No session token found. Please use the link provided in your email.');
-    return;
-  }
+if(!email||!status||!notes){
+showError('Please complete all required fields: Email, Session Status, and Session Summary.');
+return;
+}
 
-  // Build payload
-  const payload={
-    token: token,
-    consultantEmail: email,
-    sessionStatus: status,
-    clientEmotionalState: document.getElementById('emotionalStateVal').value||'',
-    sessionNotes: notes,
-    guidanceProvided: document.getElementById('guidanceProvided').value.trim(),
-    consultantNotes: document.getElementById('consultantNotes').value.trim(),
-    riskFlags: document.getElementById('riskFlagsVal').value||'None',
-    followUpNeeded: document.getElementById('followUpNeeded').checked,
-    followUpType: document.getElementById('followUpType').value||'',
-    followUpDue: document.getElementById('followUpDue').value||'',
-    followUpNotes: document.getElementById('followUpNotes').value.trim(),
-    differentConsultantForFollowUp: document.getElementById('differentConsultant').checked,
-    differentConsultantNotes: document.getElementById('diffConsultantNotes').value.trim()
-  };
+if(!token){
+showError('No session token found. Please use the link provided in your email.');
+return;
+}
 
-  const btn=document.getElementById('submitBtn');
-  const statusEl=document.getElementById('submitStatus');
-  btn.disabled=true;
-  statusEl.textContent='Submitting...';
-  hideError();
+const payload={
+token: token,
+consultantEmail: email,
+sessionStatus: status,
+clientEmotionalState: document.getElementById('emotionalStateVal').value||'',
+sessionNotes: notes,
+guidanceProvided: document.getElementById('guidanceProvided').value.trim(),
+consultantNotes: document.getElementById('consultantNotes').value.trim(),
+riskFlags: document.getElementById('riskFlagsVal').value||'None',
+followUpNeeded: document.getElementById('followUpNeeded').checked,
+followUpType: document.getElementById('followUpType').value||'',
+followUpDue: document.getElementById('followUpDue').value||'',
+followUpNotes: document.getElementById('followUpNotes').value.trim(),
+differentConsultantForFollowUp: document.getElementById('differentConsultant').checked,
+differentConsultantNotes: document.getElementById('diffConsultantNotes').value.trim()
+};
 
-  try{
-    const resp=await fetch('/api/feedback',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(payload)
-    });
+const btn=document.getElementById('submitBtn');
+const statusEl=document.getElementById('submitStatus');
+btn.disabled=true;
+statusEl.textContent='Submitting...';
+hideError();
 
-    const result=await resp.json();
+try{
+const resp=await fetch('/api/feedback',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify(payload)
+});
 
-    if(!resp.ok||!result.success){
-      throw new Error(result.message||'Submission failed');
-    }
+const result=await resp.json();
+if(!resp.ok||!result.success){
+throw new Error(result.message||'Submission failed');
+}
 
-    // Show success
-    document.getElementById('formContainer').style.display='none';
-    document.getElementById('successScreen').classList.add('visible');
-
-  } catch(err){
-    console.error('Submit error:',err);
-    showError(err.message||'Something went wrong. Please try again or contact admin.');
-    btn.disabled=false;
-    statusEl.textContent='';
-  }
+document.getElementById('formContainer').style.display='none';
+document.getElementById('successScreen').classList.add('visible');
+} catch(err){
+console.error('Submit error:',err);
+showError(err.message||'Something went wrong. Please try again or contact admin.');
+btn.disabled=false;
+statusEl.textContent='';
+}
 });
 
 function showError(msg){
-  const el=document.getElementById('submitError');
-  el.textContent=msg;
-  el.style.display='block';
+const el=document.getElementById('submitError');
+el.textContent=msg;
+el.style.display='block';
 }
 function hideError(){
-  document.getElementById('submitError').style.display='none';
+document.getElementById('submitError').style.display='none';
 }
 </script>
-
 </body>
 </html>
