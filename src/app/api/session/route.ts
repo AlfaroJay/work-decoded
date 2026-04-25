@@ -50,6 +50,9 @@ export async function GET(request: NextRequest) {
     let clientName = '';
     let issueType = '';
     let situationSummary = '';
+    let urgency = '';
+    let employmentStatus = '';
+    let industry = '';
 
     if (clientIds.length > 0) {
       const clientRes = await fetch(
@@ -67,6 +70,9 @@ export async function GET(request: NextRequest) {
         clientName = `${first} ${last}`.trim();
         issueType = cf['Primary Issue'] || '';
         situationSummary = cf['Situation Description'] || '';
+        urgency = cf['Urgency'] || '';
+        employmentStatus = cf['Employment Status'] || '';
+        industry = cf['Industry'] || '';
       }
     }
 
@@ -75,6 +81,9 @@ export async function GET(request: NextRequest) {
       clientName,
       issueType,
       situationSummary,
+      urgency,
+      employmentStatus,
+      industry,
       sessionDate: fields['Session Date'] || null,
       topicArea: fields['Topic Area'] || '',
     });
