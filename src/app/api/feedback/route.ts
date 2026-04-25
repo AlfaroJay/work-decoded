@@ -3,6 +3,14 @@ import { AIRTABLE_BASE_ID } from '@/lib/constants';
 
 const SESSIONS_TABLE = 'Sessions';
 
+const RISK_FLAG_MAP: Record<string, string> = {
+  'Retaliation concern': 'Retaliation Concern',
+  'Harassment escalation': 'Harassment Escalation',
+  'Legal action likely': 'Legal Risk',
+  'Mental health concern': 'Mental Health Concern',
+  'Urgent follow-up': 'Urgent Follow-Up',
+};
+
 interface FeedbackPayload {
   token: string;
   sessionStatus: string;
@@ -24,113 +32,62 @@ export async function POST(request: NextRequest) {
   const pat = process.env.AIRTABLE_PAT;
   if (!pat) {
     console.error('[Feedback] AIRTABLE_PAT not configured');
-    return NextResponse.json(
-      { success: false, message: 'Server configuration error.' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: 'Server configuration error.' }, { status: 500 });
   }
 
   let data: FeedbackPayload;
-  try {
-    data = await request.json();
-  } catch {
-    return NextResponse.json(
-      { success: false, message: 'Invalid request body.' },
-      { status: 400 }
-    );
-  }
+  try { data = await request.json(); } catch { return NextResponse.json({ success: false, message: 'Invalid request body.' }, { status: 400 }); }
 
-  // Validate required fields
-  if (!data.token || !/^rec[A-Za-z0-9]{14}$/.test(data.token)) {
-    return NextResponse.json(
-      { success: false, message: 'Invalid session token.' },
-      { status: 400 }
-    );
-  }
-  if (!data.sessionStatus || !data.sessionNotes) {
-    return NextResponse.json(
-      { success: false, message: 'Session status and summary are required.' },
-      { status: 400 }
-    );
-  }
+  if (!data.token || !/^rec[A-Za-z0-9]{14}$/.test(data.token))
+    return NextResponse.json({ success: false, message: 'Invalid session token.' }, { status: 400 });
+
+  if (!data.sessionStatus || !data.sessionNotes)
+    return NextResponse.json({ success: false, message: 'Session status and summary are required.' }, { status: 400 });
 
   try {
-    // Verify the session exists first
     const checkRes = await fetch(
       `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(SESSIONS_TABLE)}/${data.token}`,
-      {
-        headers: { Authorization: `Bearer ${pat}` },
-      }
+      { headers: { Authorization: `Bearer ${pat}` }, cache: 'no-store' }
     );
-
     if (!checkRes.ok) {
-      if (checkRes.status === 404) {
-        return NextResponse.json(
-          { success: false, message: 'Session not found. Please check the link.' },
-          { status: 404 }
-        );
-      }
+      if (checkRes.status === 404) return NextResponse.json({ success: false, message: 'Session not found.' }, { status: 404 });
       throw new Error(`Airtable lookup error (${checkRes.status})`);
     }
 
-    // Build the update fields
     const fields: Record<string, unknown> = {};
-
-    // Situation Summary (consultant's session notes)
     if (data.sessionNotes) fields['Situation Summary'] = data.sessionNotes;
-
-    // Client Emotional State (single select)
-    if (data.clientEmotionalState) fields['Client Emotional State'] = { name: data.clientEmotionalState };
-
-    // Guidance Provided
+    if (data.clientEmotionalState) fields['Client Emotional State'] = data.clientEmotionalState;
     if (data.guidanceProvided) fields['Guidance Provided'] = data.guidanceProvided;
 
-    // Risk Flags (multiple select)
     if (data.riskFlags && data.riskFlags !== 'None') {
-      const flags = data.riskFlags.split(', ').map(f => ({ name: f.trim() }));
-      fields['Risk Flags'] = flags;
+      fields['Risk Flags'] = data.riskFlags.split(', ').map((f: string) => {
+        const trimmed = f.trim();
+        return RISK_FLAG_MAP[trimmed] || trimmed;
+      });
     }
 
-    // Recommended Next Steps (using follow-up notes)
     if (data.followUpNotes) fields['Recommended Next Steps'] = data.followUpNotes;
-
-    // Risk Flag Notes (using consultant private notes)
     if (data.consultantNotes) fields['Risk Flag Notes'] = data.consultantNotes;
 
-    // Follow-Up Needed (single select: Yes / No / Possibly)
-    fields['Follow-Up Needed'] = data.followUpNeeded ? { name: 'Yes' } : { name: 'No' };
-
-    // Different Consultant for Follow-Up (checkbox)
+    fields['Follow-Up Needed'] = data.followUpNeeded ? 'Yes' : 'No';
     fields['Different Consultant for Follow-Up'] = data.differentConsultantForFollowUp;
 
-    // Additional Notes (different consultant notes + any extra context)
-    const additionalParts: string[] = [];
-    if (data.differentConsultantNotes) {
-      additionalParts.push(`Reassignment note: ${data.differentConsultantNotes}`);
-    }
-    if (data.followUpType) {
-      additionalParts.push(`Follow-up type: ${data.followUpType}`);
-    }
-    if (data.followUpDue) {
-      additionalParts.push(`Follow-up due: ${data.followUpDue}`);
-    }
-    if (data.consultantEmail) {
-      additionalParts.push(`Submitted by: ${data.consultantEmail}`);
-    }
-    additionalParts.push(`Status: ${data.sessionStatus}`);
-    additionalParts.push(`Submitted: ${new Date().toISOString()}`);
-    fields['Additional Notes'] = additionalParts.join('\n');
+    const parts: string[] = [];
+    if (data.differentConsultantNotes) parts.push(`Reassignment: ${data.differentConsultantNotes}`);
+    if (data.followUpType) parts.push(`Follow-up type: ${data.followUpType}`);
+    if (data.followUpDue) parts.push(`Follow-up due: ${data.followUpDue}`);
+    if (data.consultantEmail) parts.push(`Submitted by: ${data.consultantEmail}`);
+    parts.push(`Status: ${data.sessionStatus}`);
+    parts.push(`Submitted: ${new Date().toISOString()}`);
+    fields['Additional Notes'] = parts.join('\n');
 
-    // Update the session record
     const updateRes = await fetch(
       `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(SESSIONS_TABLE)}/${data.token}`,
       {
         method: 'PATCH',
-        headers: {
-          Authorization: `Bearer ${pat}`,
-          'Content-Type': 'application/json',
-        },
+        headers: { Authorization: `Bearer ${pat}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ fields }),
+        cache: 'no-store',
       }
     );
 
@@ -140,15 +97,9 @@ export async function POST(request: NextRequest) {
       throw new Error(`Airtable update error (${updateRes.status})`);
     }
 
-    return NextResponse.json({
-      success: true,
-      message: 'Feedback recorded successfully.',
-    });
+    return NextResponse.json({ success: true, message: 'Feedback recorded successfully.' });
   } catch (error) {
     console.error('[Feedback] Submit error:', error);
-    return NextResponse.json(
-      { success: false, message: 'Something went wrong. Please try again.' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: 'Something went wrong. Please try again.' }, { status: 500 });
   }
 }
