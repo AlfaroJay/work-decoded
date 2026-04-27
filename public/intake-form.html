@@ -9,8 +9,8 @@
 body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2rem 1rem;color:#e8e8e8}
 .wd{max-width:740px;margin:0 auto}
 .wd-header{padding-bottom:1rem;margin-bottom:1.5rem;text-align:center}
-.wd-logo{font-size:28px;font-weight:700;color:#fff;letter-spacing:1px;text-transform:uppercase}
-.wd-logo .red{color:#e63946}
+.wd-logo{margin-bottom:4px}
+.wd-logo img{max-height:48px;width:auto}
 .wd-tagline{font-size:12px;color:#999;margin-top:4px;letter-spacing:0.4px}
 .wd-intro{font-size:13px;color:#40c9a2;margin-bottom:1.5rem;line-height:1.7;padding:14px 18px;background:#242424;border-radius:10px;border:1px solid #333}
 .wd-intro strong{color:#fff}
@@ -30,23 +30,38 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 .hint{font-size:11px;color:#777;margin-top:4px;line-height:1.4}
 .char-count{font-size:11px;color:#666;text-align:right;margin-top:3px}
 
-/* Tier grid — 4 tiers */
-.tier-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:4px}
-.tier-card{border:1px solid #444;border-radius:12px;padding:14px;cursor:pointer;transition:all 0.15s;background:#1a1a1a}
-.tier-card:hover{border-color:#40c9a2}
-.tier-card.selected{border:2px solid #40c9a2;background:#1e2e2a}
-.tier-card.crisis-card:hover{border-color:#e63946}
-.tier-card.crisis-card.selected{border:2px solid #e63946;background:#2a1e1e}
-.tier-card.discovery-card.selected{border:2px solid #40c9a2;background:#1e2e2a}
-.tier-name{font-size:13px;font-weight:600;color:#fff;margin-bottom:4px}
-.tier-price{font-size:20px;font-weight:600;color:#40c9a2;margin-bottom:2px}
-.tier-price.crisis-price{color:#e63946}
-.tier-price.free-price{color:#40c9a2}
-.tier-sub{font-size:11px;color:#888}
-.tier-note{font-size:11px;color:#e63946;margin-top:6px;line-height:1.4}
-.tier-badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;margin-top:6px}
-.tier-badge.badge-crisis{background:rgba(230,57,70,0.15);color:#e63946;border:1px solid rgba(230,57,70,0.3)}
-.tier-badge.badge-free{background:rgba(64,201,162,0.15);color:#40c9a2;border:1px solid rgba(64,201,162,0.3)}
+/* ===== COMPARISON TABLE ===== */
+.tier-table-wrap{overflow-x:auto;margin-top:4px;-webkit-overflow-scrolling:touch}
+.tier-table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.tier-table th,.tier-table td{padding:10px 12px;text-align:center;border-bottom:1px solid #333}
+.tier-table thead th{background:#1a1a1a;color:#888;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;position:sticky;top:0}
+.tier-table thead th:first-child{text-align:left;color:#999}
+.tier-table tbody td:first-child{text-align:left;color:#ccc;font-weight:500;font-size:12px;white-space:nowrap}
+.tier-table tbody td{color:#e8e8e8}
+.tier-col-header{cursor:pointer;padding:10px 8px !important;transition:all 0.15s;border-radius:8px 8px 0 0;min-width:110px}
+.tier-col-header:hover{background:#2a2a2a}
+.tier-col-header.selected{background:#1e2e2a;box-shadow:inset 0 -2px 0 #40c9a2}
+.tier-col-header.crisis-selected{background:#2a1e1e;box-shadow:inset 0 -2px 0 #e63946}
+.tier-col-name{font-size:14px;font-weight:600;color:#fff;margin-bottom:2px}
+.tier-col-price{font-size:20px;font-weight:700;color:#40c9a2}
+.tier-col-price.crisis-price{color:#e63946}
+.tier-col-price.free-price{color:#40c9a2}
+.tier-col-sub{font-size:10px;color:#888;margin-top:1px}
+.tier-col-badge{display:inline-block;font-size:9px;padding:2px 6px;border-radius:12px;margin-top:4px}
+.tier-col-badge.badge-free{background:rgba(64,201,162,0.15);color:#40c9a2;border:1px solid rgba(64,201,162,0.3)}
+.tier-col-badge.badge-crisis{background:rgba(230,57,70,0.15);color:#e63946;border:1px solid rgba(230,57,70,0.3)}
+.tier-table .col-selected{background:rgba(64,201,162,0.05)}
+.tier-table .col-crisis-selected{background:rgba(230,57,70,0.05)}
+.tier-table .row-feature td{font-size:12px;color:#bbb}
+.tier-check{color:#40c9a2;font-weight:600}
+.tier-cross{color:#555}
+.tier-table tbody tr:last-child td{border-bottom:none}
+.tier-select-btn{display:inline-block;padding:5px 14px;border:1px solid #40c9a2;border-radius:6px;color:#40c9a2;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.15s;background:transparent}
+.tier-select-btn:hover{background:rgba(64,201,162,0.1)}
+.tier-select-btn.active{background:#40c9a2;color:#1a1a1a}
+.tier-select-btn.crisis-btn{border-color:#e63946;color:#e63946}
+.tier-select-btn.crisis-btn:hover{background:rgba(230,57,70,0.1)}
+.tier-select-btn.crisis-btn.active{background:#e63946;color:#fff}
 
 /* Packages */
 .pkg-section{margin-top:1rem;display:none}
@@ -78,6 +93,12 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 .consent-box a{color:#40c9a2;text-decoration:underline}
 .consent-check{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:#ccc;cursor:pointer}
 .consent-check input{width:auto;accent-color:#40c9a2;margin-top:2px}
+
+/* Legal link tracking */
+.legal-link{position:relative}
+.legal-link .link-check{display:inline-block;margin-left:4px;font-size:11px;color:#40c9a2;opacity:0;transition:opacity 0.3s}
+.legal-link .link-check.visited{opacity:1}
+.legal-links-warning{background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.3);border-radius:8px;padding:10px 14px;color:#e63946;font-size:13px;margin-top:10px;display:none}
 
 /* Summary */
 .summary-bar{background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:10px 14px;font-size:13px;color:#ccc;margin-top:1rem;display:none}
@@ -130,7 +151,10 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 
 @media(max-width:600px){
   .two-col{grid-template-columns:1fr}
-  .tier-grid{grid-template-columns:1fr 1fr}
+  .tier-table{font-size:11px}
+  .tier-table th,.tier-table td{padding:8px 6px}
+  .tier-col-price{font-size:16px}
+  .tier-col-name{font-size:12px}
   .pkg-grid{grid-template-columns:1fr}
   .date-grid{grid-template-columns:repeat(5,1fr)}
   .time-grid{grid-template-columns:repeat(3,1fr)}
@@ -139,8 +163,9 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 </head>
 <body>
 <div class="wd">
+  <!-- CHANGE 2: Brand logo image instead of text -->
   <div class="wd-header">
-    <div class="wd-logo">Work<span class="red">Decoded</span>HQ</div>
+    <div class="wd-logo"><img src="WorkDecodedHQ_logo_white.png" alt="Work Decoded HQ"></div>
     <div class="wd-tagline">The workplace playbook they don't give you</div>
   </div>
 
@@ -291,30 +316,96 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
     <div class="section-title">Session selection</div>
     <div class="field">
       <label>Select your consultation type <span class="req">*</span></label>
-      <div class="tier-grid">
-        <div class="tier-card discovery-card" id="card-discovery" onclick="selectTier('discovery')">
-          <div class="tier-name">Discovery Call</div>
-          <div class="tier-price free-price">Free</div>
-          <div class="tier-sub">15-minute call</div>
-          <div class="tier-badge badge-free">No charge</div>
-        </div>
-        <div class="tier-card" id="card-standard" onclick="selectTier('standard')">
-          <div class="tier-name">Standard</div>
-          <div class="tier-price">$100</div>
-          <div class="tier-sub">per 30-min session</div>
-        </div>
-        <div class="tier-card" id="card-premier" onclick="selectTier('premier')">
-          <div class="tier-name">Premier</div>
-          <div class="tier-price">$125</div>
-          <div class="tier-sub">per 30-min session</div>
-        </div>
-        <div class="tier-card crisis-card" id="card-crisis" onclick="selectTier('crisis')">
-          <div class="tier-name">Crisis</div>
-          <div class="tier-price crisis-price">$175</div>
-          <div class="tier-sub">per 30-min session</div>
-          <div class="tier-badge badge-crisis">Within 24 hours</div>
-          <div class="tier-note">No packages available. Single sessions only.</div>
-        </div>
+
+      <!-- CHANGE 1: Comparison table replaces tier cards -->
+      <div class="tier-table-wrap">
+        <table class="tier-table" id="tier-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th class="tier-col-header" id="col-discovery" onclick="selectTier('discovery')">
+                <div class="tier-col-name">Discovery</div>
+                <div class="tier-col-price free-price">Free</div>
+                <div class="tier-col-sub">15-min call</div>
+                <div class="tier-col-badge badge-free">No charge</div>
+              </th>
+              <th class="tier-col-header" id="col-standard" onclick="selectTier('standard')">
+                <div class="tier-col-name">Standard</div>
+                <div class="tier-col-price">$100</div>
+                <div class="tier-col-sub">per session</div>
+              </th>
+              <th class="tier-col-header" id="col-premier" onclick="selectTier('premier')">
+                <div class="tier-col-name">Premier</div>
+                <div class="tier-col-price">$125</div>
+                <div class="tier-col-sub">per session</div>
+              </th>
+              <th class="tier-col-header" id="col-crisis" onclick="selectTier('crisis')">
+                <div class="tier-col-name">Crisis</div>
+                <div class="tier-col-price crisis-price">$175</div>
+                <div class="tier-col-sub">per session</div>
+                <div class="tier-col-badge badge-crisis">Within 24 hrs</div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="row-feature">
+              <td>Duration</td>
+              <td class="cell-discovery">15 minutes</td>
+              <td class="cell-standard">30 minutes</td>
+              <td class="cell-premier">30 minutes</td>
+              <td class="cell-crisis">30 minutes</td>
+            </tr>
+            <tr class="row-feature">
+              <td>Best for</td>
+              <td class="cell-discovery">Exploring fit</td>
+              <td class="cell-standard">General guidance</td>
+              <td class="cell-premier">Complex situations</td>
+              <td class="cell-crisis">Urgent matters</td>
+            </tr>
+            <tr class="row-feature">
+              <td>Scheduling</td>
+              <td class="cell-discovery">Next 10 biz days</td>
+              <td class="cell-standard">Next 10 biz days</td>
+              <td class="cell-premier">Next 10 biz days</td>
+              <td class="cell-crisis">Today + next 2 days</td>
+            </tr>
+            <tr class="row-feature">
+              <td>3-pack (save 10%)</td>
+              <td class="cell-discovery"><span class="tier-cross">—</span></td>
+              <td class="cell-standard"><span class="tier-check">$270</span></td>
+              <td class="cell-premier"><span class="tier-check">$337.50</span></td>
+              <td class="cell-crisis"><span class="tier-cross">—</span></td>
+            </tr>
+            <tr class="row-feature">
+              <td>5-pack (save 10%)</td>
+              <td class="cell-discovery"><span class="tier-cross">—</span></td>
+              <td class="cell-standard"><span class="tier-check">$450</span></td>
+              <td class="cell-premier"><span class="tier-check">$562.50</span></td>
+              <td class="cell-crisis"><span class="tier-cross">—</span></td>
+            </tr>
+            <tr class="row-feature">
+              <td>Document review</td>
+              <td class="cell-discovery"><span class="tier-cross">—</span></td>
+              <td class="cell-standard"><span class="tier-cross">—</span></td>
+              <td class="cell-premier"><span class="tier-check">&#10003;</span></td>
+              <td class="cell-crisis"><span class="tier-check">&#10003;</span></td>
+            </tr>
+            <tr class="row-feature">
+              <td>Priority scheduling</td>
+              <td class="cell-discovery"><span class="tier-cross">—</span></td>
+              <td class="cell-standard"><span class="tier-cross">—</span></td>
+              <td class="cell-premier"><span class="tier-check">&#10003;</span></td>
+              <td class="cell-crisis"><span class="tier-check">&#10003;</span></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td class="cell-discovery"><button type="button" class="tier-select-btn" id="btn-discovery" onclick="selectTier('discovery')">Select</button></td>
+              <td class="cell-standard"><button type="button" class="tier-select-btn" id="btn-standard" onclick="selectTier('standard')">Select</button></td>
+              <td class="cell-premier"><button type="button" class="tier-select-btn" id="btn-premier" onclick="selectTier('premier')">Select</button></td>
+              <td class="cell-crisis"><button type="button" class="tier-select-btn crisis-btn" id="btn-crisis" onclick="selectTier('crisis')">Select</button></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -349,12 +440,14 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
       Your session notes are stored securely in Work Decoded's internal records system and may be accessed by Work Decoded's founder for quality assurance and continuity of care purposes only.<br><br>
       By submitting this form you acknowledge that Work Decoded consultants are independent HR professionals providing strategic guidance, not legal advice. For legal matters, you are encouraged to consult a licensed attorney.<br><br>
       You may request deletion of your records at any time by contacting <a href="mailto:support@workdecodedhq.com">support@workdecodedhq.com</a>.<br><br>
-      For the full <a href="https://workdecodedhq.com/privacy" target="_blank">Privacy Notice</a> and <a href="https://workdecodedhq.com/client-services-agreement" target="_blank">Client Services Agreement</a>, please click the respective links to review before consenting.
+      <!-- CHANGE 3: Legal link tracking with checkmarks -->
+      For the full <span class="legal-link"><a href="https://workdecodedhq.com/privacy" target="_blank" id="link-privacy" onclick="trackLegalLink('privacy')">Privacy Notice</a><span class="link-check" id="check-privacy">&#10003;</span></span> and <span class="legal-link"><a href="https://workdecodedhq.com/client-services-agreement" target="_blank" id="link-csa" onclick="trackLegalLink('csa')">Client Services Agreement</a><span class="link-check" id="check-csa">&#10003;</span></span>, please click the respective links to review before consenting.
     </div>
     <label class="consent-check">
       <input type="checkbox" id="consent"/>
       <span>I have read and agree to Work Decoded's Privacy Notice and Client Services Agreement. I understand that this form is confidential and that my consultant will use it solely to prepare for my session. <span class="req">*</span></span>
     </label>
+    <div class="legal-links-warning" id="legal-links-warning"></div>
   </div>
 
   <div class="submit-row">
@@ -380,24 +473,10 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 <script>
 /* ============================================================
    WORK DECODED INTAKE FORM
-   ------------------------------------------------------------
-   FLOW: client fills form → selects tier → picks date/time
-   from available slots → submits → payload POSTs to Zapier
-   Catch Hook → Zapier creates Airtable record + Google
-   Calendar event → client sees confirmation.
-
-   CONFIGURATION — fill these in once accounts are live.
    ============================================================ */
 const CONFIG = {
-  // Zapier Catch Hook URL for the intake Zap.
   ZAPIER_INTAKE_WEBHOOK: 'https://hooks.zapier.com/hooks/catch/27132993/uj9mk1d/',
-
-  // Availability API endpoint (your Vercel-deployed Next.js app).
-  // Returns { date, slots: [{ time: "HH:MM", available: bool }] }
-  // Pass ?date=YYYY-MM-DD&duration=15 or &duration=30
   AVAILABILITY_API: 'https://work-decoded.vercel.app/api/availability',
-
-  // Google Calendar ID for creating events via Zapier
   GOOGLE_CALENDAR_ID: 'hello@workdecodedhq.com'
 };
 
@@ -407,6 +486,9 @@ const CONFIG = {
 let selectedTier = null, selectedPkg = null, urgencySelected = null;
 let selectedDate = null, selectedTime = null;
 let availabilityCache = {};
+
+// CHANGE 3: Legal link click tracking
+let legalLinksClicked = { privacy: false, csa: false };
 
 const TIERS = ['discovery','standard','premier','crisis'];
 const prices = { discovery: 0, standard: 100, premier: 125, crisis: 175 };
@@ -424,15 +506,47 @@ const pkgData = {
 };
 
 /* ------------------------------------------------------------
-   TIER / PACKAGE SELECTION
+   CHANGE 3: LEGAL LINK TRACKING
+   ------------------------------------------------------------ */
+function trackLegalLink(which) {
+  legalLinksClicked[which] = true;
+  document.getElementById('check-' + which).classList.add('visited');
+  // Hide the warning if both links are now clicked
+  if (legalLinksClicked.privacy && legalLinksClicked.csa) {
+    document.getElementById('legal-links-warning').style.display = 'none';
+  }
+}
+
+/* ------------------------------------------------------------
+   CHANGE 1: COMPARISON TABLE — TIER SELECTION
    ------------------------------------------------------------ */
 function selectTier(tier) {
   selectedTier = tier; selectedPkg = null;
   selectedDate = null; selectedTime = null;
   availabilityCache = {};
 
-  TIERS.forEach(t => document.getElementById('card-'+t).classList.remove('selected'));
-  document.getElementById('card-'+tier).classList.add('selected');
+  // Update column highlighting
+  TIERS.forEach(t => {
+    const col = document.getElementById('col-' + t);
+    const btn = document.getElementById('btn-' + t);
+    col.classList.remove('selected', 'crisis-selected');
+    btn.classList.remove('active');
+    // Remove column cell highlighting
+    document.querySelectorAll('.cell-' + t).forEach(cell => {
+      cell.classList.remove('col-selected', 'col-crisis-selected');
+    });
+  });
+
+  const col = document.getElementById('col-' + tier);
+  const btn = document.getElementById('btn-' + tier);
+  if (tier === 'crisis') {
+    col.classList.add('crisis-selected');
+    document.querySelectorAll('.cell-crisis').forEach(cell => cell.classList.add('col-crisis-selected'));
+  } else {
+    col.classList.add('selected');
+    document.querySelectorAll('.cell-' + tier).forEach(cell => cell.classList.add('col-selected'));
+  }
+  btn.classList.add('active');
 
   const st = document.getElementById('summary-total');
   st.className = 'summary-total' + (tier === 'crisis' ? ' crisis-total' : '');
@@ -450,14 +564,12 @@ function selectTier(tier) {
   }
   document.getElementById('summary-bar').classList.add('visible');
 
-  // Show date picker only if urgency is already selected (urgency drives the date range)
   document.getElementById('time-container').innerHTML = '';
   document.getElementById('selected-datetime').classList.remove('visible');
   if (urgencySelected) {
     document.getElementById('schedule-section').classList.add('visible');
     buildDateGrid();
   } else {
-    // Prompt user to select urgency first
     document.getElementById('schedule-section').classList.add('visible');
     document.getElementById('date-grid').innerHTML =
       '<div class="no-slots" style="grid-column:1/-1">Please select an urgency level above to see available dates.</div>';
@@ -494,24 +606,22 @@ function updateSummary(label, price) {
 }
 
 /* ------------------------------------------------------------
-   DATE GRID — urgency-driven: crisis=today+2, high=3, low/med=10
+   DATE GRID
    ------------------------------------------------------------ */
 function buildDateGrid() {
   const grid = document.getElementById('date-grid');
   grid.innerHTML = '';
 
-  // Determine how many days to show based on urgency
-  const urgency = urgencySelected || 'medium'; // default to medium if somehow not set
+  const urgency = urgencySelected || 'medium';
   let days;
   if (urgency === 'crisis') {
-    days = getCrisisBusinessDays();       // today (if biz hours left) + next 2 biz days
+    days = getCrisisBusinessDays();
   } else if (urgency === 'high') {
-    days = getNextBusinessDays(3);        // next 3 biz days (starting tomorrow)
+    days = getNextBusinessDays(3);
   } else {
-    days = getNextBusinessDays(10);       // low/medium: next 10 biz days
+    days = getNextBusinessDays(10);
   }
 
-  // Update the schedule intro text based on urgency
   const intro = document.getElementById('schedule-intro');
   const introText = {
     low:     'All times are shown in Eastern Time (ET). Sessions are available Monday – Friday, 9 AM – 5 PM.',
@@ -521,7 +631,6 @@ function buildDateGrid() {
   };
   intro.textContent = introText[urgency];
 
-  // Adjust grid columns if fewer days
   grid.style.gridTemplateColumns = 'repeat(' + Math.min(days.length, 5) + ', 1fr)';
 
   const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -534,7 +643,6 @@ function buildDateGrid() {
     const dateStr = formatDateISO(d);
     btn.dataset.date = dateStr;
 
-    // Mark today with a label
     const isToday = formatDateISO(d) === formatDateISO(new Date());
     const label = isToday ? 'Today' : dayNames[d.getDay()];
 
@@ -548,11 +656,10 @@ function buildDateGrid() {
 function getNextBusinessDays(count) {
   const days = [];
   const d = new Date();
-  // Start from tomorrow
   d.setDate(d.getDate() + 1);
   while (days.length < count) {
     const day = d.getDay();
-    if (day !== 0 && day !== 6) { // skip weekends
+    if (day !== 0 && day !== 6) {
       days.push(new Date(d));
     }
     d.setDate(d.getDate() + 1);
@@ -561,25 +668,20 @@ function getNextBusinessDays(count) {
 }
 
 function getCrisisBusinessDays() {
-  // Crisis: include today if it's a weekday and before 4 PM ET (last 30-min slot starts at 4:30),
-  // then next 2 business days
   const days = [];
   const now = new Date();
 
-  // Check if today is a weekday and there's still time for at least one slot
-  // Convert current time to ET approximation (UTC-4 or UTC-5 depending on DST)
   const etOffset = isDST(now) ? -4 : -5;
   const utcHour = now.getUTCHours();
   const etHour = (utcHour + etOffset + 24) % 24;
 
   const isWeekday = now.getDay() !== 0 && now.getDay() !== 6;
-  const hasTimeLeft = etHour < 16; // before 4 PM ET means at least one 30-min slot possible
+  const hasTimeLeft = etHour < 16;
 
   if (isWeekday && hasTimeLeft) {
-    days.push(new Date(now)); // today
+    days.push(new Date(now));
   }
 
-  // Add next 2 business days
   const d = new Date(now);
   d.setDate(d.getDate() + 1);
   let added = 0;
@@ -595,7 +697,6 @@ function getCrisisBusinessDays() {
 }
 
 function isDST(date) {
-  // US Eastern DST: second Sunday in March through first Sunday in November
   const jan = new Date(date.getFullYear(), 0, 1).getTimezoneOffset();
   const jul = new Date(date.getFullYear(), 6, 1).getTimezoneOffset();
   return date.getTimezoneOffset() < Math.max(jan, jul);
@@ -609,28 +710,25 @@ function formatDateISO(d) {
 }
 
 /* ------------------------------------------------------------
-   TIME SLOTS — fetch availability then render
+   TIME SLOTS
    ------------------------------------------------------------ */
 async function selectDate(dateStr, btnEl) {
   selectedDate = dateStr;
   selectedTime = null;
   document.getElementById('selected-datetime').classList.remove('visible');
 
-  // Highlight selected date
   document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('selected'));
   btnEl.classList.add('selected');
 
   const container = document.getElementById('time-container');
   const dur = durations[selectedTier];
 
-  // Check cache first
   const cacheKey = dateStr + '-' + dur;
   if (availabilityCache[cacheKey]) {
     renderTimeSlots(availabilityCache[cacheKey]);
     return;
   }
 
-  // Show loading
   container.innerHTML = '<div class="time-loading"><span class="spinner"></span>Checking availability...</div>';
 
   try {
@@ -642,7 +740,6 @@ async function selectDate(dateStr, btnEl) {
     renderTimeSlots(data.slots || []);
   } catch (e) {
     console.warn('Availability API error, showing all slots:', e);
-    // Fallback: generate all slots locally if API unavailable
     const fallbackSlots = generateFallbackSlots(dur);
     availabilityCache[cacheKey] = fallbackSlots;
     renderTimeSlots(fallbackSlots);
@@ -650,11 +747,9 @@ async function selectDate(dateStr, btnEl) {
 }
 
 function generateFallbackSlots(durationMin) {
-  // Generate 9am-5pm ET slots at the given interval
   const slots = [];
   for (let h = 9; h < 17; h++) {
     for (let m = 0; m < 60; m += durationMin) {
-      // Don't create a slot if it would run past 5pm
       if (h * 60 + m + durationMin > 17 * 60) continue;
       const time = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
       slots.push({ time, available: true });
@@ -687,7 +782,6 @@ function selectTime(time, btnEl) {
   document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
   btnEl.classList.add('selected');
 
-  // Show confirmation
   const dt = document.getElementById('selected-datetime');
   const dur = durations[selectedTier];
   const dateObj = new Date(selectedDate + 'T' + time + ':00');
@@ -716,14 +810,12 @@ function setUrgency(level, el) {
   const map = { low: 'sel-low', medium: 'sel-med', high: 'sel-high', crisis: 'sel-high' };
   el.classList.add(map[level]);
 
-  // Reset date/time selections when urgency changes (dates will differ)
   selectedDate = null;
   selectedTime = null;
   availabilityCache = {};
   document.getElementById('time-container').innerHTML = '';
   document.getElementById('selected-datetime').classList.remove('visible');
 
-  // Show urgency hint
   const hint = document.getElementById('urgency-hint');
   const hints = {
     low:     'You\'ll see the next 10 business days when you select a session type below.',
@@ -734,34 +826,42 @@ function setUrgency(level, el) {
   hint.textContent = hints[level];
   hint.style.display = 'block';
 
-  // Crisis urgency → auto-lock the Crisis tier
   if (level === 'crisis') {
-    // Disable non-crisis tier cards visually and functionally
     ['discovery','standard','premier'].forEach(t => {
-      const card = document.getElementById('card-' + t);
-      card.style.opacity = '0.35';
-      card.style.pointerEvents = 'none';
+      const col = document.getElementById('col-' + t);
+      const btn = document.getElementById('btn-' + t);
+      col.style.opacity = '0.35';
+      col.style.pointerEvents = 'none';
+      btn.style.opacity = '0.35';
+      btn.style.pointerEvents = 'none';
     });
-    document.getElementById('card-crisis').style.opacity = '';
-    document.getElementById('card-crisis').style.pointerEvents = '';
-    // Auto-select crisis tier
+    document.getElementById('col-crisis').style.opacity = '';
+    document.getElementById('col-crisis').style.pointerEvents = '';
+    document.getElementById('btn-crisis').style.opacity = '';
+    document.getElementById('btn-crisis').style.pointerEvents = '';
     selectTier('crisis');
   } else {
-    // Re-enable all tier cards for non-crisis urgency
     TIERS.forEach(t => {
-      const card = document.getElementById('card-' + t);
-      card.style.opacity = '';
-      card.style.pointerEvents = '';
+      const col = document.getElementById('col-' + t);
+      const btn = document.getElementById('btn-' + t);
+      col.style.opacity = '';
+      col.style.pointerEvents = '';
+      btn.style.opacity = '';
+      btn.style.pointerEvents = '';
     });
-    // If crisis was previously auto-selected, clear it so user picks freely
     if (selectedTier === 'crisis') {
       selectedTier = null; selectedPkg = null;
-      TIERS.forEach(t => document.getElementById('card-'+t).classList.remove('selected'));
+      TIERS.forEach(t => {
+        document.getElementById('col-' + t).classList.remove('selected', 'crisis-selected');
+        document.getElementById('btn-' + t).classList.remove('active');
+        document.querySelectorAll('.cell-' + t).forEach(cell => {
+          cell.classList.remove('col-selected', 'col-crisis-selected');
+        });
+      });
       document.getElementById('pkg-section').classList.remove('visible');
       document.getElementById('summary-bar').classList.remove('visible');
       document.getElementById('schedule-section').classList.remove('visible');
     } else if (selectedTier) {
-      // Non-crisis tier already selected, just rebuild date grid with new urgency range
       document.getElementById('schedule-section').classList.add('visible');
       buildDateGrid();
     }
@@ -797,14 +897,16 @@ function val(id)      { return (document.getElementById(id).value || '').trim();
 function radioVal(n)  { const el = document.querySelector('input[name="' + n + '"]:checked'); return el ? el.value : ''; }
 
 /* ------------------------------------------------------------
-   SUBMIT: validate → POST to Zapier → show confirmation
+   SUBMIT
    ------------------------------------------------------------ */
 async function submitForm() {
   const errorEl  = document.getElementById('submit-error');
   const statusEl = document.getElementById('submit-status');
   const btn      = document.getElementById('btn-submit');
+  const legalWarning = document.getElementById('legal-links-warning');
   errorEl.style.display = 'none';
   errorEl.textContent = '';
+  legalWarning.style.display = 'none';
 
   // --- Validation ---
   const required = [
@@ -823,20 +925,29 @@ async function submitForm() {
     return;
   }
 
+  // CHANGE 3: Check that both legal links have been clicked
+  if (!legalLinksClicked.privacy || !legalLinksClicked.csa) {
+    const unclicked = [];
+    if (!legalLinksClicked.privacy) unclicked.push('Privacy Notice');
+    if (!legalLinksClicked.csa) unclicked.push('Client Services Agreement');
+    legalWarning.textContent = 'Please review the ' + unclicked.join(' and the ') + ' before submitting. Click the link' + (unclicked.length > 1 ? 's' : '') + ' in the consent section above to open and review.';
+    legalWarning.style.display = 'block';
+    // Scroll to the warning
+    legalWarning.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
   // --- Build payload ---
   const clientId = generateClientId();
   const total    = quotedTotal(selectedTier, selectedPkg);
   const dur      = durations[selectedTier];
 
-  // Build ISO datetime for the appointment (ET = America/New_York)
   const appointmentDatetime = selectedDate + 'T' + selectedTime + ':00';
 
-  // Calculate end datetime (start + duration)
   const [_sH, _sM] = selectedTime.split(':').map(Number);
   const _eT = _sH * 60 + _sM + dur;
   const endDatetime = selectedDate + 'T' + String(Math.floor(_eT/60)).padStart(2,'0') + ':' + String(_eT%60).padStart(2,'0') + ':00';
 
-  // Flat payload — Zapier Catch Hook maps these field names directly
   const payload = {
     clientId,
     submittedAt:          new Date().toISOString(),
@@ -891,10 +1002,15 @@ async function submitForm() {
     return;
   }
 
-  // --- Show success screen ---
+  // --- CHANGE 4: Show success screen with smooth scroll to top ---
   document.getElementById('form-container').style.display = 'none';
   const ss = document.getElementById('success-screen');
   ss.classList.add('visible');
+
+  // Scroll to the top of the page smoothly
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Also ensure the .wd container is at the top of the viewport
+  document.querySelector('.wd').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   const dateObj = new Date(selectedDate + 'T' + selectedTime + ':00');
   const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -916,10 +1032,17 @@ function clearForm() {
   document.querySelectorAll('input:not([type=radio]):not([type=checkbox]),select,textarea').forEach(el => el.value = '');
   document.querySelectorAll('input[type=radio],input[type=checkbox]').forEach(el => el.checked = false);
   TIERS.forEach(t => {
-    const card = document.getElementById('card-'+t);
-    card.classList.remove('selected');
-    card.style.opacity = '';
-    card.style.pointerEvents = '';
+    const col = document.getElementById('col-' + t);
+    const btn = document.getElementById('btn-' + t);
+    col.classList.remove('selected', 'crisis-selected');
+    col.style.opacity = '';
+    col.style.pointerEvents = '';
+    btn.classList.remove('active');
+    btn.style.opacity = '';
+    btn.style.pointerEvents = '';
+    document.querySelectorAll('.cell-' + t).forEach(cell => {
+      cell.classList.remove('col-selected', 'col-crisis-selected');
+    });
   });
   document.getElementById('pkg-section').classList.remove('visible');
   document.getElementById('summary-bar').classList.remove('visible');
@@ -927,6 +1050,7 @@ function clearForm() {
   document.getElementById('preferred-field').style.display = 'none';
   document.getElementById('prior-detail-field').style.display = 'none';
   document.getElementById('submit-error').style.display = 'none';
+  document.getElementById('legal-links-warning').style.display = 'none';
   document.getElementById('selected-datetime').classList.remove('visible');
   document.querySelectorAll('.urgency-btn').forEach(b => b.className = 'urgency-btn');
   document.getElementById('urgency-hint').style.display = 'none';
@@ -934,6 +1058,10 @@ function clearForm() {
   document.getElementById('submit-status').textContent = '';
   document.getElementById('btn-submit').disabled = false;
   document.getElementById('time-container').innerHTML = '';
+  // Reset legal link tracking
+  legalLinksClicked = { privacy: false, csa: false };
+  document.getElementById('check-privacy').classList.remove('visited');
+  document.getElementById('check-csa').classList.remove('visited');
   selectedTier = null; selectedPkg = null; urgencySelected = null;
   selectedDate = null; selectedTime = null; availabilityCache = {};
 }
