@@ -213,13 +213,66 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 .footer{text-align:center;font-size:11px;color:#555;margin-top:2rem;padding-top:1rem;border-top:1px solid #333}
 .footer a{color:#40c9a2;text-decoration:none}
 
+/* ===== MOBILE RESPONSIVE ===== */
 @media(max-width:600px){
-  .two-col{grid-template-columns:1fr}
+  body{padding:1rem 0.875rem}
+  .wd-header{padding-bottom:0.5rem;margin-bottom:1rem}
+  .wd-logo img{max-height:38px}
+  .wd-tagline{font-size:11px}
+  .wd-intro{font-size:13px;padding:12px 14px;line-height:1.6}
+  .section{padding:1rem;border-radius:10px;margin-bottom:0.875rem}
+  .section-title{font-size:11px;margin-bottom:0.875rem;padding-bottom:0.4rem}
+  .field{margin-bottom:0.875rem}
+  .field label{font-size:13px;margin-bottom:5px}
+  /* 16px font on inputs prevents iOS auto-zoom on focus */
+  .field input,.field select,.field textarea{font-size:16px;padding:11px 12px;border-radius:8px}
+  .field textarea{min-height:90px}
+  .two-col{grid-template-columns:1fr;gap:10px}
+  .radio-group{gap:8px}
+  .radio-group label{font-size:14px;padding:4px 0}
+  /* Tier comparison: hide table, show stacked cards */
   .tier-table-wrap{display:none}
-  .tier-cards{display:flex}
-  .pkg-grid{grid-template-columns:1fr}
-  .date-grid{grid-template-columns:repeat(5,1fr)}
-  .time-grid{grid-template-columns:repeat(3,1fr)}
+  .tier-cards{display:flex;gap:10px}
+  .tier-card{padding:14px}
+  .tier-card-name{font-size:14px}
+  .tier-card-price{font-size:20px}
+  .tier-card-features li{padding:5px 0;font-size:11.5px}
+  /* Packages stack */
+  .pkg-grid{grid-template-columns:1fr;gap:8px}
+  .pkg-card{padding:12px 14px}
+  /* Urgency: 2x2 grid, smaller text */
+  .urgency-bar{gap:6px}
+  .urgency-btn{flex:1 1 calc(50% - 6px);min-width:0;font-size:11.5px;padding:11px 6px;line-height:1.3}
+  /* Date / time pickers */
+  .date-grid{grid-template-columns:repeat(3,1fr);gap:6px}
+  .date-btn{padding:10px 4px;font-size:12px}
+  .time-grid{grid-template-columns:repeat(3,1fr);gap:6px}
+  .time-btn{padding:10px 4px;font-size:13px}
+  /* Consent + legal links */
+  .consent-box{padding:11px 13px;font-size:12px;max-height:140px}
+  .consent-check{font-size:13px;line-height:1.5}
+  .legal-link{display:inline-block;margin-bottom:2px}
+  /* Submit row stacks vertically; full-width buttons */
+  .submit-row{flex-direction:column;align-items:stretch;gap:10px}
+  .submit-row button{width:100%;padding:14px 20px;font-size:15px}
+  .submit-status{margin-left:0;text-align:center;margin-top:4px}
+  /* Footer + success */
+  .footer{font-size:10.5px;margin-top:1.25rem}
+  .success-screen{padding:2rem 1rem}
+  .success-icon{font-size:42px}
+  .success-title{font-size:18px}
+  .success-msg{font-size:13.5px}
+}
+
+/* Extra-small phones (≤360px e.g. iPhone SE) */
+@media(max-width:360px){
+  body{padding:0.75rem 0.625rem}
+  .section{padding:0.875rem}
+  .urgency-btn{font-size:10.5px;padding:10px 4px}
+  .tier-card-features li{font-size:11px}
+  .date-grid{grid-template-columns:repeat(3,1fr);gap:5px}
+  .date-btn{font-size:11px;padding:9px 2px}
+  .time-grid{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
