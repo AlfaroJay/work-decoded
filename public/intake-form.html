@@ -63,6 +63,30 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 .tier-select-btn.crisis-btn:hover{background:rgba(230,57,70,0.1)}
 .tier-select-btn.crisis-btn.active{background:#e63946;color:#fff}
 
+/* ===== TIER CARDS (mobile alternative to table) ===== */
+.tier-cards{display:none;flex-direction:column;gap:12px;margin-top:8px}
+.tier-card{border:1px solid #333;border-radius:10px;padding:14px 16px;background:#1a1a1a;transition:all 0.15s;cursor:pointer}
+.tier-card:hover{border-color:#444}
+.tier-card.selected{border:2px solid #40c9a2;background:#1e2e2a;padding:13px 15px}
+.tier-card.crisis-selected{border:2px solid #e63946;background:#2a1e1e;padding:13px 15px}
+.tier-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px}
+.tier-card-name{font-size:15px;font-weight:600;color:#fff;line-height:1.2}
+.tier-card-sub{font-size:11px;color:#888;margin-top:2px}
+.tier-card-badge{display:inline-block;font-size:9px;padding:2px 6px;border-radius:12px;margin-top:6px;letter-spacing:0.3px}
+.tier-card-badge.badge-free{background:rgba(64,201,162,0.15);color:#40c9a2;border:1px solid rgba(64,201,162,0.3)}
+.tier-card-badge.badge-crisis{background:rgba(230,57,70,0.15);color:#e63946;border:1px solid rgba(230,57,70,0.3)}
+.tier-card-price{font-size:22px;font-weight:700;color:#40c9a2;line-height:1;text-align:right;white-space:nowrap}
+.tier-card-price.crisis{color:#e63946}
+.tier-card-price-sub{font-size:10px;color:#888;font-weight:400;display:block;margin-top:2px}
+.tier-card-features{list-style:none;padding:0;margin:0 0 12px}
+.tier-card-features li{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;font-size:12px;color:#bbb;border-bottom:1px solid #2a2a2a}
+.tier-card-features li:last-child{border-bottom:none}
+.tier-card-features .feat-label{color:#888}
+.tier-card-features .feat-value{color:#e8e8e8;font-weight:500;text-align:right}
+.tier-card-features .feat-value.yes{color:#40c9a2}
+.tier-card-features .feat-value.no{color:#555}
+.tier-card .tier-select-btn{width:100%;padding:10px 14px;font-size:13px}
+
 /* Packages */
 .pkg-section{margin-top:1rem;display:none}
 .pkg-section.visible{display:block}
@@ -89,16 +113,56 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 .urgency-btn.sel-high{border-color:#e63946;background:rgba(230,57,70,0.1);color:#e63946;font-weight:500}
 
 /* Consent */
-.consent-box{background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:12px;max-height:120px;overflow-y:auto;font-size:12px;color:#999;line-height:1.6;margin-bottom:10px}
+.consent-box{background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:12px;max-height:120px;overflow-y:auto;font-size:12px;color:#999;line-height:1.6;margin-bottom:6px;position:relative;transition:border-color 0.2s}
+.consent-box.read{border-color:#40c9a2}
 .consent-box a{color:#40c9a2;text-decoration:underline}
-.consent-check{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:#ccc;cursor:pointer}
+.consent-hint{font-size:11px;color:#888;margin:0 0 10px 2px;display:flex;align-items:center;gap:6px;transition:opacity 0.2s}
+.consent-hint.hidden{display:none}
+.consent-hint .pulse{display:inline-block;animation:bounce 1.4s ease-in-out infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(2px)}}
+.consent-check{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:#ccc;cursor:pointer;transition:opacity 0.2s}
+.consent-check.locked{opacity:0.45;cursor:not-allowed}
+.consent-check.locked input{cursor:not-allowed}
 .consent-check input{width:auto;accent-color:#40c9a2;margin-top:2px}
+.consent-check input:disabled{cursor:not-allowed}
 
 /* Legal link tracking */
-.legal-link{position:relative}
-.legal-link .link-check{display:inline-block;margin-left:4px;font-size:11px;color:#40c9a2;opacity:0;transition:opacity 0.3s}
-.legal-link .link-check.visited{opacity:1}
 .legal-links-warning{background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.3);border-radius:8px;padding:10px 14px;color:#e63946;font-size:13px;margin-top:10px;display:none}
+
+/* ===== LEGAL MODAL (Privacy Notice / CSA inline viewer) ===== */
+.legal-modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(2px);z-index:9000;display:none;align-items:center;justify-content:center;padding:5vh 4vw}
+.legal-modal-backdrop.open{display:flex}
+.legal-modal{background:#1f1f1f;border:1px solid #333;border-radius:12px;width:100%;max-width:720px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.5);overflow:hidden}
+.legal-modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid #333;flex-shrink:0}
+.legal-modal-title{font-size:15px;font-weight:600;color:#fff;margin:0}
+.legal-modal-close{background:transparent;border:none;color:#999;font-size:22px;width:36px;height:36px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;line-height:1;padding:0;transition:background 0.15s,color 0.15s}
+.legal-modal-close:hover{background:#2a2a2a;color:#fff}
+.legal-modal-body{padding:16px 22px;overflow-y:auto;color:#ccc;font-size:13px;line-height:1.65;flex:1}
+.legal-modal-body h1,.legal-modal-body h2,.legal-modal-body h3,.legal-modal-body h4{color:#fff;margin:1.25em 0 0.4em;line-height:1.3}
+.legal-modal-body h1{font-size:18px}
+.legal-modal-body h2{font-size:16px}
+.legal-modal-body h3{font-size:14px}
+.legal-modal-body p{margin:0.6em 0}
+.legal-modal-body ul,.legal-modal-body ol{margin:0.6em 0 0.6em 1.4em;padding:0}
+.legal-modal-body li{margin:0.25em 0}
+.legal-modal-body a{color:#40c9a2;text-decoration:underline}
+.legal-modal-body strong{color:#fff}
+.legal-modal-body hr{border:none;border-top:1px solid #333;margin:1.2em 0}
+.legal-modal-loading{padding:40px 20px;text-align:center;color:#888;font-size:13px}
+.legal-modal-loading .spinner{display:inline-block;width:18px;height:18px;border:2px solid #444;border-top-color:#40c9a2;border-radius:50%;animation:spin 0.8s linear infinite;margin-right:10px;vertical-align:middle}
+.legal-modal-error{padding:30px 20px;text-align:center;color:#e63946;font-size:13px;line-height:1.5}
+.legal-modal-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 18px;border-top:1px solid #333;flex-shrink:0;font-size:12px;color:#888}
+.legal-modal-foot a{color:#40c9a2;text-decoration:none}
+.legal-modal-foot a:hover{text-decoration:underline}
+.legal-modal-foot .legal-done{background:#40c9a2;color:#1a1a1a;border:none;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.legal-modal-foot .legal-done:hover{background:#35b08d}
+@media(max-width:600px){
+  .legal-modal-backdrop{padding:2vh 3vw}
+  .legal-modal{max-height:96vh}
+  .legal-modal-head{padding:12px 14px}
+  .legal-modal-body{padding:14px 16px;font-size:13px}
+  .legal-modal-foot{padding:10px 14px;flex-wrap:wrap}
+}
 
 /* Summary */
 .summary-bar{background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:10px 14px;font-size:13px;color:#ccc;margin-top:1rem;display:none}
@@ -151,10 +215,8 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 
 @media(max-width:600px){
   .two-col{grid-template-columns:1fr}
-  .tier-table{font-size:11px}
-  .tier-table th,.tier-table td{padding:8px 6px}
-  .tier-col-price{font-size:16px}
-  .tier-col-name{font-size:12px}
+  .tier-table-wrap{display:none}
+  .tier-cards{display:flex}
   .pkg-grid{grid-template-columns:1fr}
   .date-grid{grid-template-columns:repeat(5,1fr)}
   .time-grid{grid-template-columns:repeat(3,1fr)}
@@ -407,6 +469,93 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
           </tbody>
         </table>
       </div>
+
+      <!-- Mobile-only stacked cards (mirror of table data) -->
+      <div class="tier-cards" id="tier-cards">
+
+        <div class="tier-card" id="card-discovery" onclick="selectTier('discovery')">
+          <div class="tier-card-head">
+            <div>
+              <div class="tier-card-name">Discovery</div>
+              <div class="tier-card-sub">15-min call</div>
+              <div class="tier-card-badge badge-free">No charge</div>
+            </div>
+            <div class="tier-card-price">Free<span class="tier-card-price-sub">no charge</span></div>
+          </div>
+          <ul class="tier-card-features">
+            <li><span class="feat-label">Duration</span><span class="feat-value">15 minutes</span></li>
+            <li><span class="feat-label">Best for</span><span class="feat-value">Exploring fit</span></li>
+            <li><span class="feat-label">Scheduling</span><span class="feat-value">Next 10 biz days</span></li>
+            <li><span class="feat-label">3-pack (save 10%)</span><span class="feat-value no">—</span></li>
+            <li><span class="feat-label">5-pack (save 10%)</span><span class="feat-value no">—</span></li>
+            <li><span class="feat-label">Document review</span><span class="feat-value no">—</span></li>
+            <li><span class="feat-label">Priority scheduling</span><span class="feat-value no">—</span></li>
+          </ul>
+          <button type="button" class="tier-select-btn" id="card-btn-discovery" onclick="event.stopPropagation();selectTier('discovery')">Select</button>
+        </div>
+
+        <div class="tier-card" id="card-standard" onclick="selectTier('standard')">
+          <div class="tier-card-head">
+            <div>
+              <div class="tier-card-name">Standard</div>
+              <div class="tier-card-sub">per session</div>
+            </div>
+            <div class="tier-card-price">$100<span class="tier-card-price-sub">30 min</span></div>
+          </div>
+          <ul class="tier-card-features">
+            <li><span class="feat-label">Duration</span><span class="feat-value">30 minutes</span></li>
+            <li><span class="feat-label">Best for</span><span class="feat-value">General guidance</span></li>
+            <li><span class="feat-label">Scheduling</span><span class="feat-value">Next 10 biz days</span></li>
+            <li><span class="feat-label">3-pack (save 10%)</span><span class="feat-value yes">$270</span></li>
+            <li><span class="feat-label">5-pack (save 10%)</span><span class="feat-value yes">$450</span></li>
+            <li><span class="feat-label">Document review</span><span class="feat-value no">—</span></li>
+            <li><span class="feat-label">Priority scheduling</span><span class="feat-value no">—</span></li>
+          </ul>
+          <button type="button" class="tier-select-btn" id="card-btn-standard" onclick="event.stopPropagation();selectTier('standard')">Select</button>
+        </div>
+
+        <div class="tier-card" id="card-premier" onclick="selectTier('premier')">
+          <div class="tier-card-head">
+            <div>
+              <div class="tier-card-name">Premier</div>
+              <div class="tier-card-sub">per session</div>
+            </div>
+            <div class="tier-card-price">$125<span class="tier-card-price-sub">30 min</span></div>
+          </div>
+          <ul class="tier-card-features">
+            <li><span class="feat-label">Duration</span><span class="feat-value">30 minutes</span></li>
+            <li><span class="feat-label">Best for</span><span class="feat-value">Complex situations</span></li>
+            <li><span class="feat-label">Scheduling</span><span class="feat-value">Next 10 biz days</span></li>
+            <li><span class="feat-label">3-pack (save 10%)</span><span class="feat-value yes">$337.50</span></li>
+            <li><span class="feat-label">5-pack (save 10%)</span><span class="feat-value yes">$562.50</span></li>
+            <li><span class="feat-label">Document review</span><span class="feat-value yes">&#10003;</span></li>
+            <li><span class="feat-label">Priority scheduling</span><span class="feat-value yes">&#10003;</span></li>
+          </ul>
+          <button type="button" class="tier-select-btn" id="card-btn-premier" onclick="event.stopPropagation();selectTier('premier')">Select</button>
+        </div>
+
+        <div class="tier-card" id="card-crisis" onclick="selectTier('crisis')">
+          <div class="tier-card-head">
+            <div>
+              <div class="tier-card-name">Crisis</div>
+              <div class="tier-card-sub">per session</div>
+              <div class="tier-card-badge badge-crisis">Within 24 hrs</div>
+            </div>
+            <div class="tier-card-price crisis">$175<span class="tier-card-price-sub">30 min</span></div>
+          </div>
+          <ul class="tier-card-features">
+            <li><span class="feat-label">Duration</span><span class="feat-value">30 minutes</span></li>
+            <li><span class="feat-label">Best for</span><span class="feat-value">Urgent matters</span></li>
+            <li><span class="feat-label">Scheduling</span><span class="feat-value">Today + next 2 days</span></li>
+            <li><span class="feat-label">3-pack (save 10%)</span><span class="feat-value no">—</span></li>
+            <li><span class="feat-label">5-pack (save 10%)</span><span class="feat-value no">—</span></li>
+            <li><span class="feat-label">Document review</span><span class="feat-value yes">&#10003;</span></li>
+            <li><span class="feat-label">Priority scheduling</span><span class="feat-value yes">&#10003;</span></li>
+          </ul>
+          <button type="button" class="tier-select-btn crisis-btn" id="card-btn-crisis" onclick="event.stopPropagation();selectTier('crisis')">Select</button>
+        </div>
+
+      </div>
     </div>
 
     <!-- Packages (Standard/Premier only) -->
@@ -434,17 +583,17 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
   <!-- SECTION 5: CONSENT -->
   <div class="section">
     <div class="section-title">Privacy & consent</div>
-    <div class="consent-box">
+    <div class="consent-box" id="consent-box">
       <strong>Privacy Notice & Client Services Agreement</strong><br><br>
       Work Decoded is committed to protecting your privacy. The information you provide on this form is strictly confidential and will only be shared with your assigned consultant to prepare for your session. It will not be sold, shared with your employer, or disclosed to any third party except as required by law.<br><br>
       Your session notes are stored securely in Work Decoded's internal records system and may be accessed by Work Decoded's founder for quality assurance and continuity of care purposes only.<br><br>
       By submitting this form you acknowledge that Work Decoded consultants are independent HR professionals providing strategic guidance, not legal advice. For legal matters, you are encouraged to consult a licensed attorney.<br><br>
       You may request deletion of your records at any time by contacting <a href="mailto:support@workdecodedhq.com">support@workdecodedhq.com</a>.<br><br>
-      <!-- CHANGE 3: Legal link tracking with checkmarks -->
-      For the full <span class="legal-link"><a href="https://workdecodedhq.com/privacy" target="_blank" id="link-privacy" onclick="trackLegalLink('privacy')">Privacy Notice</a><span class="link-check" id="check-privacy">&#10003;</span></span> and <span class="legal-link"><a href="https://workdecodedhq.com/client-services-agreement" target="_blank" id="link-csa" onclick="trackLegalLink('csa')">Client Services Agreement</a><span class="link-check" id="check-csa">&#10003;</span></span>, please click the respective links to review before consenting.
+      For the full <a href="https://www.workdecodedhq.com/privacy-policy" target="_blank" id="link-privacy" onclick="return openLegalModal('privacy-policy', 'Privacy Notice', 'privacy', event)">Privacy Notice</a> and <a href="https://www.workdecodedhq.com/client-services-agreement" target="_blank" id="link-csa" onclick="return openLegalModal('client-services-agreement', 'Client Services Agreement', 'csa', event)">Client Services Agreement</a>, please click the respective links to review before consenting.
     </div>
-    <label class="consent-check">
-      <input type="checkbox" id="consent"/>
+    <div class="consent-hint" id="consent-hint"><span class="pulse">&#9662;</span><span>Scroll to the bottom of the box above to enable consent.</span></div>
+    <label class="consent-check locked" id="consent-label">
+      <input type="checkbox" id="consent" disabled/>
       <span>I have read and agree to Work Decoded's Privacy Notice and Client Services Agreement. I understand that this form is confidential and that my consultant will use it solely to prepare for my session. <span class="req">*</span></span>
     </label>
     <div class="legal-links-warning" id="legal-links-warning"></div>
@@ -470,13 +619,30 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
   <div class="footer">Work Decoded &middot; <a href="https://workdecodedhq.com">WorkDecodedHQ.com</a> &middot; support@workdecodedhq.com</div>
 </div>
 
+<!-- LEGAL MODAL (Privacy Notice / Client Services Agreement) -->
+<div class="legal-modal-backdrop" id="legal-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="legal-modal-title" onclick="if(event.target===this)closeLegalModal()">
+  <div class="legal-modal">
+    <div class="legal-modal-head">
+      <h2 class="legal-modal-title" id="legal-modal-title">Privacy Notice</h2>
+      <button type="button" class="legal-modal-close" id="legal-modal-close" aria-label="Close" onclick="closeLegalModal()">&times;</button>
+    </div>
+    <div class="legal-modal-body" id="legal-modal-body">
+      <div class="legal-modal-loading"><span class="spinner"></span>Loading…</div>
+    </div>
+    <div class="legal-modal-foot">
+      <a id="legal-modal-source" href="#" target="_blank" rel="noopener">View on website &rarr;</a>
+      <button type="button" class="legal-done" onclick="closeLegalModal()">Done</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ============================================================
    WORK DECODED INTAKE FORM
    ============================================================ */
 const CONFIG = {
   ZAPIER_INTAKE_WEBHOOK: 'https://hooks.zapier.com/hooks/catch/27132993/uj9mk1d/',
-  AVAILABILITY_API: 'https://work-decoded.vercel.app/api/availability',
+  AVAILABILITY_API: 'https://jocular-scone-5abeea.netlify.app/api/availability',
   GOOGLE_CALENDAR_ID: 'hello@workdecodedhq.com'
 };
 
@@ -510,12 +676,73 @@ const pkgData = {
    ------------------------------------------------------------ */
 function trackLegalLink(which) {
   legalLinksClicked[which] = true;
-  document.getElementById('check-' + which).classList.add('visited');
   // Hide the warning if both links are now clicked
   if (legalLinksClicked.privacy && legalLinksClicked.csa) {
     document.getElementById('legal-links-warning').style.display = 'none';
   }
 }
+
+/* ------------------------------------------------------------
+   LEGAL MODAL — Privacy Notice / Client Services Agreement
+   Fetches the live content from /api/legal/<slug> (which
+   server-side proxies the Squarespace page) and shows it in a
+   dismissable modal so users never leave the intake form.
+   ------------------------------------------------------------ */
+const legalContentCache = {};
+
+function openLegalModal(slug, title, trackKey, ev) {
+  // Prevent the default new-tab navigation
+  if (ev && ev.preventDefault) ev.preventDefault();
+  // Mark the link as clicked for the existing submission gate
+  trackLegalLink(trackKey);
+
+  const backdrop = document.getElementById('legal-modal-backdrop');
+  const body = document.getElementById('legal-modal-body');
+  const titleEl = document.getElementById('legal-modal-title');
+  const source = document.getElementById('legal-modal-source');
+
+  titleEl.textContent = title;
+  source.href = 'https://www.workdecodedhq.com/' + slug;
+  body.innerHTML = '<div class="legal-modal-loading"><span class="spinner"></span>Loading…</div>';
+  backdrop.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // Serve from cache if we've already fetched this slug
+  if (legalContentCache[slug]) {
+    body.innerHTML = legalContentCache[slug];
+    body.scrollTop = 0;
+    return false;
+  }
+
+  fetch('/api/legal/' + slug, { headers: { 'Accept': 'application/json' } })
+    .then(res => {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    })
+    .then(data => {
+      const html = (data && data.html) || '';
+      if (!html) throw new Error('Empty content');
+      legalContentCache[slug] = html;
+      body.innerHTML = html;
+      body.scrollTop = 0;
+    })
+    .catch(() => {
+      body.innerHTML = '<div class="legal-modal-error">Could not load this page right now. <a href="https://www.workdecodedhq.com/' + slug + '" target="_blank" rel="noopener">Open it on the website &rarr;</a></div>';
+    });
+
+  return false; // Block new-tab fallback when JS handler runs
+}
+
+function closeLegalModal() {
+  document.getElementById('legal-modal-backdrop').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && document.getElementById('legal-modal-backdrop').classList.contains('open')) {
+    closeLegalModal();
+  }
+});
 
 /* ------------------------------------------------------------
    CHANGE 1: COMPARISON TABLE — TIER SELECTION
@@ -525,12 +752,16 @@ function selectTier(tier) {
   selectedDate = null; selectedTime = null;
   availabilityCache = {};
 
-  // Update column highlighting
+  // Update column highlighting (table view) + card highlighting (mobile view)
   TIERS.forEach(t => {
     const col = document.getElementById('col-' + t);
     const btn = document.getElementById('btn-' + t);
+    const card = document.getElementById('card-' + t);
+    const cardBtn = document.getElementById('card-btn-' + t);
     col.classList.remove('selected', 'crisis-selected');
     btn.classList.remove('active');
+    if (card) card.classList.remove('selected', 'crisis-selected');
+    if (cardBtn) cardBtn.classList.remove('active');
     // Remove column cell highlighting
     document.querySelectorAll('.cell-' + t).forEach(cell => {
       cell.classList.remove('col-selected', 'col-crisis-selected');
@@ -539,14 +770,19 @@ function selectTier(tier) {
 
   const col = document.getElementById('col-' + tier);
   const btn = document.getElementById('btn-' + tier);
+  const card = document.getElementById('card-' + tier);
+  const cardBtn = document.getElementById('card-btn-' + tier);
   if (tier === 'crisis') {
     col.classList.add('crisis-selected');
+    if (card) card.classList.add('crisis-selected');
     document.querySelectorAll('.cell-crisis').forEach(cell => cell.classList.add('col-crisis-selected'));
   } else {
     col.classList.add('selected');
+    if (card) card.classList.add('selected');
     document.querySelectorAll('.cell-' + tier).forEach(cell => cell.classList.add('col-selected'));
   }
   btn.classList.add('active');
+  if (cardBtn) cardBtn.classList.add('active');
 
   const st = document.getElementById('summary-total');
   st.className = 'summary-total' + (tier === 'crisis' ? ' crisis-total' : '');
@@ -1060,11 +1296,64 @@ function clearForm() {
   document.getElementById('time-container').innerHTML = '';
   // Reset legal link tracking
   legalLinksClicked = { privacy: false, csa: false };
-  document.getElementById('check-privacy').classList.remove('visited');
-  document.getElementById('check-csa').classList.remove('visited');
   selectedTier = null; selectedPkg = null; urgencySelected = null;
   selectedDate = null; selectedTime = null; availabilityCache = {};
+  resetConsentGate();
 }
+
+/* ------------------------------------------------------------
+   CONSENT SCROLL GATE
+   Disable the consent checkbox until the user scrolls the
+   privacy/consent box to the bottom (or content already fits).
+   ------------------------------------------------------------ */
+function unlockConsent() {
+  const box = document.getElementById('consent-box');
+  const label = document.getElementById('consent-label');
+  const input = document.getElementById('consent');
+  const hint = document.getElementById('consent-hint');
+  if (!box || box.dataset.unlocked === '1') return;
+  box.dataset.unlocked = '1';
+  box.classList.add('read');
+  label.classList.remove('locked');
+  input.disabled = false;
+  hint.classList.add('hidden');
+}
+
+function resetConsentGate() {
+  const box = document.getElementById('consent-box');
+  const label = document.getElementById('consent-label');
+  const input = document.getElementById('consent');
+  const hint = document.getElementById('consent-hint');
+  if (!box) return;
+  box.dataset.unlocked = '0';
+  box.classList.remove('read');
+  box.scrollTop = 0;
+  label.classList.add('locked');
+  input.checked = false;
+  input.disabled = true;
+  hint.classList.remove('hidden');
+  initConsentGate();
+}
+
+function initConsentGate() {
+  const box = document.getElementById('consent-box');
+  if (!box) return;
+  // If content already fits without scrolling, unlock immediately
+  if (box.scrollHeight - box.clientHeight <= 4) {
+    unlockConsent();
+    return;
+  }
+  const onScroll = () => {
+    // 6px tolerance handles sub-pixel rounding on zoomed displays
+    if (box.scrollTop + box.clientHeight >= box.scrollHeight - 6) {
+      unlockConsent();
+      box.removeEventListener('scroll', onScroll);
+    }
+  };
+  box.addEventListener('scroll', onScroll, { passive: true });
+}
+
+document.addEventListener('DOMContentLoaded', initConsentGate);
 </script>
 </body>
 </html>
