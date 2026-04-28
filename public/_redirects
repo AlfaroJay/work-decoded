@@ -1,2 +1,7 @@
+# Subdomain routing — entire subdomain serves the matching form
+https://book.workdecodedhq.com/*        /intake-form.html       200!
+https://feedback.workdecodedhq.com/*    /feedback-form.html     200!
+
+# Clean URLs on the main host
 /book        /intake-form.html       200
 /feedback    /feedback-form.html     200
