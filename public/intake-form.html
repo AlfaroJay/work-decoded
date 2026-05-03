@@ -53,6 +53,9 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 .tier-card-badge{display:inline-block;font-size:10px;padding:3px 8px;border-radius:12px;letter-spacing:0.4px;background:rgba(230,57,70,0.15);color:#e63946;border:1px solid rgba(230,57,70,0.3);margin-bottom:10px;align-self:flex-start;font-weight:600;text-transform:uppercase}
 .tier-card-crisis{border-color:rgba(230,57,70,0.35)}
 .tier-card-crisis:hover{border-color:rgba(230,57,70,0.55)}
+.tier-card.locked-out,.discovery-cta.locked-out{opacity:0.35;pointer-events:none;filter:grayscale(0.6)}
+.pkg-code-hint-link{color:#40c9a2;text-decoration:underline}
+.pkg-code-hint-link:hover{color:#5fdcb3}
 .tier-select-btn{display:block;width:100%;padding:11px 14px;border:1px solid #40c9a2;border-radius:8px;color:#40c9a2;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;background:transparent;font-family:inherit;margin-top:auto}
 .tier-select-btn:hover{background:rgba(64,201,162,0.12)}
 .tier-select-btn.active{background:#40c9a2;color:#1a1a1a}
@@ -546,8 +549,25 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
     <div class="field">
       <label>Select your consultation type <span class="req">*</span></label>
 
+      <!-- Returning client? Code-first decision drives tier selection. -->
+      <div class="pkg-code-section" id="pkg-code-section">
+        <div class="field" style="margin-bottom:0">
+          <label>Are you a returning client with a package code?</label>
+          <div class="radio-group" style="flex-direction:row;gap:20px;margin-top:4px;flex-wrap:wrap">
+            <label><input type="radio" name="has-code" value="yes" onchange="togglePackageCode(true)"> Yes</label>
+            <label><input type="radio" name="has-code" value="no" onchange="togglePackageCode(false)"> No, I'm new</label>
+          </div>
+        </div>
+        <div class="field" id="pkg-code-input-field" style="display:none;margin-top:14px">
+          <label>Enter your package code</label>
+          <input type="text" id="pkg-code" placeholder="WD-XXXX-XXXX" autocomplete="off" oninput="onCodeInput(this)" onblur="validatePackageCode()"/>
+          <div class="hint" id="pkg-code-hint">If you've purchased a multi-session package, you received a code via email. Enter it here to use one of your pre-paid sessions. <a href="mailto:support@workdecodedhq.com?subject=Lost%20package%20code" class="pkg-code-hint-link">Lost your code?</a></div>
+          <div class="pkg-code-status" id="pkg-code-status"></div>
+        </div>
+      </div>
+
       <!-- 3-card tier comparison: Standard / Premier / Crisis. Discovery moves to the CTA below. -->
-      <div class="tier-cards-3">
+      <div class="tier-cards-3" style="margin-top:18px">
         <div class="tier-card" id="card-standard" onclick="selectTier('standard')">
           <div class="tier-card-name">STANDARD</div>
           <div class="tier-card-price">$100<span class="tier-card-price-sub">per session · 30 min</span></div>
@@ -595,23 +615,6 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
           <div class="discovery-cta-body">Book a free 15-minute Discovery call to talk through your situation and get matched with the right consultant.</div>
         </div>
         <button type="button" class="discovery-cta-btn" id="card-btn-discovery" onclick="selectTier('discovery')">Book free call</button>
-      </div>
-    </div>
-
-    <!-- Package code redemption (Standard/Premier only — appears after tier selected) -->
-    <div class="pkg-code-section" id="pkg-code-section" style="display:none">
-      <div class="field">
-        <label>Do you have a package code?</label>
-        <div class="radio-group" style="flex-direction:row;gap:20px;margin-top:4px;flex-wrap:wrap">
-          <label><input type="radio" name="has-code" value="yes" onchange="togglePackageCode(true)"> I have a package code</label>
-          <label><input type="radio" name="has-code" value="no" onchange="togglePackageCode(false)"> I'm purchasing a session (no code)</label>
-        </div>
-      </div>
-      <div class="field" id="pkg-code-input-field" style="display:none">
-        <label>Enter your package code</label>
-        <input type="text" id="pkg-code" placeholder="WD-XXXX-XXXX" autocomplete="off" oninput="onCodeInput(this)" onblur="validatePackageCode()"/>
-        <div class="hint" id="pkg-code-hint">If you've purchased a multi-session package, you received a code via email. Enter it here to use one of your pre-paid sessions.</div>
-        <div class="pkg-code-status" id="pkg-code-status"></div>
       </div>
     </div>
 
@@ -872,22 +875,6 @@ function selectTier(tier) {
 
   const st = document.getElementById('summary-total');
   st.className = 'summary-total' + (tier === 'crisis' ? ' crisis-total' : '');
-
-  // Package CODE redemption only available for Standard/Premier (existing pre-paid pack)
-  const codeSection = document.getElementById('pkg-code-section');
-  if (tier === 'standard' || tier === 'premier') {
-    codeSection.style.display = 'block';
-  } else {
-    codeSection.style.display = 'none';
-    // Reset any in-progress code entry
-    document.getElementsByName('has-code').forEach(r => r.checked = false);
-    document.getElementById('pkg-code-input-field').style.display = 'none';
-    document.getElementById('pkg-code').value = '';
-    document.getElementById('pkg-code-status').className = 'pkg-code-status';
-    document.getElementById('pkg-code-status').textContent = '';
-    packageCodeValid = null;
-    packageCodeData = null;
-  }
 
   if (tier === 'discovery') {
     document.getElementById('pkg-section').classList.remove('visible');
@@ -1256,6 +1243,24 @@ function toggleUnionHint() {
 /* ------------------------------------------------------------
    PACKAGE CODE REDEMPTION
    ------------------------------------------------------------ */
+function lockOtherTiers(activeTier) {
+  document.querySelectorAll('.tier-card').forEach(card => {
+    if (card.id === 'card-' + activeTier) {
+      card.classList.remove('locked-out');
+    } else {
+      card.classList.add('locked-out');
+    }
+  });
+  const discovery = document.getElementById('card-discovery');
+  if (discovery) discovery.classList.add('locked-out');
+}
+
+function unlockAllTiers() {
+  document.querySelectorAll('.tier-card').forEach(card => card.classList.remove('locked-out'));
+  const discovery = document.getElementById('card-discovery');
+  if (discovery) discovery.classList.remove('locked-out');
+}
+
 function togglePackageCode(hasCode) {
   const inputField = document.getElementById('pkg-code-input-field');
   const pkgSection = document.getElementById('pkg-section');
@@ -1265,6 +1270,8 @@ function togglePackageCode(hasCode) {
     pkgSection.classList.remove('visible');
     selectedPkg = null;
   } else {
+    // Unlock tier picker — user is purchasing fresh, not redeeming
+    unlockAllTiers();
     // Restore the new-pack purchase options for Standard/Premier
     if (selectedTier === 'standard' || selectedTier === 'premier') {
       pkgSection.classList.add('visible');
@@ -1318,12 +1325,15 @@ async function validatePackageCode() {
       const used = (typeof data.sessionsUsed === 'number') ? data.sessionsUsed : Math.max(0, purchased - remaining);
       const currentSession = used + 1;
       const afterBooking = Math.max(0, remaining - 1);
-      const tierMatch = data.tier && (data.tier.toLowerCase() === selectedTier);
-      if (data.tier && !tierMatch) {
-        status.className = 'pkg-code-status invalid';
-        status.textContent = '✗ This code is for a ' + data.tier + ' package, not ' + selectedTier + '. Switch tiers above to use it.';
-        packageCodeValid = false;
-        return;
+      // Code is the source of truth — drive tier selection from the code's tier
+      const codeTier = data.tier ? String(data.tier).toLowerCase() : null;
+      if (codeTier && (codeTier === 'standard' || codeTier === 'premier')) {
+        if (selectedTier !== codeTier) {
+          selectTier(codeTier);
+        }
+        lockOtherTiers(codeTier);
+        // Hide the new-pack purchase question — this is redemption, not purchase
+        document.getElementById('pkg-section').classList.remove('visible');
       }
       const tail = (afterBooking === 0)
         ? 'This is your final session in the package.'
@@ -1588,11 +1598,15 @@ function clearForm() {
   document.getElementById('pkg-section').classList.remove('visible');
   document.getElementById('summary-bar').classList.remove('visible');
   document.getElementById('schedule-section').classList.remove('visible');
-  // Hide all conditional fields added in the Doc 1 rewrite
-  ['pip-timeline-field','attorney-ack-field','other-outcome-field','pkg-code-section','pkg-code-input-field'].forEach(id => {
+  // Hide all conditional fields added in the Doc 1 rewrite.
+  // pkg-code-section is now always-visible (the "returning client?" entry-point question).
+  ['pip-timeline-field','attorney-ack-field','other-outcome-field','pkg-code-input-field'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
   });
+  // Reset the has-code radios + unlock all tier cards
+  document.getElementsByName('has-code').forEach(r => r.checked = false);
+  if (typeof unlockAllTiers === 'function') unlockAllTiers();
   document.getElementById('union-hint').style.display = 'none';
   document.getElementById('legal-alert').style.display = 'none';
   document.getElementById('pkg-code-status').className = 'pkg-code-status';
@@ -1752,23 +1766,14 @@ async function loadPrefill() {
       const res  = await fetch(CONFIG.VALIDATE_CODE_API + '?code=' + encodeURIComponent(code));
       const data = await res.json();
       if (data && data.valid && data.tier) {
-        const tier = String(data.tier).toLowerCase();
-        if (['standard','premier','crisis'].includes(tier)) {
-          // Open the matching tier card (also reveals package-code section)
-          if (typeof selectTier === 'function') selectTier(tier);
-
-          // Flip the "I have a code" radio + show input
-          setRadioIfEmpty('has-code', 'yes');
-          if (typeof togglePackageCode === 'function') togglePackageCode(true);
-
-          // Stamp the code value and run the same validation path
-          // the user would trigger on blur — this updates the
-          // summary and the "Session X of Y" status line.
-          const pkgInput = document.getElementById('pkg-code');
-          if (pkgInput) {
-            pkgInput.value = code;
-            if (typeof validatePackageCode === 'function') validatePackageCode();
-          }
+        // Flip "Yes" on the returning-client question and reveal the input.
+        // validatePackageCode() will drive tier selection from the code itself.
+        setRadioIfEmpty('has-code', 'yes');
+        if (typeof togglePackageCode === 'function') togglePackageCode(true);
+        const pkgInput = document.getElementById('pkg-code');
+        if (pkgInput) {
+          pkgInput.value = code;
+          if (typeof validatePackageCode === 'function') validatePackageCode();
         }
       }
     } catch (e) {
