@@ -30,62 +30,42 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 .hint{font-size:11px;color:#777;margin-top:4px;line-height:1.4}
 .char-count{font-size:11px;color:#666;text-align:right;margin-top:3px}
 
-/* ===== COMPARISON TABLE ===== */
-.tier-table-wrap{overflow-x:auto;margin-top:4px;-webkit-overflow-scrolling:touch}
-.tier-table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
-.tier-table th,.tier-table td{padding:10px 12px;text-align:center;border-bottom:1px solid #333}
-.tier-table thead th{background:#1a1a1a;color:#888;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;position:sticky;top:0}
-.tier-table thead th:first-child{text-align:left;color:#999}
-.tier-table tbody td:first-child{text-align:left;color:#ccc;font-weight:500;font-size:12px;white-space:nowrap}
-.tier-table tbody td{color:#e8e8e8}
-.tier-col-header{cursor:pointer;padding:10px 8px !important;transition:all 0.15s;border-radius:8px 8px 0 0;min-width:110px}
-.tier-col-header:hover{background:#2a2a2a}
-.tier-col-header.selected{background:#1e2e2a;box-shadow:inset 0 -2px 0 #40c9a2}
-.tier-col-header.crisis-selected{background:#2a1e1e;box-shadow:inset 0 -2px 0 #e63946}
-.tier-col-name{font-size:14px;font-weight:600;color:#fff;margin-bottom:2px}
-.tier-col-price{font-size:20px;font-weight:700;color:#40c9a2}
-.tier-col-price.crisis-price{color:#e63946}
-.tier-col-price.free-price{color:#40c9a2}
-.tier-col-sub{font-size:10px;color:#888;margin-top:1px}
-.tier-col-badge{display:inline-block;font-size:9px;padding:2px 6px;border-radius:12px;margin-top:4px}
-.tier-col-badge.badge-free{background:rgba(64,201,162,0.15);color:#40c9a2;border:1px solid rgba(64,201,162,0.3)}
-.tier-col-badge.badge-crisis{background:rgba(230,57,70,0.15);color:#e63946;border:1px solid rgba(230,57,70,0.3)}
-.tier-table .col-selected{background:rgba(64,201,162,0.05)}
-.tier-table .col-crisis-selected{background:rgba(230,57,70,0.05)}
-.tier-table .row-feature td{font-size:12px;color:#bbb}
-.tier-check{color:#40c9a2;font-weight:600}
-.tier-cross{color:#555}
-.tier-table tbody tr:last-child td{border-bottom:none}
-.tier-select-btn{display:inline-block;padding:5px 14px;border:1px solid #40c9a2;border-radius:6px;color:#40c9a2;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.15s;background:transparent}
-.tier-select-btn:hover{background:rgba(64,201,162,0.1)}
+/* ===== TIER CARDS (3-up grid, responsive) ===== */
+.tier-cards-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:6px}
+.tier-card{display:flex;flex-direction:column;border:1px solid #333;border-radius:12px;padding:18px 18px 16px;background:#1a1a1a;transition:border-color 0.15s,background 0.15s,box-shadow 0.15s;cursor:pointer;position:relative}
+.tier-card:hover{border-color:#555}
+.tier-card.selected{border:2px solid #40c9a2;background:#1e2e2a;padding:17px 17px 15px}
+.tier-card.crisis-selected{border:2px solid #e63946;background:#2a1e1e;padding:17px 17px 15px}
+.tier-card-name{font-size:13px;font-weight:700;color:#fff;letter-spacing:1.4px;margin-bottom:6px}
+.tier-card-price{font-size:32px;font-weight:700;color:#40c9a2;line-height:1;margin-bottom:14px}
+.tier-card-price-crisis{color:#e63946}
+.tier-card-price-sub{display:block;font-size:11px;font-weight:400;color:#888;margin-top:5px;letter-spacing:0.3px}
+.tier-card-desc{font-size:13px;color:#bbb;line-height:1.55;margin:0 0 14px}
+.tier-card-desc em{color:#fff;font-style:italic}
+.tier-card-features{list-style:none;padding:0;margin:0 0 16px;flex:1}
+.tier-card-features li{position:relative;padding:5px 0 5px 22px;font-size:12.5px;color:#cfcfcf;line-height:1.5}
+.tier-card-features li:before{content:"\2713";position:absolute;left:0;top:5px;color:#40c9a2;font-weight:700;font-size:13px}
+.tier-card-crisis .tier-card-features li:before{color:#e63946}
+.tier-card-badge{display:inline-block;font-size:10px;padding:3px 8px;border-radius:12px;letter-spacing:0.4px;background:rgba(230,57,70,0.15);color:#e63946;border:1px solid rgba(230,57,70,0.3);margin-bottom:10px;align-self:flex-start;font-weight:600;text-transform:uppercase}
+.tier-card-crisis{border-color:rgba(230,57,70,0.35)}
+.tier-card-crisis:hover{border-color:rgba(230,57,70,0.55)}
+.tier-select-btn{display:block;width:100%;padding:11px 14px;border:1px solid #40c9a2;border-radius:8px;color:#40c9a2;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;background:transparent;font-family:inherit;margin-top:auto}
+.tier-select-btn:hover{background:rgba(64,201,162,0.12)}
 .tier-select-btn.active{background:#40c9a2;color:#1a1a1a}
-.tier-select-btn.crisis-btn{border-color:#e63946;color:#e63946}
-.tier-select-btn.crisis-btn:hover{background:rgba(230,57,70,0.1)}
-.tier-select-btn.crisis-btn.active{background:#e63946;color:#fff}
+.tier-select-btn-crisis{border-color:#e63946;color:#e63946}
+.tier-select-btn-crisis:hover{background:rgba(230,57,70,0.12)}
+.tier-select-btn-crisis.active{background:#e63946;color:#fff}
 
-/* ===== TIER CARDS (mobile alternative to table) ===== */
-.tier-cards{display:none;flex-direction:column;gap:12px;margin-top:8px}
-.tier-card{border:1px solid #333;border-radius:10px;padding:14px 16px;background:#1a1a1a;transition:all 0.15s;cursor:pointer}
-.tier-card:hover{border-color:#444}
-.tier-card.selected{border:2px solid #40c9a2;background:#1e2e2a;padding:13px 15px}
-.tier-card.crisis-selected{border:2px solid #e63946;background:#2a1e1e;padding:13px 15px}
-.tier-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px}
-.tier-card-name{font-size:15px;font-weight:600;color:#fff;line-height:1.2}
-.tier-card-sub{font-size:11px;color:#888;margin-top:2px}
-.tier-card-badge{display:inline-block;font-size:9px;padding:2px 6px;border-radius:12px;margin-top:6px;letter-spacing:0.3px}
-.tier-card-badge.badge-free{background:rgba(64,201,162,0.15);color:#40c9a2;border:1px solid rgba(64,201,162,0.3)}
-.tier-card-badge.badge-crisis{background:rgba(230,57,70,0.15);color:#e63946;border:1px solid rgba(230,57,70,0.3)}
-.tier-card-price{font-size:22px;font-weight:700;color:#40c9a2;line-height:1;text-align:right;white-space:nowrap}
-.tier-card-price.crisis{color:#e63946}
-.tier-card-price-sub{font-size:10px;color:#888;font-weight:400;display:block;margin-top:2px}
-.tier-card-features{list-style:none;padding:0;margin:0 0 12px}
-.tier-card-features li{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;font-size:12px;color:#bbb;border-bottom:1px solid #2a2a2a}
-.tier-card-features li:last-child{border-bottom:none}
-.tier-card-features .feat-label{color:#888}
-.tier-card-features .feat-value{color:#e8e8e8;font-weight:500;text-align:right}
-.tier-card-features .feat-value.yes{color:#40c9a2}
-.tier-card-features .feat-value.no{color:#555}
-.tier-card .tier-select-btn{width:100%;padding:10px 14px;font-size:13px}
+/* Discovery CTA: free 15-min call as a separate banner below paid tiers */
+.discovery-cta{margin-top:18px;padding:18px 22px;background:#1a1a1a;border:1px solid #333;border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:18px;transition:border-color 0.15s,background 0.15s}
+.discovery-cta:hover{border-color:#444}
+.discovery-cta.selected{border:2px solid #40c9a2;background:#1e2e2a;padding:17px 21px}
+.discovery-cta-text{flex:1;min-width:0}
+.discovery-cta-title{font-size:14px;font-weight:600;color:#fff;margin-bottom:4px}
+.discovery-cta-body{font-size:12.5px;color:#aaa;line-height:1.5}
+.discovery-cta-btn{flex-shrink:0;padding:11px 22px;border:1px solid #40c9a2;border-radius:8px;background:transparent;color:#40c9a2;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s;white-space:nowrap}
+.discovery-cta-btn:hover{background:rgba(64,201,162,0.12)}
+.discovery-cta-btn.active{background:#40c9a2;color:#1a1a1a}
 
 /* Packages */
 .pkg-section{margin-top:1rem;display:none}
@@ -105,12 +85,6 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 .radio-group label{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:400;cursor:pointer;color:#ccc}
 .radio-group input{width:auto;accent-color:#40c9a2}
 
-/* Urgency */
-.urgency-bar{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
-.urgency-btn{flex:1;min-width:120px;padding:8px 4px;border:1px solid #444;border-radius:8px;font-size:12px;cursor:pointer;text-align:center;background:#1a1a1a;color:#888;font-family:'Helvetica Neue',Arial,sans-serif}
-.urgency-btn.sel-low{border-color:#40c9a2;background:rgba(64,201,162,0.1);color:#40c9a2;font-weight:500}
-.urgency-btn.sel-med{border-color:#f0a500;background:rgba(240,165,0,0.1);color:#f0a500;font-weight:500}
-.urgency-btn.sel-high{border-color:#e63946;background:rgba(230,57,70,0.1);color:#e63946;font-weight:500}
 
 /* Consent */
 .consent-box{background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:12px;max-height:120px;overflow-y:auto;font-size:12px;color:#999;line-height:1.6;margin-bottom:6px;position:relative;transition:border-color 0.2s}
@@ -165,9 +139,12 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 }
 
 /* Summary */
-.summary-bar{background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:10px 14px;font-size:13px;color:#ccc;margin-top:1rem;display:none}
-.summary-bar.visible{display:flex;justify-content:space-between;align-items:center}
-.summary-total{font-size:16px;font-weight:600;color:#40c9a2}
+.summary-bar{background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:12px 16px;font-size:13px;color:#ccc;margin-top:1rem;display:none}
+.summary-bar.visible{display:flex;align-items:center;gap:12px}
+.summary-cart-icon{color:#40c9a2;display:inline-flex;align-items:center;flex-shrink:0}
+.summary-cart-icon svg{display:block}
+.summary-bar.visible #summary-label{flex:1;color:#e8e8e8}
+.summary-total{font-size:17px;font-weight:700;color:#40c9a2;flex-shrink:0}
 .summary-total.crisis-total{color:#e63946}
 
 /* ===== DATE/TIME PICKER ===== */
@@ -230,19 +207,21 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
   .two-col{grid-template-columns:1fr;gap:10px}
   .radio-group{gap:8px}
   .radio-group label{font-size:14px;padding:4px 0}
-  /* Tier comparison: hide table, show stacked cards */
-  .tier-table-wrap{display:none}
-  .tier-cards{display:flex;gap:10px}
-  .tier-card{padding:14px}
-  .tier-card-name{font-size:14px}
-  .tier-card-price{font-size:20px}
-  .tier-card-features li{padding:5px 0;font-size:11.5px}
+  /* Tier cards stack to single column on mobile */
+  .tier-cards-3{grid-template-columns:1fr;gap:12px;margin-top:4px}
+  .tier-card{padding:16px}
+  .tier-card.selected,.tier-card.crisis-selected{padding:15px}
+  .tier-card-name{font-size:13px}
+  .tier-card-price{font-size:28px;margin-bottom:12px}
+  .tier-card-desc{font-size:13px}
+  .tier-card-features li{padding:5px 0 5px 22px;font-size:12.5px}
+  /* Discovery CTA stacks on mobile */
+  .discovery-cta{flex-direction:column;align-items:stretch;text-align:left;padding:16px 18px}
+  .discovery-cta.selected{padding:15px 17px}
+  .discovery-cta-btn{width:100%;padding:13px}
   /* Packages stack */
   .pkg-grid{grid-template-columns:1fr;gap:8px}
   .pkg-card{padding:12px 14px}
-  /* Urgency: 2x2 grid, smaller text */
-  .urgency-bar{gap:6px}
-  .urgency-btn{flex:1 1 calc(50% - 6px);min-width:0;font-size:11.5px;padding:11px 6px;line-height:1.3}
   /* Date / time pickers */
   .date-grid{grid-template-columns:repeat(3,1fr);gap:6px}
   .date-btn{padding:10px 4px;font-size:12px}
@@ -268,7 +247,6 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 @media(max-width:360px){
   body{padding:0.75rem 0.625rem}
   .section{padding:0.875rem}
-  .urgency-btn{font-size:10.5px;padding:10px 4px}
   .tier-card-features li{font-size:11px}
   .date-grid{grid-template-columns:repeat(3,1fr);gap:5px}
   .date-btn{font-size:11px;padding:9px 2px}
@@ -304,10 +282,13 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 
 /* ===== PACKAGE CODE SECTION ===== */
 .pkg-code-section{margin-top:1rem;padding:14px;background:#1a1a1a;border:1px solid #333;border-radius:10px}
-.pkg-code-status{font-size:13px;margin-top:8px;padding:8px 12px;border-radius:6px;display:none}
+.pkg-code-status{font-size:13px;margin-top:10px;padding:12px 16px;border-radius:10px;display:none;line-height:1.5}
 .pkg-code-status.valid{display:block;background:rgba(64,201,162,0.1);border:1px solid rgba(64,201,162,0.35);color:#40c9a2}
 .pkg-code-status.invalid{display:block;background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.35);color:#e63946}
 .pkg-code-status.checking{display:block;background:#1f1f1f;border:1px solid #333;color:#888}
+.pkg-code-status-headline{font-size:15px;font-weight:600;color:#40c9a2;margin-bottom:4px;letter-spacing:0.2px}
+.pkg-code-status-detail{font-size:13px;color:#bdd9cf}
+.pkg-code-status-detail strong{color:#fff;font-weight:700}
 #pkg-code{font-family:'Menlo','Monaco',monospace;letter-spacing:1px;text-transform:uppercase}
 </style>
 </head>
@@ -335,18 +316,6 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
     <div class="two-col">
       <div class="field"><label>Email address <span class="req">*</span></label><input type="email" id="email" placeholder="you@email.com"/></div>
       <div class="field"><label>Phone number</label><input type="tel" id="phone" placeholder="(000) 000-0000"/></div>
-    </div>
-    <div class="field">
-      <label>Are you a returning client?</label>
-      <div class="radio-group" style="flex-direction:row;gap:20px;margin-top:4px">
-        <label><input type="radio" name="returning" value="yes" onchange="togglePreferred(true)"> Yes</label>
-        <label><input type="radio" name="returning" value="no" onchange="togglePreferred(false)"> No</label>
-      </div>
-    </div>
-    <div class="field" id="preferred-field" style="display:none">
-      <label>Preferred consultant (if you have one)</label>
-      <input type="text" id="preferred" placeholder="Consultant's name"/>
-      <div class="hint">Leave blank if you have no preference — we'll match you based on availability and expertise.</div>
     </div>
     <div class="two-col">
       <div class="field">
@@ -382,7 +351,7 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 
   <!-- SECTION 2: EMPLOYMENT -->
   <div class="section">
-    <div class="section-title">Your employment</div>
+    <div class="section-title">Your employment information</div>
     <div class="two-col">
       <div class="field">
         <label>Employer name</label>
@@ -436,44 +405,19 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
   <div class="section">
     <div class="section-title">Your workplace situation</div>
     <div class="field">
-      <label>What service do you need help with today? <span class="req">*</span></label>
-      <select id="issue-type" onchange="toggleOtherIssue()">
-        <option value="">Select one</option>
-        <option>Resume Review / Interview Prep</option>
-        <option>Interview Decoded</option>
-        <option>Know Your Worth, Get Your Worth</option>
-        <option>Surviving Performance Issues</option>
-        <option>Level Up at Work</option>
-        <option>Fix It or Leave It?</option>
-        <option>Set Boundaries That Stick</option>
-        <option>Network Like a Human</option>
-        <option>Make the Leap</option>
-        <option>Exit on Your Terms</option>
-        <option>When You Have to Deal with HR</option>
-        <option>You Just Got Promoted—Now What?</option>
-        <option>Not sure / Need help determining</option>
-        <option>Other</option>
-      </select>
-    </div>
-    <div class="field" id="other-issue-field" style="display:none">
-      <label>Briefly describe what you need help with</label>
-      <textarea id="other-issue" maxlength="500" placeholder="100 words or less" oninput="updateCount(this,'other-issue-count')"></textarea>
-      <div class="char-count"><span id="other-issue-count">0</span>/500</div>
-    </div>
-    <div class="field">
       <label>Please tell us about your situation in detail <span class="req">*</span></label>
       <textarea id="situation" maxlength="3000" placeholder="What's happening, key dates, people involved (use titles like 'my manager'), what you've done so far, what concerns you most." oninput="updateCount(this,'sit-count')"></textarea>
       <div class="char-count"><span id="sit-count">0</span>/3000</div>
       <div class="hint">Confidential — only shared with your assigned consultant.</div>
     </div>
     <div class="field">
-      <label>Urgency level <span class="req">*</span></label>
-      <div class="urgency-bar">
-        <button type="button" class="urgency-btn" onclick="setUrgency('low',this)">Low — no immediate deadline</button>
-        <button type="button" class="urgency-btn" onclick="setUrgency('medium',this)">Medium — within 2 weeks</button>
-        <button type="button" class="urgency-btn" onclick="setUrgency('high',this)">High — within 48–72 hours</button>
-        <button type="button" class="urgency-btn" onclick="setUrgency('crisis',this)">Crisis — today or tomorrow</button>
-      </div>
+      <label>How urgent is your situation? <span class="req">*</span></label>
+      <select id="urgency" onchange="onUrgencyChange()">
+        <option value="">Select one</option>
+        <option value="Immediate">Immediate — happening this week, need help ASAP</option>
+        <option value="Soon">Soon — within the next 2-4 weeks</option>
+        <option value="Planning ahead">Planning ahead — no immediate deadline</option>
+      </select>
       <div class="hint" id="urgency-hint" style="display:none"></div>
     </div>
     <div class="field">
@@ -553,7 +497,7 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
         <label><input type="checkbox" name="legal-cat" value="Not sure" onchange="updateLegalAlert()"> Not sure</label>
       </div>
       <div class="legal-alert" id="legal-alert" style="display:none">
-        <strong>&#9888; Heads up:</strong> Your situation may have legal implications. Work Decoded provides workplace guidance and advocacy, not legal advice. We can still help you navigate strategically, but legal counsel is important for situations involving potential discrimination, harassment, retaliation, or wrongful termination.
+        <strong>&#9888; Heads up:</strong> Work Decoded provides strategic HR guidance and workplace advocacy — not legal advice. If your situation involves potential discrimination, harassment, retaliation, or wrongful termination, we'll help you navigate it strategically and let you know when consulting an employment attorney is in your best interest.
       </div>
     </div>
   </div>
@@ -589,182 +533,55 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
     <div class="field">
       <label>Select your consultation type <span class="req">*</span></label>
 
-      <!-- CHANGE 1: Comparison table replaces tier cards -->
-      <div class="tier-table-wrap">
-        <table class="tier-table" id="tier-table">
-          <thead>
-            <tr>
-              <th></th>
-              <th class="tier-col-header" id="col-discovery" onclick="selectTier('discovery')">
-                <div class="tier-col-name">Discovery</div>
-                <div class="tier-col-price free-price">Free</div>
-                <div class="tier-col-sub">15-min call</div>
-                <div class="tier-col-badge badge-free">No charge</div>
-              </th>
-              <th class="tier-col-header" id="col-standard" onclick="selectTier('standard')">
-                <div class="tier-col-name">Standard</div>
-                <div class="tier-col-price">$100</div>
-                <div class="tier-col-sub">per session</div>
-              </th>
-              <th class="tier-col-header" id="col-premier" onclick="selectTier('premier')">
-                <div class="tier-col-name">Premier</div>
-                <div class="tier-col-price">$125</div>
-                <div class="tier-col-sub">per session</div>
-              </th>
-              <th class="tier-col-header" id="col-crisis" onclick="selectTier('crisis')">
-                <div class="tier-col-name">Crisis</div>
-                <div class="tier-col-price crisis-price">$175</div>
-                <div class="tier-col-sub">per session</div>
-                <div class="tier-col-badge badge-crisis">Within 24 hrs</div>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="row-feature">
-              <td>Duration</td>
-              <td class="cell-discovery">15 minutes</td>
-              <td class="cell-standard">30 minutes</td>
-              <td class="cell-premier">30 minutes</td>
-              <td class="cell-crisis">30 minutes</td>
-            </tr>
-            <tr class="row-feature">
-              <td>Best for</td>
-              <td class="cell-discovery">Exploring fit</td>
-              <td class="cell-standard">General guidance</td>
-              <td class="cell-premier">Complex situations</td>
-              <td class="cell-crisis">Urgent matters</td>
-            </tr>
-            <tr class="row-feature">
-              <td>Scheduling</td>
-              <td class="cell-discovery">Next 10 biz days</td>
-              <td class="cell-standard">Next 10 biz days</td>
-              <td class="cell-premier">Next 10 biz days</td>
-              <td class="cell-crisis">Today + next 2 days</td>
-            </tr>
-            <tr class="row-feature">
-              <td>3-pack (save 10%)</td>
-              <td class="cell-discovery"><span class="tier-cross">—</span></td>
-              <td class="cell-standard"><span class="tier-check">$270</span></td>
-              <td class="cell-premier"><span class="tier-check">$337.50</span></td>
-              <td class="cell-crisis"><span class="tier-cross">—</span></td>
-            </tr>
-            <tr class="row-feature">
-              <td>5-pack (save 10%)</td>
-              <td class="cell-discovery"><span class="tier-cross">—</span></td>
-              <td class="cell-standard"><span class="tier-check">$450</span></td>
-              <td class="cell-premier"><span class="tier-check">$562.50</span></td>
-              <td class="cell-crisis"><span class="tier-cross">—</span></td>
-            </tr>
-            <tr class="row-feature">
-              <td>Document review</td>
-              <td class="cell-discovery"><span class="tier-cross">—</span></td>
-              <td class="cell-standard"><span class="tier-cross">—</span></td>
-              <td class="cell-premier"><span class="tier-check">&#10003;</span></td>
-              <td class="cell-crisis"><span class="tier-check">&#10003;</span></td>
-            </tr>
-            <tr class="row-feature">
-              <td>Priority scheduling</td>
-              <td class="cell-discovery"><span class="tier-cross">—</span></td>
-              <td class="cell-standard"><span class="tier-cross">—</span></td>
-              <td class="cell-premier"><span class="tier-check">&#10003;</span></td>
-              <td class="cell-crisis"><span class="tier-check">&#10003;</span></td>
-            </tr>
-            <tr>
-              <td></td>
-              <td class="cell-discovery"><button type="button" class="tier-select-btn" id="btn-discovery" onclick="selectTier('discovery')">Select</button></td>
-              <td class="cell-standard"><button type="button" class="tier-select-btn" id="btn-standard" onclick="selectTier('standard')">Select</button></td>
-              <td class="cell-premier"><button type="button" class="tier-select-btn" id="btn-premier" onclick="selectTier('premier')">Select</button></td>
-              <td class="cell-crisis"><button type="button" class="tier-select-btn crisis-btn" id="btn-crisis" onclick="selectTier('crisis')">Select</button></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Mobile-only stacked cards (mirror of table data) -->
-      <div class="tier-cards" id="tier-cards">
-
-        <div class="tier-card" id="card-discovery" onclick="selectTier('discovery')">
-          <div class="tier-card-head">
-            <div>
-              <div class="tier-card-name">Discovery</div>
-              <div class="tier-card-sub">15-min call</div>
-              <div class="tier-card-badge badge-free">No charge</div>
-            </div>
-            <div class="tier-card-price">Free<span class="tier-card-price-sub">no charge</span></div>
-          </div>
-          <ul class="tier-card-features">
-            <li><span class="feat-label">Duration</span><span class="feat-value">15 minutes</span></li>
-            <li><span class="feat-label">Best for</span><span class="feat-value">Exploring fit</span></li>
-            <li><span class="feat-label">Scheduling</span><span class="feat-value">Next 10 biz days</span></li>
-            <li><span class="feat-label">3-pack (save 10%)</span><span class="feat-value no">—</span></li>
-            <li><span class="feat-label">5-pack (save 10%)</span><span class="feat-value no">—</span></li>
-            <li><span class="feat-label">Document review</span><span class="feat-value no">—</span></li>
-            <li><span class="feat-label">Priority scheduling</span><span class="feat-value no">—</span></li>
-          </ul>
-          <button type="button" class="tier-select-btn" id="card-btn-discovery" onclick="event.stopPropagation();selectTier('discovery')">Select</button>
-        </div>
-
+      <!-- 3-card tier comparison: Standard / Premier / Crisis. Discovery moves to the CTA below. -->
+      <div class="tier-cards-3">
         <div class="tier-card" id="card-standard" onclick="selectTier('standard')">
-          <div class="tier-card-head">
-            <div>
-              <div class="tier-card-name">Standard</div>
-              <div class="tier-card-sub">per session</div>
-            </div>
-            <div class="tier-card-price">$100<span class="tier-card-price-sub">30 min</span></div>
-          </div>
+          <div class="tier-card-name">STANDARD</div>
+          <div class="tier-card-price">$100<span class="tier-card-price-sub">per session · 30 min</span></div>
+          <p class="tier-card-desc">Everyday workplace guidance — wage and hour violations, job misclassification, promotion, benefits (leave, disability, accommodations, etc.), preparing for conversations with HR or management, and building healthy work-life boundaries.</p>
           <ul class="tier-card-features">
-            <li><span class="feat-label">Duration</span><span class="feat-value">30 minutes</span></li>
-            <li><span class="feat-label">Best for</span><span class="feat-value">General guidance</span></li>
-            <li><span class="feat-label">Scheduling</span><span class="feat-value">Next 10 biz days</span></li>
-            <li><span class="feat-label">3-pack (save 10%)</span><span class="feat-value yes">$270</span></li>
-            <li><span class="feat-label">5-pack (save 10%)</span><span class="feat-value yes">$450</span></li>
-            <li><span class="feat-label">Document review</span><span class="feat-value no">—</span></li>
-            <li><span class="feat-label">Priority scheduling</span><span class="feat-value no">—</span></li>
+            <li>Schedule within next 10 business days</li>
+            <li>3-session pack: $270 (save 10%)</li>
+            <li>5-session pack: $450 (save 10%)</li>
           </ul>
-          <button type="button" class="tier-select-btn" id="card-btn-standard" onclick="event.stopPropagation();selectTier('standard')">Select</button>
+          <button type="button" class="tier-select-btn" id="card-btn-standard" onclick="event.stopPropagation();selectTier('standard')">Select Standard</button>
         </div>
 
         <div class="tier-card" id="card-premier" onclick="selectTier('premier')">
-          <div class="tier-card-head">
-            <div>
-              <div class="tier-card-name">Premier</div>
-              <div class="tier-card-sub">per session</div>
-            </div>
-            <div class="tier-card-price">$125<span class="tier-card-price-sub">30 min</span></div>
-          </div>
+          <div class="tier-card-name">PREMIER</div>
+          <div class="tier-card-price">$125<span class="tier-card-price-sub">per session · 30 min</span></div>
+          <p class="tier-card-desc">Support for complex, high-stakes situations — severance, transition agreements, separation agreements, discrimination, harassment, hostile work environment, retaliation, whistleblowing, workplace investigations, performance management (PIP, demotion, probation), and salary negotiation.</p>
           <ul class="tier-card-features">
-            <li><span class="feat-label">Duration</span><span class="feat-value">30 minutes</span></li>
-            <li><span class="feat-label">Best for</span><span class="feat-value">Complex situations</span></li>
-            <li><span class="feat-label">Scheduling</span><span class="feat-value">Next 10 biz days</span></li>
-            <li><span class="feat-label">3-pack (save 10%)</span><span class="feat-value yes">$337.50</span></li>
-            <li><span class="feat-label">5-pack (save 10%)</span><span class="feat-value yes">$562.50</span></li>
-            <li><span class="feat-label">Document review</span><span class="feat-value yes">&#10003;</span></li>
-            <li><span class="feat-label">Priority scheduling</span><span class="feat-value yes">&#10003;</span></li>
+            <li>Schedule within next 10 business days</li>
+            <li>Document review included</li>
+            <li>Priority scheduling</li>
+            <li>3-session pack: $337.50 (save 10%)</li>
+            <li>5-session pack: $562.50 (save 10%)</li>
           </ul>
-          <button type="button" class="tier-select-btn" id="card-btn-premier" onclick="event.stopPropagation();selectTier('premier')">Select</button>
+          <button type="button" class="tier-select-btn" id="card-btn-premier" onclick="event.stopPropagation();selectTier('premier')">Select Premier</button>
         </div>
 
-        <div class="tier-card" id="card-crisis" onclick="selectTier('crisis')">
-          <div class="tier-card-head">
-            <div>
-              <div class="tier-card-name">Crisis</div>
-              <div class="tier-card-sub">per session</div>
-              <div class="tier-card-badge badge-crisis">Within 24 hrs</div>
-            </div>
-            <div class="tier-card-price crisis">$175<span class="tier-card-price-sub">30 min</span></div>
-          </div>
+        <div class="tier-card tier-card-crisis" id="card-crisis" onclick="selectTier('crisis')">
+          <div class="tier-card-badge">Within 24 hours</div>
+          <div class="tier-card-name">CRISIS</div>
+          <div class="tier-card-price tier-card-price-crisis">$175<span class="tier-card-price-sub">per session · 30 min</span></div>
+          <p class="tier-card-desc">When you need answers <em>now</em>. Connect with a consultant within 24 hours for urgent, time-sensitive situations that can't wait.</p>
           <ul class="tier-card-features">
-            <li><span class="feat-label">Duration</span><span class="feat-value">30 minutes</span></li>
-            <li><span class="feat-label">Best for</span><span class="feat-value">Urgent matters</span></li>
-            <li><span class="feat-label">Scheduling</span><span class="feat-value">Today + next 2 days</span></li>
-            <li><span class="feat-label">3-pack (save 10%)</span><span class="feat-value no">—</span></li>
-            <li><span class="feat-label">5-pack (save 10%)</span><span class="feat-value no">—</span></li>
-            <li><span class="feat-label">Document review</span><span class="feat-value yes">&#10003;</span></li>
-            <li><span class="feat-label">Priority scheduling</span><span class="feat-value yes">&#10003;</span></li>
+            <li>Today + next 2 business days</li>
+            <li>Document review included</li>
+            <li>Priority scheduling</li>
           </ul>
-          <button type="button" class="tier-select-btn crisis-btn" id="card-btn-crisis" onclick="event.stopPropagation();selectTier('crisis')">Select</button>
+          <button type="button" class="tier-select-btn tier-select-btn-crisis" id="card-btn-crisis" onclick="event.stopPropagation();selectTier('crisis')">Select Crisis</button>
         </div>
+      </div>
 
+      <!-- Discovery: free 15-min consultation as a CTA below the paid tiers -->
+      <div class="discovery-cta" id="card-discovery">
+        <div class="discovery-cta-text">
+          <div class="discovery-cta-title">Not sure which tier fits your situation?</div>
+          <div class="discovery-cta-body">Book a free 15-minute Discovery call to talk through your situation and get matched with the right consultant.</div>
+        </div>
+        <button type="button" class="discovery-cta-btn" id="card-btn-discovery" onclick="selectTier('discovery')">Book free call</button>
       </div>
     </div>
 
@@ -793,6 +610,13 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
     </div>
 
     <div class="summary-bar" id="summary-bar">
+      <span class="summary-cart-icon" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="20" cy="21" r="1"></circle>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg>
+      </span>
       <span id="summary-label">1 session selected</span>
       <span class="summary-total" id="summary-total"></span>
     </div>
@@ -1007,43 +831,29 @@ document.addEventListener('keydown', function(e) {
 });
 
 /* ------------------------------------------------------------
-   CHANGE 1: COMPARISON TABLE — TIER SELECTION
+   TIER SELECTION (3-card grid for Standard/Premier/Crisis +
+   Discovery as a CTA banner below)
    ------------------------------------------------------------ */
 function selectTier(tier) {
   selectedTier = tier; selectedPkg = null;
   selectedDate = null; selectedTime = null;
   availabilityCache = {};
 
-  // Update column highlighting (table view) + card highlighting (mobile view)
+  // Clear all card + button selection state
   TIERS.forEach(t => {
-    const col = document.getElementById('col-' + t);
-    const btn = document.getElementById('btn-' + t);
     const card = document.getElementById('card-' + t);
     const cardBtn = document.getElementById('card-btn-' + t);
-    col.classList.remove('selected', 'crisis-selected');
-    btn.classList.remove('active');
     if (card) card.classList.remove('selected', 'crisis-selected');
     if (cardBtn) cardBtn.classList.remove('active');
-    // Remove column cell highlighting
-    document.querySelectorAll('.cell-' + t).forEach(cell => {
-      cell.classList.remove('col-selected', 'col-crisis-selected');
-    });
   });
 
-  const col = document.getElementById('col-' + tier);
-  const btn = document.getElementById('btn-' + tier);
   const card = document.getElementById('card-' + tier);
   const cardBtn = document.getElementById('card-btn-' + tier);
   if (tier === 'crisis') {
-    col.classList.add('crisis-selected');
     if (card) card.classList.add('crisis-selected');
-    document.querySelectorAll('.cell-crisis').forEach(cell => cell.classList.add('col-crisis-selected'));
   } else {
-    col.classList.add('selected');
     if (card) card.classList.add('selected');
-    document.querySelectorAll('.cell-' + tier).forEach(cell => cell.classList.add('col-selected'));
   }
-  btn.classList.add('active');
   if (cardBtn) cardBtn.classList.add('active');
 
   const st = document.getElementById('summary-total');
@@ -1080,14 +890,23 @@ function selectTier(tier) {
 
   document.getElementById('time-container').innerHTML = '';
   document.getElementById('selected-datetime').classList.remove('visible');
-  if (urgencySelected) {
-    document.getElementById('schedule-section').classList.add('visible');
-    buildDateGrid();
-  } else {
-    document.getElementById('schedule-section').classList.add('visible');
-    document.getElementById('date-grid').innerHTML =
-      '<div class="no-slots" style="grid-column:1/-1">Please select an urgency level above to see available dates.</div>';
+
+  // If urgency hasn't been picked yet, default it to a sensible value so the calendar
+  // appears promptly: Crisis tier -> Immediate, all others -> Soon. User can change above.
+  if (!urgencySelected) {
+    urgencySelected = (tier === 'crisis') ? 'Immediate' : 'Soon';
+    const urgencySel = document.getElementById('urgency');
+    if (urgencySel) urgencySel.value = urgencySelected;
+    const hint = document.getElementById('urgency-hint');
+    if (hint) {
+      hint.textContent = (urgencySelected === 'Immediate')
+        ? 'Crisis-window scheduling auto-selected (today + next 2 business days). Change above if your situation isn\'t urgent.'
+        : 'Default urgency set to "Soon" — change above if this is more urgent.';
+      hint.style.display = 'block';
+    }
   }
+  document.getElementById('schedule-section').classList.add('visible');
+  buildDateGrid();
 }
 
 function buildPackages(tier) {
@@ -1126,22 +945,19 @@ function buildDateGrid() {
   const grid = document.getElementById('date-grid');
   grid.innerHTML = '';
 
-  const urgency = urgencySelected || 'medium';
+  const urgency = urgencySelected || 'Soon';
   let days;
-  if (urgency === 'crisis') {
+  if (urgency === 'Immediate') {
     days = getCrisisBusinessDays();
-  } else if (urgency === 'high') {
-    days = getNextBusinessDays(3);
   } else {
     days = getNextBusinessDays(10);
   }
 
   const intro = document.getElementById('schedule-intro');
   const introText = {
-    low:     'All times are shown in Eastern Time (ET). Sessions are available Monday – Friday, 9 AM – 5 PM.',
-    medium:  'All times are shown in Eastern Time (ET). Sessions are available Monday – Friday, 9 AM – 5 PM.',
-    high:    'Showing the nearest available dates for high-urgency scheduling. All times Eastern (ET).',
-    crisis:  'Showing the earliest available slots for crisis-level urgency — including today if hours remain. All times Eastern (ET).'
+    'Immediate':      'Showing the earliest available slots for immediate scheduling — including today if hours remain. All times Eastern (ET).',
+    'Soon':           'All times are shown in Eastern Time (ET). Sessions are available Monday – Friday, 9 AM – 5 PM.',
+    'Planning ahead': 'All times are shown in Eastern Time (ET). Sessions are available Monday – Friday, 9 AM – 5 PM.'
   };
   intro.textContent = introText[urgency];
 
@@ -1318,11 +1134,9 @@ function formatTime12(time24) {
 /* ------------------------------------------------------------
    URGENCY, TOGGLES, HELPERS
    ------------------------------------------------------------ */
-function setUrgency(level, el) {
-  urgencySelected = level;
-  document.querySelectorAll('.urgency-btn').forEach(b => b.className = 'urgency-btn');
-  const map = { low: 'sel-low', medium: 'sel-med', high: 'sel-high', crisis: 'sel-high' };
-  el.classList.add(map[level]);
+function onUrgencyChange() {
+  const level = document.getElementById('urgency').value;
+  urgencySelected = level || null;
 
   selectedDate = null;
   selectedTime = null;
@@ -1331,46 +1145,51 @@ function setUrgency(level, el) {
   document.getElementById('selected-datetime').classList.remove('visible');
 
   const hint = document.getElementById('urgency-hint');
+  if (!level) {
+    hint.style.display = 'none';
+    return;
+  }
+
   const hints = {
-    low:     'You\'ll see the next 10 business days when you select a session type below.',
-    medium:  'You\'ll see the next 10 business days when you select a session type below.',
-    high:    'We\'ll show the nearest 3 business days so you can get help quickly.',
-    crisis:  'Crisis session auto-selected — we\'ll show today (if slots remain) plus the next 2 business days.'
+    'Immediate':      'Crisis session auto-selected — we\'ll show today (if slots remain) plus the next 2 business days. Crisis pricing applies ($175).',
+    'Soon':           'You\'ll see the next 10 business days when you select a session type below.',
+    'Planning ahead': 'You\'ll see the next 10 business days when you select a session type below.'
   };
   hint.textContent = hints[level];
   hint.style.display = 'block';
 
-  if (level === 'crisis') {
+  if (level === 'Immediate') {
+    // Disable non-Crisis tiers visually + interactively
     ['discovery','standard','premier'].forEach(t => {
-      const col = document.getElementById('col-' + t);
-      const btn = document.getElementById('btn-' + t);
-      col.style.opacity = '0.35';
-      col.style.pointerEvents = 'none';
-      btn.style.opacity = '0.35';
-      btn.style.pointerEvents = 'none';
+      const card = document.getElementById('card-' + t);
+      if (card) {
+        card.style.opacity = '0.35';
+        card.style.pointerEvents = 'none';
+      }
     });
-    document.getElementById('col-crisis').style.opacity = '';
-    document.getElementById('col-crisis').style.pointerEvents = '';
-    document.getElementById('btn-crisis').style.opacity = '';
-    document.getElementById('btn-crisis').style.pointerEvents = '';
+    const crisisCard = document.getElementById('card-crisis');
+    if (crisisCard) {
+      crisisCard.style.opacity = '';
+      crisisCard.style.pointerEvents = '';
+    }
     selectTier('crisis');
   } else {
+    // Re-enable all tier cards
     TIERS.forEach(t => {
-      const col = document.getElementById('col-' + t);
-      const btn = document.getElementById('btn-' + t);
-      col.style.opacity = '';
-      col.style.pointerEvents = '';
-      btn.style.opacity = '';
-      btn.style.pointerEvents = '';
+      const card = document.getElementById('card-' + t);
+      if (card) {
+        card.style.opacity = '';
+        card.style.pointerEvents = '';
+      }
     });
+    // If user had Crisis tier auto-selected from a prior 'Immediate' urgency, clear it
     if (selectedTier === 'crisis') {
       selectedTier = null; selectedPkg = null;
       TIERS.forEach(t => {
-        document.getElementById('col-' + t).classList.remove('selected', 'crisis-selected');
-        document.getElementById('btn-' + t).classList.remove('active');
-        document.querySelectorAll('.cell-' + t).forEach(cell => {
-          cell.classList.remove('col-selected', 'col-crisis-selected');
-        });
+        const card = document.getElementById('card-' + t);
+        const cardBtn = document.getElementById('card-btn-' + t);
+        if (card) card.classList.remove('selected', 'crisis-selected');
+        if (cardBtn) cardBtn.classList.remove('active');
       });
       document.getElementById('pkg-section').classList.remove('visible');
       document.getElementById('summary-bar').classList.remove('visible');
@@ -1382,19 +1201,11 @@ function setUrgency(level, el) {
   }
 }
 
-function togglePreferred(show)   { document.getElementById('preferred-field').style.display    = show ? 'block' : 'none'; }
 function updateCount(el, id)     { document.getElementById(id).textContent = el.value.length; }
 
 /* ------------------------------------------------------------
    CONDITIONAL FIELD TOGGLES (added per Doc 1 spec)
    ------------------------------------------------------------ */
-function toggleOtherIssue() {
-  const v = document.getElementById('issue-type').value;
-  const show = v === 'Other' || v === 'Not sure / Need help determining';
-  document.getElementById('other-issue-field').style.display = show ? 'block' : 'none';
-  if (!show) document.getElementById('other-issue').value = '';
-}
-
 function togglePIPTimeline() {
   const v = document.getElementById('pip-status').value;
   const show = v === 'Currently on a PIP'
@@ -1488,7 +1299,11 @@ async function validatePackageCode() {
       packageCodeValid = true;
       packageCodeData = data;
       status.className = 'pkg-code-status valid';
-      const remaining = (typeof data.remaining === 'number') ? data.remaining : '?';
+      const remaining = (typeof data.remaining === 'number') ? data.remaining : 0;
+      const purchased = data.sessionsPurchased || (typeof data.sessions_purchased === 'number' ? data.sessions_purchased : 0);
+      const used = (typeof data.sessionsUsed === 'number') ? data.sessionsUsed : Math.max(0, purchased - remaining);
+      const currentSession = used + 1;
+      const afterBooking = Math.max(0, remaining - 1);
       const tierMatch = data.tier && (data.tier.toLowerCase() === selectedTier);
       if (data.tier && !tierMatch) {
         status.className = 'pkg-code-status invalid';
@@ -1496,9 +1311,14 @@ async function validatePackageCode() {
         packageCodeValid = false;
         return;
       }
-      status.textContent = '✓ Code accepted. ' + remaining + ' session' + (remaining === 1 ? '' : 's') + ' remaining on your package.';
+      const tail = (afterBooking === 0)
+        ? 'This is your final session in the package.'
+        : afterBooking + ' session' + (afterBooking === 1 ? '' : 's') + ' will remain after this booking.';
+      status.innerHTML =
+        '<div class="pkg-code-status-headline">&#10003; Code accepted</div>' +
+        '<div class="pkg-code-status-detail">Session <strong>' + currentSession + ' of ' + (purchased || '?') + '</strong> &mdash; ' + tail + '</div>';
       // Lock summary to "pre-paid"
-      updateSummary('Pre-paid (package redemption)', 'Included');
+      updateSummary('Pre-paid &middot; Session ' + currentSession + ' of ' + (purchased || '?'), 'Included');
     } else {
       packageCodeValid = false;
       packageCodeData = null;
@@ -1563,7 +1383,6 @@ async function submitForm() {
     { id:'job-title',       label:'Job title' },
     { id:'industry',        label:'Industry' },
     { id:'union',           label:'Union membership' },
-    { id:'issue-type',      label:'Service you need help with' },
     { id:'situation',       label:'Situation description' },
     { id:'spoke-hr',        label:'Whether you’ve spoken with HR' },
     { id:'pip-status',      label:'PIP / performance warning status' },
@@ -1576,12 +1395,6 @@ async function submitForm() {
   if (!selectedTier)                                  missing.push('Consultation type');
   if (!selectedDate || !selectedTime)                 missing.push('Appointment date and time');
   if (!urgencySelected)                               missing.push('Urgency level');
-
-  // Conditional: if issue-type is Other or "Not sure", require the description
-  const issueVal = val('issue-type');
-  if ((issueVal === 'Other' || issueVal === 'Not sure / Need help determining') && !val('other-issue')) {
-    missing.push('Brief description of what you need help with');
-  }
 
   // Conditional: if attorney-status is "Currently represented", require the acknowledgment
   if (val('attorney-status') === 'Currently represented by an attorney' && !document.getElementById('attorney-ack').checked) {
@@ -1647,8 +1460,6 @@ async function submitForm() {
     lastName:             val('lname'),
     email:                val('email'),
     phone:                val('phone'),
-    returning:            radioVal('returning'),
-    preferredConsultant:  val('preferred'),
     state:                val('state'),
     age40OrOlder:         radioVal('age40') === 'yes',
 
@@ -1659,8 +1470,6 @@ async function submitForm() {
     unionMember:          val('union'),
 
     // Section 3 — workplace situation
-    issueType:            val('issue-type'),
-    otherIssueDetail:     val('other-issue'),
     situation:            val('situation'),
     urgency:              urgencySelected,
     spokeWithHR:          val('spoke-hr'),
@@ -1753,24 +1562,20 @@ function clearForm() {
   document.querySelectorAll('input:not([type=radio]):not([type=checkbox]),select,textarea').forEach(el => el.value = '');
   document.querySelectorAll('input[type=radio],input[type=checkbox]').forEach(el => el.checked = false);
   TIERS.forEach(t => {
-    const col = document.getElementById('col-' + t);
-    const btn = document.getElementById('btn-' + t);
-    col.classList.remove('selected', 'crisis-selected');
-    col.style.opacity = '';
-    col.style.pointerEvents = '';
-    btn.classList.remove('active');
-    btn.style.opacity = '';
-    btn.style.pointerEvents = '';
-    document.querySelectorAll('.cell-' + t).forEach(cell => {
-      cell.classList.remove('col-selected', 'col-crisis-selected');
-    });
+    const card = document.getElementById('card-' + t);
+    const cardBtn = document.getElementById('card-btn-' + t);
+    if (card) {
+      card.classList.remove('selected', 'crisis-selected');
+      card.style.opacity = '';
+      card.style.pointerEvents = '';
+    }
+    if (cardBtn) cardBtn.classList.remove('active');
   });
   document.getElementById('pkg-section').classList.remove('visible');
   document.getElementById('summary-bar').classList.remove('visible');
   document.getElementById('schedule-section').classList.remove('visible');
-  document.getElementById('preferred-field').style.display = 'none';
   // Hide all conditional fields added in the Doc 1 rewrite
-  ['other-issue-field','pip-timeline-field','attorney-ack-field','other-outcome-field','pkg-code-section','pkg-code-input-field'].forEach(id => {
+  ['pip-timeline-field','attorney-ack-field','other-outcome-field','pkg-code-section','pkg-code-input-field'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
   });
@@ -1781,9 +1586,10 @@ function clearForm() {
   document.getElementById('submit-error').style.display = 'none';
   document.getElementById('legal-links-warning').style.display = 'none';
   document.getElementById('selected-datetime').classList.remove('visible');
-  document.querySelectorAll('.urgency-btn').forEach(b => b.className = 'urgency-btn');
+  const urgencySel = document.getElementById('urgency');
+  if (urgencySel) urgencySel.value = '';
   document.getElementById('urgency-hint').style.display = 'none';
-  ['sit-count','other-issue-count'].forEach(id => {
+  ['sit-count'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.textContent = '0';
   });
