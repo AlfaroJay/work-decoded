@@ -54,6 +54,7 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 .tier-card-crisis{border-color:rgba(230,57,70,0.35)}
 .tier-card-crisis:hover{border-color:rgba(230,57,70,0.55)}
 .tier-card.locked-out,.discovery-cta.locked-out{opacity:0.35;pointer-events:none;filter:grayscale(0.6)}
+.tier-card.code-redeemed{pointer-events:none}
 .pkg-code-hint-link{color:#40c9a2;text-decoration:underline}
 .pkg-code-hint-link:hover{color:#5fdcb3}
 .tier-select-btn{display:block;width:100%;padding:11px 14px;border:1px solid #40c9a2;border-radius:8px;color:#40c9a2;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;background:transparent;font-family:inherit;margin-top:auto}
@@ -1246,9 +1247,13 @@ function toggleUnionHint() {
 function lockOtherTiers(activeTier) {
   document.querySelectorAll('.tier-card').forEach(card => {
     if (card.id === 'card-' + activeTier) {
+      // Matching tier stays visually selected but is non-clickable so a
+      // stray re-click can't clobber the code-driven "Pre-paid" summary.
       card.classList.remove('locked-out');
+      card.classList.add('code-redeemed');
     } else {
       card.classList.add('locked-out');
+      card.classList.remove('code-redeemed');
     }
   });
   const discovery = document.getElementById('card-discovery');
@@ -1256,7 +1261,10 @@ function lockOtherTiers(activeTier) {
 }
 
 function unlockAllTiers() {
-  document.querySelectorAll('.tier-card').forEach(card => card.classList.remove('locked-out'));
+  document.querySelectorAll('.tier-card').forEach(card => {
+    card.classList.remove('locked-out');
+    card.classList.remove('code-redeemed');
+  });
   const discovery = document.getElementById('card-discovery');
   if (discovery) discovery.classList.remove('locked-out');
 }
