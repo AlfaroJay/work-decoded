@@ -14,6 +14,10 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 .wd-tagline{font-size:12px;color:#999;margin-top:4px;letter-spacing:0.4px}
 .wd-intro{font-size:13px;color:#40c9a2;margin-bottom:1.5rem;line-height:1.7;padding:14px 18px;background:#242424;border-radius:10px;border:1px solid #333}
 .wd-intro strong{color:#fff}
+.welcome-banner{font-size:14px;color:#e8e8e8;margin-bottom:1rem;line-height:1.6;padding:14px 18px;background:linear-gradient(135deg,#1f3d36 0%,#243d34 100%);border-radius:10px;border:1px solid #40c9a2;display:flex;align-items:center;gap:12px}
+.welcome-banner .welcome-icon{flex-shrink:0;font-size:20px}
+.welcome-banner .welcome-text strong{color:#40c9a2;font-weight:600}
+.welcome-banner .welcome-sub{font-size:12px;color:#aab;margin-top:2px}
 .section{background:#242424;border:1px solid #333;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
 .section-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;color:#fff;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid #333}
 .field{margin-bottom:1rem}
@@ -304,6 +308,15 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
   <div id="form-container">
   <div class="wd-intro">
     Welcome! Please complete this form before your session. Your responses are <strong>confidential</strong> and will only be shared with your assigned Work Decoded consultant to ensure they arrive fully prepared to support you.
+  </div>
+
+  <!-- Welcome banner — only visible when ?t= prefill token resolves to a known client -->
+  <div id="welcome-banner" class="welcome-banner" style="display:none">
+    <div class="welcome-icon">&#128075;</div>
+    <div class="welcome-text">
+      <div>Welcome back, <strong id="welcome-name">there</strong>!</div>
+      <div class="welcome-sub">We've pre-filled your contact info. Please review your situation and goals fresh for this session.</div>
+    </div>
   </div>
 
   <!-- SECTION 1: CONTACT INFO -->
@@ -725,6 +738,7 @@ const CONFIG = {
   ZAPIER_INTAKE_WEBHOOK: 'https://hooks.zapier.com/hooks/catch/27132993/uj9mk1d/',
   AVAILABILITY_API: 'https://workdecodedhq.netlify.app/api/availability',
   VALIDATE_CODE_API: 'https://workdecodedhq.netlify.app/api/validate-code',
+  CLIENT_PREFILL_API: 'https://workdecodedhq.netlify.app/api/client-prefill',
   GOOGLE_CALENDAR_ID: 'hello@workdecodedhq.com'
 };
 
@@ -1667,6 +1681,103 @@ function initConsentGate() {
 }
 
 document.addEventListener('DOMContentLoaded', initConsentGate);
+
+/* ------------------------------------------------------------
+   RETURNING CLIENT PREFILL (POC)
+   - Reads ?t=<airtable-rec-id> and ?code=<package-code> from URL
+   - If t resolves: pre-fills SAFE demographic fields ONLY
+     (name, email, phone, state, age40, employer, job title,
+      industry, union). Never pre-fills situation, urgency,
+      legal categories, attorney info, goals, or consents —
+      those must be re-entered fresh per Michelle's legal
+      requirement.
+   - If code resolves: auto-selects matching tier and stamps
+     the package code so the calendar opens immediately.
+   - Fails silently if anything errors so a blank form still works.
+   ------------------------------------------------------------ */
+function setIfEmpty(id, value) {
+  if (!value) return;
+  const el = document.getElementById(id);
+  if (el && !el.value) el.value = value;
+}
+
+function setRadioIfEmpty(name, value) {
+  if (!value) return;
+  const radios = document.querySelectorAll('input[name="' + name + '"]');
+  let alreadySet = false;
+  radios.forEach(r => { if (r.checked) alreadySet = true; });
+  if (alreadySet) return;
+  radios.forEach(r => { if (r.value === value) r.checked = true; });
+}
+
+async function loadPrefill() {
+  const params = new URLSearchParams(window.location.search);
+  const token  = (params.get('t') || '').trim();
+  const code   = (params.get('code') || '').trim().toUpperCase();
+
+  // ---- Profile prefill -----------------------------------------
+  if (token && /^rec[A-Za-z0-9]{14}$/.test(token)) {
+    try {
+      const res  = await fetch(CONFIG.CLIENT_PREFILL_API + '?t=' + encodeURIComponent(token));
+      const data = await res.json();
+      if (data && data.valid) {
+        setIfEmpty('fname',     data.firstName);
+        setIfEmpty('lname',     data.lastName);
+        setIfEmpty('email',     data.email);
+        setIfEmpty('phone',     data.phone);
+        setIfEmpty('state',     data.state);
+        setRadioIfEmpty('age40', data.age40OrOlder ? 'yes' : 'no');
+        setIfEmpty('employer',  data.employer);
+        setIfEmpty('job-title', data.jobTitle);
+        setIfEmpty('industry',  data.industry);
+        setIfEmpty('union',     data.unionMember);
+        if (typeof toggleUnionHint === 'function') toggleUnionHint();
+
+        // Show the welcome banner
+        const banner = document.getElementById('welcome-banner');
+        const nameEl = document.getElementById('welcome-name');
+        if (banner && data.firstName) {
+          if (nameEl) nameEl.textContent = data.firstName;
+          banner.style.display = 'flex';
+        }
+      }
+    } catch (e) {
+      console.warn('[Prefill] profile lookup failed:', e);
+    }
+  }
+
+  // ---- Auto-apply package code ---------------------------------
+  if (code && /^WD-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(code)) {
+    try {
+      const res  = await fetch(CONFIG.VALIDATE_CODE_API + '?code=' + encodeURIComponent(code));
+      const data = await res.json();
+      if (data && data.valid && data.tier) {
+        const tier = String(data.tier).toLowerCase();
+        if (['standard','premier','crisis'].includes(tier)) {
+          // Open the matching tier card (also reveals package-code section)
+          if (typeof selectTier === 'function') selectTier(tier);
+
+          // Flip the "I have a code" radio + show input
+          setRadioIfEmpty('has-code', 'yes');
+          if (typeof togglePackageCode === 'function') togglePackageCode(true);
+
+          // Stamp the code value and run the same validation path
+          // the user would trigger on blur — this updates the
+          // summary and the "Session X of Y" status line.
+          const pkgInput = document.getElementById('pkg-code');
+          if (pkgInput) {
+            pkgInput.value = code;
+            if (typeof validatePackageCode === 'function') validatePackageCode();
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('[Prefill] code lookup failed:', e);
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', loadPrefill);
 </script>
 </body>
 </html>
