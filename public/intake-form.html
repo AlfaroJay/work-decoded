@@ -739,9 +739,9 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
    ============================================================ */
 const CONFIG = {
   ZAPIER_INTAKE_WEBHOOK: 'https://hooks.zapier.com/hooks/catch/27132993/uj9mk1d/',
-  AVAILABILITY_API: 'https://workdecodedhq.netlify.app/api/availability',
-  VALIDATE_CODE_API: 'https://workdecodedhq.netlify.app/api/validate-code',
-  CLIENT_PREFILL_API: 'https://workdecodedhq.netlify.app/api/client-prefill',
+  AVAILABILITY_API: '/api/availability',
+  VALIDATE_CODE_API: '/api/validate-code',
+  CLIENT_PREFILL_API: '/api/client-prefill',
   GOOGLE_CALENDAR_ID: 'hello@workdecodedhq.com'
 };
 
@@ -1342,7 +1342,7 @@ async function validatePackageCode() {
         '<div class="pkg-code-status-headline">&#10003; Code accepted</div>' +
         '<div class="pkg-code-status-detail">Session <strong>' + currentSession + ' of ' + (purchased || '?') + '</strong> &mdash; ' + tail + '</div>';
       // Lock summary to "pre-paid"
-      updateSummary('Pre-paid &middot; Session ' + currentSession + ' of ' + (purchased || '?'), 'Included');
+      updateSummary('Pre-paid · Session ' + currentSession + ' of ' + (purchased || '?'), 'Included');
     } else {
       packageCodeValid = false;
       packageCodeData = null;
