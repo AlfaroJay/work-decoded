@@ -609,6 +609,13 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
         </div>
       </div>
 
+      <!-- Packages (Standard/Premier only — purchase a new pack). Sits directly under the tier cards so package options appear right below the selected card. -->
+      <div class="pkg-section" id="pkg-section">
+        <div class="pkg-title">Session packages — save 10%</div>
+        <div class="pkg-grid" id="pkg-grid"></div>
+        <div class="hint" style="margin-top:6px">Packages are billed upfront at a discounted rate. Sessions do not expire.</div>
+      </div>
+
       <!-- Discovery: free 15-min consultation as a CTA below the paid tiers -->
       <div class="discovery-cta" id="card-discovery">
         <div class="discovery-cta-text">
@@ -617,13 +624,6 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
         </div>
         <button type="button" class="discovery-cta-btn" id="card-btn-discovery" onclick="selectTier('discovery')">Book free call</button>
       </div>
-    </div>
-
-    <!-- Packages (Standard/Premier only — purchase a new pack) -->
-    <div class="pkg-section" id="pkg-section">
-      <div class="pkg-title">Session packages — save 10%</div>
-      <div class="pkg-grid" id="pkg-grid"></div>
-      <div class="hint" style="margin-top:6px">Packages are billed upfront at a discounted rate. Sessions do not expire.</div>
     </div>
 
     <div class="summary-bar" id="summary-bar">
