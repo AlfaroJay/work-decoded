@@ -70,12 +70,7 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 /* Packages */
 .pkg-section{margin-top:1rem;display:none}
 .pkg-section.visible{display:block}
-.pkg-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
-.pkg-toggle-btn{display:none;align-items:center;gap:6px;background:none;border:1px solid #444;border-radius:6px;padding:4px 10px;cursor:pointer;color:#aaa;font-size:12px;font-family:inherit;line-height:1;transition:border-color 0.15s,color 0.15s}
-.pkg-toggle-btn:hover,.pkg-toggle-btn:focus-visible{border-color:#40c9a2;color:#40c9a2;outline:none}
-.pkg-chevron{display:inline-block;transition:transform 220ms ease;font-size:10px}
-.pkg-section.collapsed .pkg-chevron{transform:rotate(-90deg)}
-.pkg-title{font-size:12px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0}
+.pkg-title{font-size:12px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
 .pkg-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .pkg-card{border:1px solid #444;border-radius:8px;padding:10px 12px;cursor:pointer;background:#1a1a1a}
 .pkg-card:hover{border-color:#40c9a2}
@@ -227,11 +222,11 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
   /* Packages stack */
   .pkg-grid{grid-template-columns:1fr;gap:8px}
   .pkg-card{padding:12px 14px}
-  /* Mobile-only: animate pkg-section open/close + show collapse toggle */
+  /* Mobile-only: animate pkg-section open/close. Collapse toggle is the
+     selected tier's "Select X" CTA itself (re-click toggles). */
   .pkg-section{display:grid;grid-template-rows:0fr;margin-top:0;transition:grid-template-rows 320ms ease,margin-top 320ms ease}
   .pkg-section.visible{grid-template-rows:1fr;margin-top:1rem;display:grid}
   .pkg-section-inner{overflow:hidden;min-height:0}
-  .pkg-toggle-btn{display:inline-flex}
   .pkg-collapsible{display:grid;grid-template-rows:1fr;margin-top:0;opacity:1;transition:grid-template-rows 280ms ease,margin-top 280ms ease,opacity 220ms ease}
   .pkg-section.collapsed .pkg-collapsible{grid-template-rows:0fr;opacity:0}
   .pkg-collapsible-inner{overflow:hidden;min-height:0}
@@ -588,16 +583,10 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
         </div>
       </div>
 
-      <!-- Packages (Standard/Premier only — purchase a new pack). Sits directly under the tier cards so package options appear right below the selected card. Animated open/close + collapsible on mobile. -->
+      <!-- Packages (Standard/Premier only — purchase a new pack). Sits directly under the tier cards so package options appear right below the selected card. Animated open/close on mobile; the selected tier's CTA is the collapse toggle (re-click). -->
       <div class="pkg-section" id="pkg-section">
         <div class="pkg-section-inner">
-          <div class="pkg-header">
-            <span class="pkg-title">Session packages — save 10%</span>
-            <button type="button" class="pkg-toggle-btn" onclick="togglePkgCollapse()" aria-label="Show or hide package options" aria-expanded="true">
-              <span class="pkg-toggle-label">Hide</span>
-              <span class="pkg-chevron" aria-hidden="true">&#9662;</span>
-            </button>
-          </div>
+          <div class="pkg-title">Session packages — save 10%</div>
           <div class="pkg-collapsible">
             <div class="pkg-collapsible-inner">
               <div class="pkg-grid" id="pkg-grid"></div>
@@ -914,10 +903,6 @@ function selectTier(tier) {
   // so default to expanded.
   const pkgSectionEl = document.getElementById('pkg-section');
   pkgSectionEl.classList.remove('collapsed');
-  const toggleBtn = pkgSectionEl.querySelector('.pkg-toggle-btn');
-  const toggleLabel = pkgSectionEl.querySelector('.pkg-toggle-label');
-  if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
-  if (toggleLabel) toggleLabel.textContent = 'Hide';
 
   if (tier === 'discovery') {
     pkgSectionEl.classList.remove('visible');
@@ -979,12 +964,7 @@ window.addEventListener('resize', () => {
 
 function togglePkgCollapse() {
   const section = document.getElementById('pkg-section');
-  if (!section) return;
-  const isCollapsed = section.classList.toggle('collapsed');
-  const btn = section.querySelector('.pkg-toggle-btn');
-  const label = section.querySelector('.pkg-toggle-label');
-  if (btn) btn.setAttribute('aria-expanded', String(!isCollapsed));
-  if (label) label.textContent = isCollapsed ? 'Show' : 'Hide';
+  if (section) section.classList.toggle('collapsed');
 }
 
 function buildPackages(tier) {
