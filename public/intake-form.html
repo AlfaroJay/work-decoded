@@ -860,6 +860,16 @@ document.addEventListener('keydown', function(e) {
    Discovery as a CTA banner below)
    ------------------------------------------------------------ */
 function selectTier(tier) {
+  // Re-clicking the already-selected paid tier acts as a collapse/expand toggle
+  // on the package section. Mobile only — desktop has no visible collapse state,
+  // and Discovery/Crisis don't have packages, so re-click is a no-op there.
+  if (selectedTier === tier && (tier === 'standard' || tier === 'premier')) {
+    if (window.matchMedia('(max-width: 600px)').matches) {
+      togglePkgCollapse();
+    }
+    return;
+  }
+
   selectedTier = tier; selectedPkg = null;
   selectedDate = null; selectedTime = null;
   availabilityCache = {};
