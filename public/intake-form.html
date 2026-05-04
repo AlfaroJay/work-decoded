@@ -888,6 +888,7 @@ function selectTier(tier) {
     buildPackages(tier);
     updateSummary('1 ' + tier + ' session', '$' + prices[tier]);
   }
+  placePkgSection(tier);
   document.getElementById('summary-bar').classList.add('visible');
 
   document.getElementById('time-container').innerHTML = '';
@@ -910,6 +911,29 @@ function selectTier(tier) {
   document.getElementById('schedule-section').classList.add('visible');
   buildDateGrid();
 }
+
+/* On mobile (≤600px) the tier cards stack vertically. Move the package selection
+   between the selected card and the next one in the stack so the 3/5-pack option
+   appears directly under whichever tier the user picked. On desktop, snap it back
+   to its default position right below the tier-cards row. */
+function placePkgSection(tier) {
+  const pkg = document.getElementById('pkg-section');
+  const cardsGrid = document.querySelector('.tier-cards-3');
+  if (!pkg || !cardsGrid) return;
+
+  const isMobile = window.matchMedia('(max-width: 600px)').matches;
+
+  if (isMobile && (tier === 'standard' || tier === 'premier')) {
+    const selectedCard = document.getElementById('card-' + tier);
+    if (selectedCard) cardsGrid.insertBefore(pkg, selectedCard.nextSibling);
+  } else {
+    cardsGrid.parentNode.insertBefore(pkg, cardsGrid.nextSibling);
+  }
+}
+
+window.addEventListener('resize', () => {
+  if (selectedTier) placePkgSection(selectedTier);
+});
 
 function buildPackages(tier) {
   const grid = document.getElementById('pkg-grid'); grid.innerHTML = '';
