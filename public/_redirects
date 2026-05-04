@@ -1,3 +1,11 @@
+# API routes on subdomains pass through to the Next.js functions.
+# These must come BEFORE the subdomain catch-alls below, otherwise the
+# `200!` force flag on those rules will swallow /api/* requests and
+# serve the form HTML instead — which then breaks fetch().json() in
+# the form's client code.
+https://book.workdecodedhq.com/api/*        /api/:splat       200
+https://feedback.workdecodedhq.com/api/*    /api/:splat       200
+
 # Subdomain routing — entire subdomain serves the matching form
 https://book.workdecodedhq.com/*        /intake-form.html       200!
 https://feedback.workdecodedhq.com/*    /feedback-form.html     200!
