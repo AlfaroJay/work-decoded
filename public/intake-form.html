@@ -422,9 +422,9 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
       <label>How urgent is your situation? <span class="req">*</span></label>
       <select id="urgency" onchange="onUrgencyChange()">
         <option value="">Select one</option>
-        <option value="Immediate">Immediate — happening this week, need help ASAP</option>
-        <option value="Soon">Soon — within the next 2-4 weeks</option>
-        <option value="Planning ahead">Planning ahead — no immediate deadline</option>
+        <option value="Immediate">Immediate — need help ASAP (within 24-48 hours)</option>
+        <option value="Soon">Soon — sometime this week</option>
+        <option value="Planning ahead">Near future — planning ahead</option>
       </select>
       <div class="hint" id="urgency-hint" style="display:none"></div>
     </div>
@@ -683,6 +683,11 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
       <label class="consent-check locked" id="ack-privacy-label">
         <input type="checkbox" id="ack-privacy" disabled/>
         <span><strong>Privacy &amp; Data Use <span class="req">*</span></strong><br>I consent to Work Decoded collecting and storing my information for the purpose of providing services. Work Decoded will store my information securely, use it only to provide the services I've requested, not share it with third parties without my consent, and allow me to request deletion at any time.</span>
+      </label>
+
+      <label class="consent-check ack-optional" id="ack-sms-label">
+        <input type="checkbox" id="ack-sms"/>
+        <span><strong>Mobile Messaging <em>(optional)</em></strong><br>I consent to receive text messages from Work Decoded at the phone number provided, including booking confirmations and session reminders. Message and data rates may apply.</span>
       </label>
 
       <label class="consent-check ack-optional" id="ack-marketing-label">
@@ -1563,6 +1568,7 @@ async function submitForm() {
     ackResponsibility:    true,
     ackPrivacy:           true,
     marketingConsent:     document.getElementById('ack-marketing').checked,
+    smsConsent:           document.getElementById('ack-sms').checked,
     consentedAt:          new Date().toISOString(),
 
     calendarId:           CONFIG.GOOGLE_CALENDAR_ID
@@ -1699,9 +1705,11 @@ function resetConsentGate() {
     if (input) { input.checked = false; input.disabled = true; }
     if (label) label.classList.add('locked');
   });
-  // Marketing consent stays unlocked but resets to unchecked
+  // Optional consents stay unlocked but reset to unchecked
   const marketing = document.getElementById('ack-marketing');
   if (marketing) marketing.checked = false;
+  const sms = document.getElementById('ack-sms');
+  if (sms) sms.checked = false;
   hint.classList.remove('hidden');
   initConsentGate();
 }
