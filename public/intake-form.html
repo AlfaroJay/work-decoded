@@ -298,6 +298,13 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 .pkg-code-status-detail{font-size:13px;color:#bdd9cf}
 .pkg-code-status-detail strong{color:#fff;font-weight:700}
 #pkg-code{font-family:'Menlo','Monaco',monospace;letter-spacing:1px;text-transform:uppercase}
+
+/* Auto-save restored toast */
+.wd-restored-toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#1e2e2a;border:1px solid #40c9a2;color:#40c9a2;padding:10px 18px;border-radius:24px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:10px;z-index:8000;box-shadow:0 6px 20px rgba(0,0,0,0.4);max-width:90vw;text-align:center}
+.wd-restored-toast button{background:transparent;border:none;color:#40c9a2;cursor:pointer;font-size:18px;line-height:1;padding:0 4px;font-family:inherit;opacity:0.7}
+.wd-restored-toast button:hover{opacity:1}
+@media(max-width:600px){.wd-restored-toast{font-size:12px;padding:8px 14px;left:8px;right:8px;max-width:none;transform:none}}
+
 </style>
 </head>
 <body>
@@ -1597,6 +1604,7 @@ async function submitForm() {
   }
 
   // --- CHANGE 4: Show success screen with smooth scroll to top ---
+  wdAutosaveClear();
   document.getElementById('form-container').style.display = 'none';
   const ss = document.getElementById('success-screen');
   ss.classList.add('visible');
@@ -1733,6 +1741,168 @@ function initConsentGate() {
 }
 
 document.addEventListener('DOMContentLoaded', initConsentGate);
+
+/* ------------------------------------------------------------
+   AUTO-SAVE — persists form state to localStorage so iOS tab
+   eviction (e.g. while reviewing the Privacy Notice in another
+   tab) doesn't lose what the client has typed.
+   ------------------------------------------------------------ */
+const WD_AUTOSAVE_KEY = 'wd_intake_draft_v1';
+const WD_AUTOSAVE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+let _wdAutosaveTimer = null;
+
+function wdAutosaveCollect() {
+  const data = {};
+  // Plain form fields
+  document.querySelectorAll('#form-container input[id], #form-container textarea[id], #form-container select[id]').forEach(el => {
+    if (el.type === 'submit' || el.type === 'button' || el.type === 'hidden') return;
+    if (el.type === 'checkbox' || el.type === 'radio') {
+      data[el.id] = el.checked;
+    } else {
+      data[el.id] = el.value;
+    }
+  });
+  // Radio groups (use name as key so we capture the SELECTED radio)
+  const radioGroups = {};
+  document.querySelectorAll('#form-container input[type="radio"][name]').forEach(el => {
+    if (el.checked) radioGroups['__radio__' + el.name] = el.value;
+  });
+  Object.assign(data, radioGroups);
+  // Checkbox groups (multi-select like legal-cat / outcome)
+  ['legal-cat','outcome'].forEach(name => {
+    const checked = Array.from(document.querySelectorAll('#form-container input[name="' + name + '"]:checked')).map(el => el.value);
+    if (checked.length) data['__checks__' + name] = checked;
+  });
+  // Custom UI state (tier / package / date / time / urgency)
+  if (typeof selectedTier !== 'undefined' && selectedTier) data._selectedTier = selectedTier;
+  if (typeof selectedPkg !== 'undefined' && selectedPkg) data._selectedPkg = selectedPkg;
+  if (typeof selectedDate !== 'undefined' && selectedDate) data._selectedDate = selectedDate;
+  if (typeof selectedTime !== 'undefined' && selectedTime) data._selectedTime = selectedTime;
+  if (typeof urgencySelected !== 'undefined' && urgencySelected) data._urgencySelected = urgencySelected;
+  data._savedAt = Date.now();
+  return data;
+}
+
+function wdAutosaveSave() {
+  try {
+    const data = wdAutosaveCollect();
+    localStorage.setItem(WD_AUTOSAVE_KEY, JSON.stringify(data));
+  } catch (e) { /* private browsing or quota — silent */ }
+}
+
+function wdAutosaveScheduleSave() {
+  if (_wdAutosaveTimer) clearTimeout(_wdAutosaveTimer);
+  _wdAutosaveTimer = setTimeout(wdAutosaveSave, 250);
+}
+
+function wdAutosaveClear() {
+  try { localStorage.removeItem(WD_AUTOSAVE_KEY); } catch (e) {}
+}
+
+function wdAutosaveRestore() {
+  let raw;
+  try { raw = localStorage.getItem(WD_AUTOSAVE_KEY); } catch (e) { return; }
+  if (!raw) return;
+  let data;
+  try { data = JSON.parse(raw); } catch (e) { wdAutosaveClear(); return; }
+  if (!data || !data._savedAt || Date.now() - data._savedAt > WD_AUTOSAVE_TTL_MS) {
+    wdAutosaveClear();
+    return;
+  }
+
+  let restoredFieldCount = 0;
+
+  // Restore form fields
+  Object.keys(data).forEach(k => {
+    if (k.startsWith('_') || k.startsWith('__')) return;
+    const el = document.getElementById(k);
+    if (!el) return;
+    if (el.type === 'checkbox' || el.type === 'radio') {
+      el.checked = !!data[k];
+    } else {
+      el.value = data[k];
+    }
+    restoredFieldCount++;
+  });
+
+  // Restore radio groups (selected value per name)
+  Object.keys(data).forEach(k => {
+    if (!k.startsWith('__radio__')) return;
+    const name = k.slice('__radio__'.length);
+    const value = data[k];
+    document.querySelectorAll('#form-container input[type="radio"][name="' + name + '"]').forEach(el => {
+      if (el.value === value) {
+        el.checked = true;
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+        restoredFieldCount++;
+      }
+    });
+  });
+
+  // Restore checkbox groups
+  Object.keys(data).forEach(k => {
+    if (!k.startsWith('__checks__')) return;
+    const name = k.slice('__checks__'.length);
+    const values = data[k] || [];
+    document.querySelectorAll('#form-container input[name="' + name + '"]').forEach(el => {
+      if (values.includes(el.value)) {
+        el.checked = true;
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+        restoredFieldCount++;
+      }
+    });
+  });
+
+  // Restore custom UI state via the existing handlers (keeps UI in sync)
+  if (data._urgencySelected && typeof selectUrgency === 'function') {
+    try { selectUrgency(data._urgencySelected); } catch (e) {}
+  }
+  if (data._selectedTier && typeof selectTier === 'function') {
+    try { selectTier(data._selectedTier); } catch (e) {}
+  }
+  if (data._selectedPkg && typeof selectPkg === 'function') {
+    try { selectPkg(data._selectedPkg); } catch (e) {}
+  }
+  // Date/time restoration is fragile because available slots are fetched
+  // dynamically — leave to the user to re-pick. Saving the strings is still
+  // useful as a memory aid in case they want to re-select what they had.
+
+  // Trigger any input listeners (char counters, conditional fields, etc.)
+  document.querySelectorAll('#form-container input, #form-container textarea, #form-container select').forEach(el => {
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+
+  if (restoredFieldCount > 0) {
+    wdShowRestoredToast();
+  }
+}
+
+function wdShowRestoredToast() {
+  const existing = document.getElementById('wd-restored-toast');
+  if (existing) existing.remove();
+  const toast = document.createElement('div');
+  toast.id = 'wd-restored-toast';
+  toast.className = 'wd-restored-toast';
+  toast.innerHTML = '<span>✓ Restored your saved answers</span><button type="button" aria-label="Dismiss" onclick="this.parentNode.remove()">×</button>';
+  document.body.appendChild(toast);
+  // Auto-dismiss after 6 seconds
+  setTimeout(() => { if (toast.parentNode) toast.remove(); }, 6000);
+}
+
+// Wire it up — listen on the form container for any input/change
+(function wdInitAutosave() {
+  const container = document.getElementById('form-container');
+  if (!container) return;
+  container.addEventListener('input', wdAutosaveScheduleSave, { passive: true });
+  container.addEventListener('change', wdAutosaveScheduleSave, { passive: true });
+  // Restore on next tick so the rest of the page's init runs first
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => setTimeout(wdAutosaveRestore, 50));
+  } else {
+    setTimeout(wdAutosaveRestore, 50);
+  }
+})();
+
 </script>
 </body>
 </html>
