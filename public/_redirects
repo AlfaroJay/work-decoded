@@ -7,24 +7,28 @@ https://book.workdecodedhq.com/api/*        /api/:splat       200
 https://feedback.workdecodedhq.com/api/*    /api/:splat       200
 
 # Static assets on subdomains pass through to the file in /public.
+# NOTE: "/:splat" only captures what the splat matched (the bit BEFORE
+# the literal extension), so the destination must restore the extension
+# (e.g. /:splat.png) — otherwise Netlify looks for a file with no
+# extension, doesn't find it, and falls through to the catch-all.
 # Same ordering rule as the API block above — must come BEFORE the
 # subdomain catch-alls or the `200!` force flag rewrites image / CSS /
 # JS requests to the form HTML and the browser fails to render them
 # (broken-image icon, MIME-type errors in console, etc.).
-https://book.workdecodedhq.com/*.png        /:splat           200
-https://book.workdecodedhq.com/*.jpg        /:splat           200
-https://book.workdecodedhq.com/*.jpeg       /:splat           200
-https://book.workdecodedhq.com/*.svg        /:splat           200
-https://book.workdecodedhq.com/*.ico        /:splat           200
-https://book.workdecodedhq.com/*.css        /:splat           200
-https://book.workdecodedhq.com/*.js         /:splat           200
-https://feedback.workdecodedhq.com/*.png    /:splat           200
-https://feedback.workdecodedhq.com/*.jpg    /:splat           200
-https://feedback.workdecodedhq.com/*.jpeg   /:splat           200
-https://feedback.workdecodedhq.com/*.svg    /:splat           200
-https://feedback.workdecodedhq.com/*.ico    /:splat           200
-https://feedback.workdecodedhq.com/*.css    /:splat           200
-https://feedback.workdecodedhq.com/*.js     /:splat           200
+https://book.workdecodedhq.com/*.png        /:splat.png           200
+https://book.workdecodedhq.com/*.jpg        /:splat.jpg           200
+https://book.workdecodedhq.com/*.jpeg       /:splat.jpeg           200
+https://book.workdecodedhq.com/*.svg        /:splat.svg           200
+https://book.workdecodedhq.com/*.ico        /:splat.ico           200
+https://book.workdecodedhq.com/*.css        /:splat.css           200
+https://book.workdecodedhq.com/*.js         /:splat.js           200
+https://feedback.workdecodedhq.com/*.png    /:splat.png           200
+https://feedback.workdecodedhq.com/*.jpg    /:splat.jpg           200
+https://feedback.workdecodedhq.com/*.jpeg   /:splat.jpeg           200
+https://feedback.workdecodedhq.com/*.svg    /:splat.svg           200
+https://feedback.workdecodedhq.com/*.ico    /:splat.ico           200
+https://feedback.workdecodedhq.com/*.css    /:splat.css           200
+https://feedback.workdecodedhq.com/*.js     /:splat.js           200
 
 # Subdomain routing — entire subdomain serves the matching form
 https://book.workdecodedhq.com/*        /intake-form.html       200!
