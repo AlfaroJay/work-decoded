@@ -1,3 +1,9 @@
+# Link shortener (l.workdecodedhq.com) — routes the API + slug lookups
+# to the Next.js handlers. Same ordering rule as the API and asset blocks
+# below — must come BEFORE any catch-all that uses the 200! force flag.
+https://l.workdecodedhq.com/api/shorten    /api/shorten    200!
+https://l.workdecodedhq.com/*              /r/:splat       200!
+
 # API routes on subdomains pass through to the Next.js functions.
 # These must come BEFORE the subdomain catch-alls below, otherwise the
 # `200!` force flag on those rules will swallow /api/* requests and
