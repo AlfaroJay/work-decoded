@@ -36,6 +36,11 @@ https://feedback.workdecodedhq.com/*.ico    /:splat.ico           200!
 https://feedback.workdecodedhq.com/*.css    /:splat.css           200!
 https://feedback.workdecodedhq.com/*.js     /:splat.js           200!
 
+# Read-only intake view for consultants (lives on the feedback subdomain).
+# Lands on the static intake-view.html which calls /api/intake?t=...
+# Force flag (200!) so it wins over the subdomain catch-all below.
+https://feedback.workdecodedhq.com/intake    /intake-view.html    200!
+
 # Subdomain routing — entire subdomain serves the matching form
 https://book.workdecodedhq.com/*        /intake-form.html       200
 https://feedback.workdecodedhq.com/*    /feedback-form.html     200

@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Client Intake · Work Decoded</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;color:#e8e8e8;padding:2rem 1rem;min-height:100vh}
+.wd{max-width:780px;margin:0 auto}
+.wd-header{padding-bottom:1rem;margin-bottom:1.5rem;text-align:center}
+.wd-logo{font-size:28px;font-weight:700;color:#fff;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.wd-logo .red{color:#e63946}
+.wd-tagline{font-size:12px;color:#999;margin-top:4px;letter-spacing:0.4px}
+.banner{background:#1e2e2a;border:1px solid #40c9a2;border-radius:10px;padding:12px 16px;margin-bottom:1.5rem;font-size:13px;color:#40c9a2;line-height:1.6}
+.banner strong{color:#fff}
+.section{background:#242424;border:1px solid #333;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+.section-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;color:#fff;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid #333}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 24px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field.full{grid-column:1/-1}
+.field-label{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:0.5px}
+.field-value{font-size:14px;color:#e8e8e8;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+.field-value.empty{color:#555;font-style:italic}
+.tag{display:inline-block;font-size:11px;padding:3px 10px;border-radius:14px;background:rgba(64,201,162,0.15);color:#40c9a2;border:1px solid rgba(64,201,162,0.3);margin:2px 4px 2px 0}
+.tag.urgency-high{background:rgba(230,57,70,0.15);color:#e63946;border-color:rgba(230,57,70,0.3)}
+.tag.urgency-med{background:rgba(240,165,0,0.15);color:#f0a500;border-color:rgba(240,165,0,0.3)}
+.tag.tier-crisis{background:rgba(230,57,70,0.15);color:#e63946;border-color:rgba(230,57,70,0.3)}
+.actions{display:flex;gap:12px;margin-top:1.5rem;flex-wrap:wrap}
+.btn{display:inline-block;padding:12px 24px;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;transition:background 0.15s,border-color 0.15s}
+.btn-primary{background:#40c9a2;color:#1a1a1a}
+.btn-primary:hover{background:#35b08d}
+.btn-secondary{background:transparent;border:1px solid #444;color:#ccc}
+.btn-secondary:hover{border-color:#888;color:#fff}
+.loading{text-align:center;padding:3rem 1rem;color:#888;font-size:14px}
+.spinner{display:inline-block;width:20px;height:20px;border:2px solid #333;border-top-color:#40c9a2;border-radius:50%;animation:spin 0.8s linear infinite;margin-right:10px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error{background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.3);border-radius:10px;padding:14px 18px;color:#e63946;font-size:13px;line-height:1.6;text-align:center}
+.error a{color:#40c9a2;text-decoration:underline}
+.footer{text-align:center;font-size:11px;color:#555;margin-top:2rem;padding-top:1rem;border-top:1px solid #333}
+.footer a{color:#40c9a2;text-decoration:none}
+@media(max-width:600px){
+  .field-grid{grid-template-columns:1fr;gap:12px}
+}
+</style>
+</head>
+<body>
+<div class="wd">
+  <div class="wd-header">
+    <div class="wd-logo">Work<span class="red">Decoded</span>HQ</div>
+    <div class="wd-tagline">Client intake — consultant view</div>
+  </div>
+
+  <div id="content">
+    <div class="loading"><span class="spinner"></span>Loading client intake...</div>
+  </div>
+
+  <div class="footer">
+    Confidential — for assigned consultant use only · Work Decoded · <a href="mailto:support@workdecodedhq.com">support@workdecodedhq.com</a>
+  </div>
+</div>
+
+<script>
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('t');
+  const content = document.getElementById('content');
+
+  if (!token) {
+    content.innerHTML = '<div class="error">Missing session token. Please use the link from your post-session email.</div>';
+    return;
+  }
+
+  fetch('/api/intake?t=' + encodeURIComponent(token))
+    .then(r => r.json().then(d => ({ ok: r.ok, data: d, status: r.status })))
+    .then(({ ok, data, status }) => {
+      if (!ok) {
+        const msg = data && data.error ? data.error : 'Could not load intake (HTTP ' + status + ').';
+        content.innerHTML = '<div class="error">' + escapeHtml(msg) + '</div>';
+        return;
+      }
+      render(data);
+    })
+    .catch(err => {
+      content.innerHTML = '<div class="error">Network error loading intake. <a href="javascript:location.reload()">Retry</a></div>';
+      console.error(err);
+    });
+
+  function render(data) {
+    const c = data.client || {};
+    const s = data.session || {};
+
+    const fullName = ((c['First Name'] || '') + ' ' + (c['Last Name'] || '')).trim() || '(no name on file)';
+    const sessionDateLabel = s.date ? formatDate(s.date) : '—';
+
+    const html = [];
+
+    html.push('<div class="banner">You are viewing the intake form for <strong>' + escapeHtml(fullName) + '</strong>'
+      + (s.date ? ' — session on <strong>' + escapeHtml(sessionDateLabel) + '</strong>' : '')
+      + '. Read carefully before your session and treat all responses as strictly confidential.</div>');
+
+    // Contact
+    html.push(section('Contact', [
+      ['Full name', fullName],
+      ['Email', c['Email']],
+      ['Phone', c['Phone']],
+      ['State of residency', c['State'] || c['State of Residency']],
+      ['Age 40+', formatYesNo(c['Age 40+'] || c['Age 40 or older'])],
+    ]));
+
+    // Employment
+    html.push(section('Employment', [
+      ['Employer', c['Employer Name'] || c['Company Name']],
+      ['Job title', c['Job Title']],
+      ['Industry', c['Industry']],
+      ['Union member', c['Union Member'] || c['Labor Union']],
+    ]));
+
+    // Situation
+    const urgencyVal = c['Urgency'] || '';
+    const urgencyTag = urgencyVal
+      ? '<span class="tag ' + urgencyClass(urgencyVal) + '">' + escapeHtml(urgencyVal) + '</span>'
+      : '<span class="field-value empty">—</span>';
+    html.push(section('Situation', [
+      ['Situation in detail', c['Situation Description'] || c['Situation Detail'], { full: true, raw: false }],
+      ['Urgency', urgencyTag, { raw: true }],
+      ['Spoken with HR?', c['HR Status'] || c['Spoken With HR']],
+      ['PIP / performance warning', c['PIP Status'] || c['Performance Warning Status']],
+      ['When did this start / next check-in', c['When Started'] || c['PIP Timeline'], { full: true }],
+      ['Documentation status', c['Documentation Status']],
+    ]));
+
+    // Legal
+    html.push(section('Legal & complexity', [
+      ['Attorney status', c['Attorney Status']],
+      ['Situation involves', formatMulti(c['Situation Involves']), { raw: true, full: true }],
+    ]));
+
+    // Goals
+    html.push(section('Goals', [
+      ['Hoped-for outcomes', formatMulti(c['Goals'] || c['Hoped-For Outcomes']), { raw: true, full: true }],
+      ['Tell us more', c['Hoped-For Outcome Detail'] || c['Outcome Detail'], { full: true }],
+    ]));
+
+    // Session info
+    html.push(section('Session', [
+      ['Session ID', s.sessionId],
+      ['Tier', s.tier ? '<span class="tag ' + (String(s.tier).toLowerCase().includes('crisis') ? 'tier-crisis' : '') + '">' + escapeHtml(s.tier) + '</span>' : '', { raw: true }],
+      ['Topic area', s.topicArea],
+      ['Consultant', s.consultantName],
+      ['Scheduled date', sessionDateLabel],
+      ['Scheduling notes from client', c['Scheduling Notes'] || c['Scheduling Constraints'], { full: true }],
+    ]));
+
+    html.push('<div class="actions">'
+      + '<a class="btn btn-primary" href="https://feedback.workdecodedhq.com/?t=' + encodeURIComponent(token) + '">Log session feedback →</a>'
+      + '<a class="btn btn-secondary" href="javascript:window.print()">Print intake</a>'
+      + '</div>');
+
+    content.innerHTML = html.join('');
+  }
+
+  function section(title, rows) {
+    const items = rows
+      .filter(r => r != null)
+      .map(([label, value, opts]) => fieldHtml(label, value, opts || {}))
+      .join('');
+    return '<div class="section"><div class="section-title">' + escapeHtml(title) + '</div><div class="field-grid">' + items + '</div></div>';
+  }
+
+  function fieldHtml(label, value, opts) {
+    const cls = 'field' + (opts.full ? ' full' : '');
+    let valHtml;
+    if (value == null || value === '' || (Array.isArray(value) && !value.length)) {
+      valHtml = '<div class="field-value empty">—</div>';
+    } else if (opts.raw) {
+      valHtml = '<div class="field-value">' + value + '</div>';
+    } else {
+      valHtml = '<div class="field-value">' + escapeHtml(String(value)) + '</div>';
+    }
+    return '<div class="' + cls + '"><div class="field-label">' + escapeHtml(label) + '</div>' + valHtml + '</div>';
+  }
+
+  function formatMulti(v) {
+    if (!v) return '';
+    const arr = Array.isArray(v) ? v : String(v).split(/\s*,\s*/);
+    if (!arr.length || (arr.length === 1 && !arr[0])) return '';
+    return arr.map(t => '<span class="tag">' + escapeHtml(String(t)) + '</span>').join('');
+  }
+
+  function formatYesNo(v) {
+    if (v === true) return 'Yes';
+    if (v === false) return 'No';
+    return v || '';
+  }
+
+  function formatDate(iso) {
+    try {
+      const d = new Date(iso);
+      if (isNaN(d.getTime())) return iso;
+      return d.toLocaleString('en-US', { weekday: 'long', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
+    } catch (e) { return iso; }
+  }
+
+  function urgencyClass(u) {
+    const s = String(u).toLowerCase();
+    if (s.includes('immediate') || s.includes('crisis') || s.includes('high')) return 'urgency-high';
+    if (s.includes('soon') || s.includes('med')) return 'urgency-med';
+    return '';
+  }
+
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+})();
+</script>
+</body>
+</html>
