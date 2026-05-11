@@ -72,19 +72,27 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 .success-msg{font-size:14px;color:#999;line-height:1.6;max-width:500px;margin:0 auto}
 .footer{text-align:center;font-size:11px;color:#555;margin-top:2rem;padding-top:1rem;border-top:1px solid #333}
 .footer a{color:#40c9a2;text-decoration:none}
-/* Client context bar */
-.client-context{background:#2a2a2a;border:1px solid #40c9a2;border-radius:10px;padding:14px 18px;margin-bottom:1.5rem;display:none}
+/* Client context bar — full intake brief for consultant pre-call */
+.client-context{background:#2a2a2a;border:1px solid #40c9a2;border-radius:10px;padding:18px 22px;margin-bottom:1.5rem;display:none}
 .client-context.visible{display:block}
-.client-context-title{font-size:11px;text-transform:uppercase;letter-spacing:0.8px;color:#40c9a2;margin-bottom:8px;font-weight:600}
-.client-context-row{display:flex;gap:24px;flex-wrap:wrap}
-.client-context-item{font-size:13px;color:#ccc}
-.client-context-item strong{color:#fff;font-weight:500}
+.client-context-title{font-size:11px;text-transform:uppercase;letter-spacing:0.8px;color:#40c9a2;margin-bottom:4px;font-weight:600}
+.client-context-subtitle{font-size:12px;color:#888;margin-bottom:14px;font-style:italic}
+.ctx-section{margin-top:12px;padding-top:12px;border-top:1px solid #3a3a3a}
+.ctx-section:first-of-type{margin-top:0;padding-top:0;border-top:none}
+.ctx-section-label{font-size:10px;text-transform:uppercase;letter-spacing:0.6px;color:#40c9a2;margin-bottom:6px;font-weight:600}
+.ctx-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:6px 24px}
+.ctx-item{font-size:13px;color:#ccc;line-height:1.5}
+.ctx-item strong{color:#fff;font-weight:500;display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.4px;color:#888;margin-bottom:1px}
+.ctx-item-empty{color:#666;font-style:italic}
+.ctx-text{font-size:13px;color:#ccc;line-height:1.55;white-space:pre-wrap}
+.ctx-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.ctx-chip{font-size:12px;background:#1f3a32;color:#a8e8d5;padding:3px 9px;border-radius:12px;border:1px solid #2d5446}
 .client-context-loading{font-size:13px;color:#888;font-style:italic}
-.urgency-high{color:#f0a500}
+.urgency-high{color:#f0a500;font-weight:500}
 .urgency-crisis{color:#e63946;font-weight:600}
-.ctx-situation{margin-top:10px;padding-top:10px;border-top:1px solid #444;display:none}
-.ctx-situation-label{font-size:11px;text-transform:uppercase;letter-spacing:0.6px;color:#40c9a2;margin-bottom:4px;font-weight:600}
-.ctx-situation-text{font-size:13px;color:#ccc;line-height:1.5}
+.urgency-immediate{color:#e63946;font-weight:600}
+.flag-pill{display:inline-block;background:#3a2a1a;color:#f0a500;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.4px;margin-left:6px}
+.flag-pill.danger{background:#3a1a1f;color:#ff8a99}
 .error-screen{display:none;text-align:center;padding:3rem 1.5rem}
 .error-screen.visible{display:block}
 .error-icon{font-size:48px;margin-bottom:1rem}
@@ -104,22 +112,76 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 <div class="wd-tagline">Consultant Post-Session Feedback</div>
 </div>
 
-<!-- Client context bar (populated from token) -->
+<!-- Client intake brief — populated from token. Read before the call. -->
 <div class="client-context" id="clientContext">
-<div class="client-context-title">Session Context</div>
-<div class="client-context-row">
-<div class="client-context-item"><strong>Client:</strong> <span id="ctxClientName">&mdash;</span></div>
-<div class="client-context-item"><strong>Issue:</strong> <span id="ctxIssueType">&mdash;</span></div>
-<div class="client-context-item"><strong>Session #</strong><span id="ctxSessionId">&mdash;</span></div>
+<div class="client-context-title">Client intake — read before the call</div>
+<div class="client-context-subtitle">The client's own answers from the intake form. Read-only.</div>
+
+<div class="ctx-section">
+<div class="ctx-section-label">Client</div>
+<div class="ctx-grid">
+<div class="ctx-item"><strong>Name</strong><span id="ctxClientName">&mdash;</span></div>
+<div class="ctx-item"><strong>Session #</strong><span id="ctxSessionId">&mdash;</span></div>
+<div class="ctx-item"><strong>Email</strong><span id="ctxEmail">&mdash;</span></div>
+<div class="ctx-item"><strong>Phone</strong><span id="ctxPhone">&mdash;</span></div>
+<div class="ctx-item"><strong>State</strong><span id="ctxState">&mdash;</span></div>
+<div class="ctx-item"><strong>Age 40+</strong><span id="ctxAge40">&mdash;</span></div>
 </div>
-<div class="client-context-row" style="margin-top:8px">
-<div class="client-context-item"><strong>Urgency:</strong> <span id="ctxUrgency">&mdash;</span></div>
-<div class="client-context-item"><strong>Employment:</strong> <span id="ctxEmployment">&mdash;</span></div>
-<div class="client-context-item"><strong>Industry:</strong> <span id="ctxIndustry">&mdash;</span></div>
 </div>
-<div class="ctx-situation" id="ctxSituationWrap">
-<div class="ctx-situation-label">Client's Situation</div>
-<div class="ctx-situation-text" id="ctxSituation"></div>
+
+<div class="ctx-section">
+<div class="ctx-section-label">Employment</div>
+<div class="ctx-grid">
+<div class="ctx-item"><strong>Employer</strong><span id="ctxEmployer">&mdash;</span></div>
+<div class="ctx-item"><strong>Job title</strong><span id="ctxJobTitle">&mdash;</span></div>
+<div class="ctx-item"><strong>Industry</strong><span id="ctxIndustry">&mdash;</span></div>
+<div class="ctx-item"><strong>Status</strong><span id="ctxEmployment">&mdash;</span></div>
+<div class="ctx-item"><strong>Union member</strong><span id="ctxUnion">&mdash;</span></div>
+</div>
+</div>
+
+<div class="ctx-section">
+<div class="ctx-section-label">Workplace situation</div>
+<div class="ctx-grid" style="margin-bottom:8px">
+<div class="ctx-item"><strong>Primary issue</strong><span id="ctxIssueType">&mdash;</span></div>
+<div class="ctx-item"><strong>Urgency</strong><span id="ctxUrgency">&mdash;</span></div>
+</div>
+<div class="ctx-text" id="ctxSituation"></div>
+</div>
+
+<div class="ctx-section">
+<div class="ctx-section-label">Legal & HR context</div>
+<div class="ctx-grid">
+<div class="ctx-item"><strong>Spoke with HR</strong><span id="ctxSpokeHR">&mdash;</span></div>
+<div class="ctx-item"><strong>On PIP</strong><span id="ctxPipStatus">&mdash;</span></div>
+<div class="ctx-item"><strong>PIP timeline</strong><span id="ctxPipTimeline">&mdash;</span></div>
+<div class="ctx-item"><strong>Documenting</strong><span id="ctxDocumenting">&mdash;</span></div>
+<div class="ctx-item"><strong>Attorney</strong><span id="ctxAttorney">&mdash;</span></div>
+<div class="ctx-item"><strong>Prior HR/legal action</strong><span id="ctxPriorAction">&mdash;</span></div>
+</div>
+<div id="ctxPriorActionDetailsWrap" style="margin-top:8px;display:none">
+<div style="font-size:11px;color:#888;margin-bottom:2px">Prior action details</div>
+<div class="ctx-text" id="ctxPriorActionDetails"></div>
+</div>
+</div>
+
+<div class="ctx-section" id="ctxLegalCatWrap" style="display:none">
+<div class="ctx-section-label">Legal categories flagged</div>
+<div class="ctx-chips" id="ctxLegalCategories"></div>
+</div>
+
+<div class="ctx-section" id="ctxOutcomesWrap" style="display:none">
+<div class="ctx-section-label">Client's desired outcomes</div>
+<div class="ctx-chips" id="ctxDesiredOutcomes"></div>
+</div>
+
+<div class="ctx-section" id="ctxMiscWrap" style="display:none">
+<div class="ctx-section-label">Notes from client</div>
+<div class="ctx-grid">
+<div class="ctx-item" id="ctxSchedulingNotesItem" style="display:none"><strong>Scheduling notes</strong><span id="ctxSchedulingNotes">&mdash;</span></div>
+<div class="ctx-item" id="ctxPackageCodeItem" style="display:none"><strong>Package code</strong><span id="ctxPackageCode">&mdash;</span></div>
+<div class="ctx-item" id="ctxIntakeSubmittedItem" style="display:none"><strong>Intake submitted</strong><span id="ctxIntakeSubmitted">&mdash;</span></div>
+</div>
 </div>
 </div>
 
@@ -379,26 +441,120 @@ throw new Error('Lookup failed');
 
 const data=await res.json();
 
-// Populate context bar - row 1
-if(data.clientName) document.getElementById('ctxClientName').textContent=data.clientName;
-if(data.issueType) document.getElementById('ctxIssueType').textContent=data.issueType;
-if(data.sessionId) document.getElementById('ctxSessionId').textContent=data.sessionId;
-
-// Populate context bar - row 2 (intake context)
-if(data.urgency){
-const urgEl=document.getElementById('ctxUrgency');
-urgEl.textContent=data.urgency;
-if(data.urgency==='Crisis') urgEl.className='urgency-crisis';
-else if(data.urgency==='High') urgEl.className='urgency-high';
+// Helpers
+const set=(id,val,emptyText='—')=>{
+const el=document.getElementById(id);
+if(!el) return;
+if(val===null||val===undefined||val===''||val===false){
+el.textContent=emptyText;
+el.classList.add('ctx-item-empty');
+}else{
+el.textContent=val;
+el.classList.remove('ctx-item-empty');
 }
-if(data.employmentStatus) document.getElementById('ctxEmployment').textContent=data.employmentStatus;
-if(data.industry) document.getElementById('ctxIndustry').textContent=data.industry;
-
-// Populate situation description
+};
+const yesNo=v=>v===true?'Yes':v===false?'No':v||'';
+const formatDate=s=>{
+if(!s) return '';
+try{const d=new Date(s);return d.toLocaleString('en-US',{dateStyle:'medium',timeStyle:'short'});}catch(e){return s;}
+};
+// Section 1: Client
+set('ctxClientName',data.clientName);
+set('ctxSessionId',data.sessionId);
+set('ctxEmail',data.email);
+set('ctxPhone',data.phone);
+set('ctxState',data.state);
+{
+const el=document.getElementById('ctxAge40');
+if(data.age40===true){el.textContent='Yes';el.innerHTML='Yes <span class="flag-pill">ADEA</span>';}
+else{el.textContent='No';el.classList.add('ctx-item-empty');}
+}
+// Section 2: Employment
+set('ctxEmployer',data.employer);
+set('ctxJobTitle',data.jobTitle);
+set('ctxIndustry',data.industry);
+set('ctxEmployment',data.employmentStatus);
+set('ctxUnion',data.unionMember);
+// Section 3: Situation
+set('ctxIssueType',data.issueType);
+{
+const urgEl=document.getElementById('ctxUrgency');
+urgEl.className='';
+if(data.urgency){
+urgEl.textContent=data.urgency;
+const u=String(data.urgency).toLowerCase();
+if(u.includes('crisis')) urgEl.className='urgency-crisis';
+else if(u.includes('immediate')) urgEl.className='urgency-immediate';
+else if(u.includes('high')||u.includes('soon')) urgEl.className='urgency-high';
+}else{urgEl.textContent='—';urgEl.classList.add('ctx-item-empty');}
+}
 if(data.situationSummary){
 document.getElementById('ctxSituation').textContent=data.situationSummary;
-document.getElementById('ctxSituationWrap').style.display='block';
+}else{
+document.getElementById('ctxSituation').textContent='(No situation description provided.)';
+document.getElementById('ctxSituation').classList.add('ctx-item-empty');
 }
+// Section 4: Legal & HR context
+set('ctxSpokeHR',data.spokeWithHR);
+{
+const el=document.getElementById('ctxPipStatus');
+if(data.pipStatus&&!/^no/i.test(data.pipStatus)){
+el.innerHTML=data.pipStatus+' <span class="flag-pill danger">FLAG</span>';
+el.classList.remove('ctx-item-empty');
+}else{
+set('ctxPipStatus',data.pipStatus);
+}
+}
+set('ctxPipTimeline',data.pipTimeline);
+set('ctxDocumenting',data.documenting);
+{
+const el=document.getElementById('ctxAttorney');
+if(data.attorneyStatus&&/represent/i.test(data.attorneyStatus)){
+el.innerHTML=data.attorneyStatus+' <span class="flag-pill danger">FLAG</span>';
+el.classList.remove('ctx-item-empty');
+}else{
+set('ctxAttorney',data.attorneyStatus);
+}
+}
+{
+const el=document.getElementById('ctxPriorAction');
+el.textContent=yesNo(data.priorAction)||'—';
+if(!data.priorAction&&data.priorAction!==false) el.classList.add('ctx-item-empty');
+}
+if(data.priorAction&&data.priorActionDetails){
+document.getElementById('ctxPriorActionDetails').textContent=data.priorActionDetails;
+document.getElementById('ctxPriorActionDetailsWrap').style.display='block';
+}
+// Legal categories chips
+if(Array.isArray(data.legalCategories)&&data.legalCategories.length>0){
+const chipWrap=document.getElementById('ctxLegalCategories');
+chipWrap.innerHTML=data.legalCategories.map(c=>`<span class="ctx-chip">${c}</span>`).join('');
+document.getElementById('ctxLegalCatWrap').style.display='block';
+}
+// Desired outcomes chips
+if(Array.isArray(data.desiredOutcomes)&&data.desiredOutcomes.length>0){
+const chipWrap=document.getElementById('ctxDesiredOutcomes');
+chipWrap.innerHTML=data.desiredOutcomes.map(c=>`<span class="ctx-chip">${c}</span>`).join('');
+document.getElementById('ctxOutcomesWrap').style.display='block';
+}
+// Misc: scheduling notes / package code / intake submitted at
+let hasMisc=false;
+if(data.schedulingNotes){
+set('ctxSchedulingNotes',data.schedulingNotes);
+document.getElementById('ctxSchedulingNotesItem').style.display='block';
+hasMisc=true;
+}
+if(data.packageCode){
+set('ctxPackageCode',data.packageCode);
+document.getElementById('ctxPackageCodeItem').style.display='block';
+hasMisc=true;
+}
+if(data.intakeSubmittedAt){
+set('ctxIntakeSubmitted',formatDate(data.intakeSubmittedAt));
+document.getElementById('ctxIntakeSubmittedItem').style.display='block';
+hasMisc=true;
+}
+if(hasMisc) document.getElementById('ctxMiscWrap').style.display='block';
 
 document.getElementById('clientContext').classList.add('visible');
 } catch(err){
