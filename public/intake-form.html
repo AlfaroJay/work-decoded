@@ -1124,7 +1124,13 @@ async function selectDate(dateStr, btnEl) {
   const dur = durations[selectedTier];
 
   const cacheKey = dateStr + '-' + dur;
-  if (availabilityCache[cacheKey]) {
+  // Skip the cache for today's date so past slots get pruned each time the
+  // user revisits the date. The server filters slots based on current time;
+  // cached results from 30 min ago would still show slots that have since
+  // passed.
+  const todayISO = new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
+  const isToday = dateStr === todayISO;
+  if (!isToday && availabilityCache[cacheKey]) {
     renderTimeSlots(availabilityCache[cacheKey]);
     return;
   }
@@ -1139,23 +1145,18 @@ async function selectDate(dateStr, btnEl) {
     availabilityCache[cacheKey] = data.slots || [];
     renderTimeSlots(data.slots || []);
   } catch (e) {
-    console.warn('Availability API error, showing all slots:', e);
-    const fallbackSlots = generateFallbackSlots(dur);
-    availabilityCache[cacheKey] = fallbackSlots;
-    renderTimeSlots(fallbackSlots);
+    // Fail closed: never show all-slots-available when we can't actually
+    // verify the calendar. Previous behavior caused a 2026-05-11 double-
+    // booking incident.
+    console.error('Availability API error, refusing to show slots:', e);
+    selectedTime = null;
+    document.getElementById('selected-datetime').classList.remove('visible');
+    container.innerHTML =
+      '<div class="no-slots">' +
+        'We can\'t load availability right now. Please refresh the page in a moment, ' +
+        'or email <a href="mailto:support@workdecodedhq.com">support@workdecodedhq.com</a> to book.' +
+      '</div>';
   }
-}
-
-function generateFallbackSlots(durationMin) {
-  const slots = [];
-  for (let h = 9; h < 17; h++) {
-    for (let m = 0; m < 60; m += durationMin) {
-      if (h * 60 + m + durationMin > 17 * 60) continue;
-      const time = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
-      slots.push({ time, available: true });
-    }
-  }
-  return slots;
 }
 
 function renderTimeSlots(slots) {

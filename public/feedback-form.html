@@ -171,9 +171,9 @@ Complete this form after each client session. Your notes help us provide continu
 
 <!-- Section 3: Session Notes -->
 <div class="section">
-<div class="section-title">Session Notes</div>
+<div class="section-title">Your workplace situation</div>
 <div class="field">
-<label>Session Summary<span class="req">*</span></label>
+<label>Please tell us about your situation in detail<span class="req">*</span></label>
 <textarea id="sessionNotes" placeholder="Summarize what was discussed, key concerns raised, and any guidance provided..." maxlength="2000" oninput="charCount(this,'sessionNotesCount',2000)" required></textarea>
 <div class="char-count" id="sessionNotesCount">0 / 2,000</div>
 <div class="hint">This may be shared with the client or referenced in future sessions</div>
@@ -416,7 +416,7 @@ const status=document.getElementById('sessionStatus').value;
 const notes=document.getElementById('sessionNotes').value.trim();
 
 if(!email||!status||!notes){
-showError('Please complete all required fields: Email, Session Status, and Session Summary.');
+showError('Please complete all required fields: Email, Session Status, and Your workplace situation.');
 return;
 }
 
