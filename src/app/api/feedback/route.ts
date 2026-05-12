@@ -72,13 +72,20 @@ export async function POST(request: NextRequest) {
     fields['Follow-Up Needed'] = data.followUpNeeded ? 'Yes' : 'No';
     fields['Different Consultant for Follow-Up'] = data.differentConsultantForFollowUp;
 
+    // Stamp the submission time so the post-session reminder Zap can skip
+    // sending the reminder if feedback was already logged within the
+    // 4-hour grace window. Used by a Zap "Filter by Zapier" step that only
+    // continues when this field is empty.
+    const submittedAt = new Date().toISOString();
+    fields['Feedback Submitted At'] = submittedAt;
+
     const parts: string[] = [];
     if (data.differentConsultantNotes) parts.push(`Reassignment: ${data.differentConsultantNotes}`);
     if (data.followUpType) parts.push(`Follow-up type: ${data.followUpType}`);
     if (data.followUpDue) parts.push(`Follow-up due: ${data.followUpDue}`);
     if (data.consultantEmail) parts.push(`Submitted by: ${data.consultantEmail}`);
     parts.push(`Status: ${data.sessionStatus}`);
-    parts.push(`Submitted: ${new Date().toISOString()}`);
+    parts.push(`Submitted: ${submittedAt}`);
     fields['Additional Notes'] = parts.join('\n');
 
     const updateRes = await fetch(
