@@ -1538,11 +1538,26 @@ async function submitForm() {
   const total    = hasCode && packageCodeValid ? 0 : quotedTotal(selectedTier, selectedPkg);
   const dur      = durations[selectedTier];
 
-  const appointmentDatetime = selectedDate + 'T' + selectedTime + ':00';
+  // Appointment slots are Eastern wall-clock. Stamp the correct (DST-aware) ET offset onto
+  // the datetimes so Airtable + Google Calendar store the right UTC instant. Without the
+  // offset a naive ISO string is interpreted as UTC, which lands the calendar event/Meet
+  // hours off from the time the client was told in their SMS/email.
+  const etOffset = (function () {
+    try {
+      const parts = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/New_York', timeZoneName: 'longOffset'
+      }).formatToParts(new Date(selectedDate + 'T12:00:00Z'));
+      const tz = (parts.find(function (p) { return p.type === 'timeZoneName'; }) || {}).value || '';
+      const off = tz.replace('GMT', '');
+      return /^[+-]\d\d:\d\d$/.test(off) ? off : '-05:00'; // e.g. "-04:00" (EDT) / "-05:00" (EST)
+    } catch (e) { return '-05:00'; }
+  })();
+
+  const appointmentDatetime = selectedDate + 'T' + selectedTime + ':00' + etOffset;
 
   const [_sH, _sM] = selectedTime.split(':').map(Number);
   const _eT = _sH * 60 + _sM + dur;
-  const endDatetime = selectedDate + 'T' + String(Math.floor(_eT/60)).padStart(2,'0') + ':' + String(_eT%60).padStart(2,'0') + ':00';
+  const endDatetime = selectedDate + 'T' + String(Math.floor(_eT/60)).padStart(2,'0') + ':' + String(_eT%60).padStart(2,'0') + ':00' + etOffset;
 
   const payload = {
     clientId,
