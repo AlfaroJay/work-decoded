@@ -724,6 +724,11 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
     <div class="success-msg" id="success-msg">
       Your intake form has been submitted and your session is booked. You'll receive a calendar invite at your email shortly. If you need to reschedule, contact <a href="mailto:support@workdecodedhq.com" style="color:#40c9a2">support@workdecodedhq.com</a>.
     </div>
+    <div class="success-booking-code" id="success-booking-code" style="display:none;margin-top:1.25rem">
+      <div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:#999">Your booking reference</div>
+      <div id="success-booking-code-value" style="font-size:1.4rem;font-weight:700;color:#40c9a2;letter-spacing:.06em;margin-top:.35rem"></div>
+      <div style="font-size:.8rem;color:#999;margin-top:.35rem">Keep this for your records &mdash; mention it in any emails about your session.</div>
+    </div>
   </div>
 
   <div class="footer">Work Decoded &middot; <a href="https://workdecodedhq.com">WorkDecodedHQ.com</a> &middot; support@workdecodedhq.com</div>
@@ -1420,6 +1425,16 @@ function generateClientId() {
   return hex.slice(0,8)+'-'+hex.slice(8,12)+'-'+hex.slice(12,16)+'-'+hex.slice(16,20)+'-'+hex.slice(20);
 }
 
+function generateBookingCode() {
+  // Client-facing booking reference: WD-XXXX-XXXX.
+  // Alphabet omits 0/O/1/I/L to avoid phone-support ambiguity.
+  const alphabet = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
+  const buf = new Uint8Array(8);
+  (window.crypto || window.msCrypto).getRandomValues(buf);
+  const chars = Array.from(buf, b => alphabet[b % alphabet.length]);
+  return 'WD-' + chars.slice(0,4).join('') + '-' + chars.slice(4).join('');
+}
+
 function quotedTotal(tier, pkg) {
   if (tier === 'discovery') return 0;
   if (tier === 'crisis') return 175;
@@ -1516,6 +1531,7 @@ async function submitForm() {
 
   // --- Build payload ---
   const clientId = generateClientId();
+  const bookingCode = generateBookingCode();
   const total    = hasCode && packageCodeValid ? 0 : quotedTotal(selectedTier, selectedPkg);
   const dur      = durations[selectedTier];
 
@@ -1527,6 +1543,7 @@ async function submitForm() {
 
   const payload = {
     clientId,
+    bookingCode,
     submittedAt:          new Date().toISOString(),
 
     // Section 1 — your info
@@ -1611,6 +1628,8 @@ async function submitForm() {
   wdAutosaveClear();
   document.getElementById('form-container').style.display = 'none';
   const ss = document.getElementById('success-screen');
+  document.getElementById('success-booking-code-value').textContent = bookingCode;
+  document.getElementById('success-booking-code').style.display = 'block';
   ss.classList.add('visible');
 
   // Scroll to the top of the page smoothly
