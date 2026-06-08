@@ -456,7 +456,7 @@ el.classList.remove('ctx-item-empty');
 const yesNo=v=>v===true?'Yes':v===false?'No':v||'';
 const formatDate=s=>{
 if(!s) return '';
-try{const d=new Date(s);return d.toLocaleString('en-US',{dateStyle:'medium',timeStyle:'short'});}catch(e){return s;}
+try{const d=new Date(s);const tz={timeZone:'America/New_York'};return d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',...tz})+' at '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',...tz})+' ET';}catch(e){return s;}
 };
 // Section 1: Client
 set('ctxClientName',data.clientName);

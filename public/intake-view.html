@@ -199,7 +199,11 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;color:#e8e
     try {
       const d = new Date(iso);
       if (isNaN(d.getTime())) return iso;
-      return d.toLocaleString('en-US', { weekday: 'long', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
+      // Always render in Eastern, matching the client-facing "Monday, June 8 at 4:45 PM ET".
+      const tz = { timeZone: 'America/New_York' };
+      const datePart = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', ...tz });
+      const timePart = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', ...tz });
+      return datePart + ' at ' + timePart + ' ET';
     } catch (e) { return iso; }
   }
 
