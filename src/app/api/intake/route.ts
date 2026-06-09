@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AIRTABLE_BASE_ID } from '@/lib/constants';
+import { rateLimit, rateLimitResponse } from '@/lib/rateLimit';
 
 /**
  * Read-only intake lookup for consultants prepping for a session.
@@ -25,6 +26,11 @@ const SESSIONS_TABLE = 'Sessions';
 const CLIENTS_TABLE = 'Clients';
 
 export async function GET(request: NextRequest) {
+  // Rate limit: this endpoint returns sensitive client PII keyed only by a
+  // record ID, so throttle per IP to slow ID-guessing/enumeration.
+  const rl = await rateLimit(request, { key: 'intake', limit: 30, windowSec: 60 });
+  if (!rl.ok) return rateLimitResponse(rl);
+
   const token = request.nextUrl.searchParams.get('t');
   if (!token || !/^rec[A-Za-z0-9]{14}$/.test(token)) {
     return NextResponse.json(

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getStore } from '@netlify/blobs';
+import { rateLimit, rateLimitResponse } from '@/lib/rateLimit';
 
 /**
  * URL Shortener — POST endpoint.
@@ -74,6 +75,10 @@ interface ShortLinkRecord {
 }
 
 export async function POST(req: NextRequest) {
+  // Rate limit (defense in depth — this route is already bearer-authed).
+  const rl = await rateLimit(req, { key: 'shorten', limit: 60, windowSec: 60 });
+  if (!rl.ok) return rateLimitResponse(rl, CORS);
+
   if (!process.env.SHORTENER_API_KEY) {
     console.error('[Shorten] SHORTENER_API_KEY not configured');
     return NextResponse.json(
@@ -146,6 +151,10 @@ export async function POST(req: NextRequest) {
  * Same bearer-token auth as POST. Returns the stored record + click count.
  */
 export async function GET(req: NextRequest) {
+  // Rate limit (defense in depth — this route is already bearer-authed).
+  const rl = await rateLimit(req, { key: 'shorten-get', limit: 60, windowSec: 60 });
+  if (!rl.ok) return rateLimitResponse(rl, CORS);
+
   if (!authOk(req)) return unauthorized('Invalid or missing bearer token');
 
   const slug = req.nextUrl.searchParams.get('slug');

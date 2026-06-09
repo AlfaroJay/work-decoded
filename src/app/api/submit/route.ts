@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AIRTABLE_BASE_ID, AIRTABLE_TABLE_NAME, VALUE_MAP } from '@/lib/constants';
 import type { IntakeFormData, SubmitResponse } from '@/lib/types';
+import { rateLimit, rateLimitResponse } from '@/lib/rateLimit';
 
 // ---- Airtable record creation ----
 async function createAirtableRecord(data: IntakeFormData): Promise<string> {
@@ -120,6 +121,11 @@ async function createCalendarEvent(data: IntakeFormData): Promise<string> {
 
 // ---- Main handler ----
 export async function POST(request: NextRequest) {
+  // Rate limit: this endpoint creates Airtable records + calendar events, so
+  // throttle per IP to cap abuse/cost. 10/min is well above any real user.
+  const rl = await rateLimit(request, { key: 'submit', limit: 10, windowSec: 60 });
+  if (!rl.ok) return rateLimitResponse(rl);
+
   try {
     const data: IntakeFormData = await request.json();
 

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type { AvailabilityResponse, TimeSlot } from '@/lib/types';
+import { rateLimit, rateLimitResponse } from '@/lib/rateLimit';
 
 // Generate 15-minute slots between business hours
 function generateSlots(startHour: number, endHour: number): string[] {
@@ -23,6 +24,11 @@ function unavailable(reason: string, status = 503) {
 }
 
 export async function GET(request: NextRequest) {
+  // Rate limit: this endpoint proxies the Google Calendar API, so throttle per
+  // IP to protect the Calendar quota. 60/min is generous for the date picker.
+  const rl = await rateLimit(request, { key: 'availability', limit: 60, windowSec: 60 });
+  if (!rl.ok) return rateLimitResponse(rl);
+
   const { searchParams } = new URL(request.url);
   const date = searchParams.get('date');
 

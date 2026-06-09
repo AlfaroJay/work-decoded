@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AIRTABLE_BASE_ID } from '@/lib/constants';
+import { rateLimit, rateLimitResponse } from '@/lib/rateLimit';
 
 const SESSIONS_TABLE = 'Sessions';
 
@@ -29,6 +30,11 @@ interface FeedbackPayload {
 }
 
 export async function POST(request: NextRequest) {
+  // Rate limit: writes to Session records keyed only by a record ID. Throttle
+  // per IP to limit tampering / flooding of consultant feedback fields.
+  const rl = await rateLimit(request, { key: 'feedback', limit: 20, windowSec: 60 });
+  if (!rl.ok) return rateLimitResponse(rl);
+
   const pat = process.env.AIRTABLE_PAT;
   if (!pat) {
     console.error('[Feedback] AIRTABLE_PAT not configured');
