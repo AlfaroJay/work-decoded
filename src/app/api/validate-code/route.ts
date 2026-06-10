@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AIRTABLE_BASE_ID } from '@/lib/constants';
+import { rateLimit, rateLimitResponse } from '@/lib/rateLimit';
 
 const PACKAGE_CODES_TABLE = 'Package Codes';
 
@@ -25,6 +26,11 @@ export async function OPTIONS() {
 }
 
 export async function GET(request: NextRequest) {
+  // Rate limit: this endpoint is a package-code oracle, so throttle per IP to
+  // blunt brute-force enumeration. 20/min is far above any human's needs.
+  const rl = await rateLimit(request, { key: 'validate-code', limit: 20, windowSec: 60 });
+  if (!rl.ok) return rateLimitResponse(rl, CORS);
+
   const code = (request.nextUrl.searchParams.get('code') || '').trim().toUpperCase();
 
   // Validate code format: WD-XXXX-XXXX or any reasonable alphanumeric+dash code

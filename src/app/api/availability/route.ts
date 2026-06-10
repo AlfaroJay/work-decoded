@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type { AvailabilityResponse, TimeSlot } from '@/lib/types';
+import { rateLimit, rateLimitResponse } from '@/lib/rateLimit';
 
 // Generate 15-minute slots between business hours
 function generateSlots(startHour: number, endHour: number): string[] {
@@ -10,6 +11,23 @@ function generateSlots(startHour: number, endHour: number): string[] {
     }
   }
   return slots;
+}
+
+// Resolve the correct Eastern Time UTC offset ("-04:00" in EDT, "-05:00" in
+// EST) for a given YYYY-MM-DD. The offset was previously hardcoded to -04:00,
+// which made every availability calculation an hour off from November through
+// mid-March (audit finding M1). DST transitions happen at 2 AM local, so
+// probing the date at noon UTC is always unambiguous.
+function etOffset(date: string): string {
+  const probe = new Date(`${date}T12:00:00Z`);
+  const tzPart = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York',
+    timeZoneName: 'longOffset',
+  })
+    .formatToParts(probe)
+    .find((p) => p.type === 'timeZoneName')?.value; // e.g. "GMT-04:00"
+  const match = tzPart?.match(/GMT([+-]\d{2}:\d{2})/);
+  return match ? match[1] : '-05:00'; // EST fallback; never expected to hit
 }
 
 // Fail closed — never silently return "everything is available", because that
@@ -23,6 +41,11 @@ function unavailable(reason: string, status = 503) {
 }
 
 export async function GET(request: NextRequest) {
+  // Rate limit: this endpoint proxies the Google Calendar API, so throttle per
+  // IP to protect the Calendar quota. 60/min is generous for the date picker.
+  const rl = await rateLimit(request, { key: 'availability', limit: 60, windowSec: 60 });
+  if (!rl.ok) return rateLimitResponse(rl);
+
   const { searchParams } = new URL(request.url);
   const date = searchParams.get('date');
 
@@ -53,9 +76,10 @@ export async function GET(request: NextRequest) {
 
     const calendar = google.calendar({ version: 'v3', auth });
 
-    // Get all events for the requested date
-    const dayStart = `${date}T00:00:00-04:00`; // ET offset
-    const dayEnd = `${date}T23:59:59-04:00`;
+    // Get all events for the requested date (DST-aware ET offset)
+    const offset = etOffset(date);
+    const dayStart = `${date}T00:00:00${offset}`;
+    const dayEnd = `${date}T23:59:59${offset}`;
 
     const events = await calendar.events.list({
       calendarId,
@@ -83,7 +107,7 @@ export async function GET(request: NextRequest) {
     // doesn't linger as bookable.
     const nowMs = Date.now();
     const slotIsPast = (time: string): boolean => {
-      const slotStart = new Date(`${date}T${time}:00-04:00`).getTime();
+      const slotStart = new Date(`${date}T${time}:00${offset}`).getTime();
       return slotStart < nowMs + 5 * 60 * 1000;
     };
 
@@ -91,7 +115,7 @@ export async function GET(request: NextRequest) {
     const slots: TimeSlot[] = allSlots
       .filter((time) => !slotIsPast(time))
       .map((time) => {
-        const slotStart = new Date(`${date}T${time}:00-04:00`).getTime();
+        const slotStart = new Date(`${date}T${time}:00${offset}`).getTime();
         const slotEnd = slotStart + 15 * 60 * 1000;
 
         const isBusy = busyRanges.some(

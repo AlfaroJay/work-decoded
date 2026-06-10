@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AIRTABLE_BASE_ID } from '@/lib/constants';
+import { rateLimit, rateLimitResponse } from '@/lib/rateLimit';
 
 const SESSIONS_TABLE = 'Sessions';
 
 export async function GET(request: NextRequest) {
+  // Rate limit: returns session + client PII keyed only by a record ID.
+  // Throttle per IP to slow ID-guessing/enumeration.
+  const rl = await rateLimit(request, { key: 'session', limit: 30, windowSec: 60 });
+  if (!rl.ok) return rateLimitResponse(rl);
+
   const token = request.nextUrl.searchParams.get('t');
 
   // Validate token format (Airtable record ID)
