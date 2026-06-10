@@ -23,7 +23,7 @@ Treat "Accepted" like a send button. Don't flip it casually, and **never flip it
 ### 1.2 Accept a booking
 
 1. Open Airtable base **"Work Decoded - Client Records"** → **Sessions** table.
-2. Find the new Pending session. Review the linked Client record (intake details) and check the calendar for conflicts.
+2. Find the new session — its `Status` will be **blank** (the intake Zap doesn't set Pending; blank means new/pending). Review the linked Client record (intake details) and check the calendar for conflicts.
 3. Set `Status` = `Accepted`.
 4. **Verify within ~10 minutes** (this is part of the procedure, not optional):
    - Calendar event with Meet link exists on `hello@workdecodedhq.com` — exactly **one**.
@@ -62,7 +62,7 @@ After the calendar event ends, the Post-Session Zap emails the consultant a feed
 ## Part 2 — Weekly checks (15 minutes)
 
 1. **Zap History** — scan for errored runs across all Zaps. Errors don't announce themselves.
-2. **Sessions table** — any Pending sessions older than a business day? Accept or decline them.
+2. **Sessions table** — any blank-Status (new) sessions older than a business day? Accept or decline them.
 3. **Invoices table** — any rows stuck in `Pending` (no Square ID)? Usually a missing Due Date; fix and INV-1 retries on its next poll.
 4. **Package Codes table** — should be empty of new rows until packages launch. If new codes appeared, INV-2 is misfiring again (see §3.4) — turn it off.
 5. **Netlify** — confirm the last production deploy is green.

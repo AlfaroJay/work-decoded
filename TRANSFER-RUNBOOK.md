@@ -128,7 +128,7 @@ Code `fldeUcZZnU6PwgBG9` · Client `fldHeLOO2vHAWsIqU` (link) · Package Type `f
 
 | Zap | ID | State | What it does |
 |---|---|---|---|
-| WorkDecoded Intake → Airtable CRM | `360012684` (v13) | **LIVE** | Booking form → Client + Session records + branded client email + consultant email. (Calendar step was removed — now on Accept.) |
+| WorkDecoded Intake → Airtable CRM | `360012684` (v14) | **LIVE** | Booking form → Client + Session records + branded client email + consultant email. (Calendar step was removed — now on Accept.) ⚠️ Leaves Session `Status` **empty** (blank = pending); see NAMING.md §2. Verified 2026-06-10: receives Title Case tiers from `/api/book` and writes them correctly. |
 | **SS-1v2: Accepted → Calendar + SMS** | `366933187` (v2) | **LIVE** | On Accept: Google Calendar event + Meet, saves Meet Link, sends SS-1 SMS. **Filter: `Status = Accepted` AND `Meet Link does not exist`** (dedup guard added 2026-06-08). |
 | **INV-0: Accepted → Create Invoice** | `367782983` (v2) | **LIVE** | On Accept + `Session Price > 0` + no existing invoice → create Invoices row. **Now sets `Due Date = Session Date`** (added 2026-06-08). |
 | **INV-1: Invoice Request → Square** | `367637945` (v2) | **LIVE** | Pending invoice → Square: find/create customer, create invoice, **publish** (emails it), write Square ID back. **Publish step now sends `Content-Type: application/json`** (fixed 2026-06-08). |

@@ -14,6 +14,7 @@ Canonical form: **Title Case** — `Standard`, `Premier`, `Crisis`, `Discovery`.
 ## 2. Statuses
 
 - **Sessions.Status:** `Pending` → `Accepted` → `Completed` / `Cancelled`. Title Case, these four only. `Accepted` is the automation trigger.
+  - ⚠️ Known quirk: the intake Zap currently leaves Status **empty** on new bookings (it does not set `Pending`). Operationally, **blank = Pending**. Optional future fix: add `Status = Pending` to the intake Zap's Create-Session step (one static field; re-test before publishing — it's the money path).
 - **Invoices.Status:** `Draft` / `Pending` / `Sent` / `Paid`. `Pending` is what INV-1 picks up.
 
 ## 3. Reference codes (three distinct namespaces)
