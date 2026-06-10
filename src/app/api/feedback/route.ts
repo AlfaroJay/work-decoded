@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AIRTABLE_BASE_ID } from '@/lib/constants';
 import { rateLimit, rateLimitResponse } from '@/lib/rateLimit';
+import { verifySessionToken } from '@/lib/signedToken';
 
 const SESSIONS_TABLE = 'Sessions';
 
@@ -44,15 +45,18 @@ export async function POST(request: NextRequest) {
   let data: FeedbackPayload;
   try { data = await request.json(); } catch { return NextResponse.json({ success: false, message: 'Invalid request body.' }, { status: 400 }); }
 
-  if (!data.token || !/^rec[A-Za-z0-9]{14}$/.test(data.token))
-    return NextResponse.json({ success: false, message: 'Invalid session token.' }, { status: 400 });
+  // Signed, expiring token (src/lib/signedToken.ts) — verifies to the Session
+  // record ID. Bare record IDs are rejected.
+  const recordId = verifySessionToken(data.token || null);
+  if (!recordId)
+    return NextResponse.json({ success: false, message: 'Invalid or expired link. Please use the link from your most recent email.' }, { status: 401 });
 
   if (!data.sessionStatus || !data.sessionNotes)
     return NextResponse.json({ success: false, message: 'Session status and summary are required.' }, { status: 400 });
 
   try {
     const checkRes = await fetch(
-      `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(SESSIONS_TABLE)}/${data.token}`,
+      `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(SESSIONS_TABLE)}/${recordId}`,
       { headers: { Authorization: `Bearer ${pat}` }, cache: 'no-store' }
     );
     if (!checkRes.ok) {
@@ -95,7 +99,7 @@ export async function POST(request: NextRequest) {
     fields['Additional Notes'] = parts.join('\n');
 
     const updateRes = await fetch(
-      `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(SESSIONS_TABLE)}/${data.token}`,
+      `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(SESSIONS_TABLE)}/${recordId}`,
       {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${pat}`, 'Content-Type': 'application/json' },

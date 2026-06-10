@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AIRTABLE_BASE_ID } from '@/lib/constants';
 import { rateLimit, rateLimitResponse } from '@/lib/rateLimit';
+import { verifySessionToken } from '@/lib/signedToken';
 
 const SESSIONS_TABLE = 'Sessions';
 
@@ -10,13 +11,13 @@ export async function GET(request: NextRequest) {
   const rl = await rateLimit(request, { key: 'session', limit: 30, windowSec: 60 });
   if (!rl.ok) return rateLimitResponse(rl);
 
-  const token = request.nextUrl.searchParams.get('t');
-
-  // Validate token format (Airtable record ID)
-  if (!token || !/^rec[A-Za-z0-9]{14}$/.test(token)) {
+  // Signed, expiring token (see src/lib/signedToken.ts). Bare record IDs are
+  // rejected — the link must come from a Zap-minted signed URL.
+  const token = verifySessionToken(request.nextUrl.searchParams.get('t'));
+  if (!token) {
     return NextResponse.json(
-      { error: 'Invalid or missing session token.' },
-      { status: 400 }
+      { error: 'Invalid or expired link. Please use the link from your most recent email.' },
+      { status: 401 }
     );
   }
 
