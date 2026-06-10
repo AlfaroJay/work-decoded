@@ -1,7 +1,7 @@
 # Work Decoded — Standard Operating Procedures
 
 **For:** Nick (operator + maintainer) · **Current as of 2026-06-10**
-**Companions:** `TRAINING.md` (your onboarding plan), `TRANSFER-RUNBOOK.md` (full system reference — IDs, schema, every Zap), `scripts/AUTOMATION-AND-TEMPLATES.md` (all message copy).
+**Companions:** `NAMING.md` (**canonical names — read before creating anything**), `TRAINING.md` (your onboarding plan), `TRANSFER-RUNBOOK.md` (full system reference — IDs, schema, every Zap), `scripts/AUTOMATION-AND-TEMPLATES.md` (all message copy).
 
 This document is the *how-to*. When you need the *why* or an ID, go to the runbook.
 

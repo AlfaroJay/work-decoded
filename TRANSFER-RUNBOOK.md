@@ -2,7 +2,9 @@
 
 **Purpose:** everything a new operator/engineer needs to take this system over cold — accounts, architecture, every automation, the data model, how to run it day-to-day, what's fragile, and what's still pending. Current as of **2026-06-10**, reconciled against the live Airtable base, Netlify site, and git state that day (see §13 Changelog).
 
-> Companion docs: `SOP.md` (Nick's day-to-day + maintainer procedures), `TRAINING.md` (Nick's onboarding plan), `scripts/AUTOMATION-AND-TEMPLATES.md` (flow + all message copy), `scripts/setup-twilio-sms.js` (canonical SMS copy), `AUDIT-2026-06-08.md` (audit findings + fixes). Where this runbook and older handoff docs disagree, **this runbook wins** — it reflects the live state.
+> Companion docs: `NAMING.md` (**canonical nomenclature — names/spellings used everywhere**), `SOP.md` (Nick's day-to-day + maintainer procedures), `TRAINING.md` (Nick's onboarding plan), `scripts/AUTOMATION-AND-TEMPLATES.md` (flow + all message copy), `scripts/setup-twilio-sms.js` (canonical SMS copy), `AUDIT-2026-06-08.md` (audit findings + fixes). Where this runbook and older handoff docs disagree, **this runbook wins** — it reflects the live state.
+>
+> **2026-06-10 (late):** all pre-launch **test data was purged** from the base (Sessions, Clients, Invoices, Follow-Up Tasks, Code Activity Log; Consultants left for review). Session tiers are now **Title Case** (`Standard/Premier/Crisis/Discovery`) — `/api/book` normalizes the form's lowercase values. Historic references in this doc to lowercase tiers, legacy options, or specific test records describe a state that no longer exists.
 
 ---
 
@@ -65,7 +67,7 @@ Invoice paid in Square → [Zap] INV-2 → if a package, issue a Package Code
 | System | Account / identifier | Notes |
 |---|---|---|
 | **Zapier** | Michelle Williams — **personal** account, logged in as `support@workdecodedhq.com` | ⚠️ All Zaps live here. For an airtight transfer, move them to a business-owned Zapier account (see §12). |
-| **Airtable** | Base `appG108B0ALyLJ4A3` "Work Decoded - Client Records". Zapier connects to it via the **`jose@thealphacreative.com`** Airtable account (used in 17 Zaps). | ⚠️ Connected through a personal account; re-auth under a business account during transfer. |
+| **Airtable** | Base `appG108B0ALyLJ4A3` "Work Decoded - Client Records". Zapier connects via **`jose@thealphacreative.com`** (AlphaCreative business account, used in 17 Zaps), an invited collaborator on Work Decoded's base. | ✅ No transfer issue — the base belongs to Work Decoded; AlphaCreative is a collaborator (confirmed by Jose 2026-06-10). |
 | **Twilio** | Toll-free **+18555500594**, A2P 10DLC verified. | `To` must be `+1` + 10 digits (E.164). `From` = `+18555500594`. SMS is sent by Zapier's Twilio steps, not by the website. |
 | **Square** | Sends the actual invoices. | INV-1 creates + publishes; INV-2 reacts to paid. |
 | **Google Calendar** | `hello@workdecodedhq.com` (America/New_York). | Service account has **read-only** here for the site's availability check; SS-1v2 creates events via Zapier's Google Calendar connection. To delete events you must do it by hand in the Calendar UI. |
@@ -212,8 +214,8 @@ Rule (INV-0): on Accept, create an invoice only when `Session Price > 0`. INV-1 
 - `validate-code` formula "escaping" is ineffective; the input allowlist is the real defense (don't loosen it). It also still returns more metadata than needed (M4).
 
 **Ownership risk (relevant to "airtight transfer") — DEFERRED by decision 2026-06-10**
-- Zapier is on **Michelle's personal account**; Airtable is connected via **Jose's personal account**; Calendar lives on `hello@`. None are owned by a neutral business entity. A truly airtight transfer means re-creating/re-authing these connections under business-owned accounts (see §12).
-- **Status:** explicitly left out of scope for this handoff (Jose's call). The system is fully functional as-is; this is a *risk acceptance*, not an oversight. Revisit §12 if/when Michelle sets up business-owned accounts — until then, nobody should rotate or disconnect the personal-account connections, or every Zap breaks.
+- Zapier is on **Michelle's personal account**; Calendar lives on `hello@`. **Airtable is NOT an issue** — the base is Work Decoded's and the Zapier connection uses Jose's AlphaCreative *business* account as an invited collaborator (corrected 2026-06-10; earlier drafts wrongly called this a personal-account risk).
+- **Status:** remaining items (Zapier account, calendar ownership) explicitly left out of scope for this handoff (Jose's call). The system is fully functional as-is; this is a *risk acceptance*, not an oversight. Until any migration, nobody should rotate or disconnect the existing connections, or the Zaps break.
 
 ---
 

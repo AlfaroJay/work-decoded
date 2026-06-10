@@ -36,6 +36,18 @@ const REQUIRED = [
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Canonical tier nomenclature (see NAMING.md): Airtable, Square, and all
+// client-facing surfaces use Title Case. The form historically sends lowercase
+// values, so we normalize here — the single choke point between the form and
+// the rest of the system. Unknown values pass through unchanged (the intake
+// Zap will surface them rather than silently dropping the booking).
+const TIER_MAP: Record<string, string> = {
+  standard: 'Standard',
+  premier: 'Premier',
+  crisis: 'Crisis',
+  discovery: 'Discovery',
+};
+
 function bad(reason: string, status = 400) {
   return NextResponse.json({ ok: false, error: 'invalid_submission', reason }, { status });
 }
@@ -96,6 +108,12 @@ export async function POST(req: NextRequest) {
     const raw = payload.phone.trim();
     const digits = raw.replace(/\D/g, '');
     payload.phone = raw.startsWith('+') ? '+' + digits : digits;
+  }
+
+  // Normalize the tier to canonical Title Case (NAMING.md).
+  if (typeof payload.selectedTier === 'string') {
+    const canonical = TIER_MAP[payload.selectedTier.trim().toLowerCase()];
+    if (canonical) payload.selectedTier = canonical;
   }
 
   for (const field of TEXT_FIELDS) {
