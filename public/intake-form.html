@@ -756,7 +756,10 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
    WORK DECODED INTAKE FORM
    ============================================================ */
 const CONFIG = {
-  ZAPIER_INTAKE_WEBHOOK: 'https://hooks.zapier.com/hooks/catch/27132993/uj9mk1d/',
+  // Bookings POST to a same-origin server proxy (/api/book) which validates +
+  // forwards to Zapier server-side. The Zapier catch-hook URL is no longer in
+  // client code — it lives in the ZAPIER_INTAKE_WEBHOOK server env var.
+  BOOK_API: '/api/book',
   // Relative (same-origin) paths so the form works on any domain it's served
   // from (book.workdecodedhq.com, *.netlify.app). Absolute cross-origin URLs
   // were blocked by the browser (no CORS headers), breaking availability.
@@ -1625,13 +1628,13 @@ async function submitForm() {
   statusEl.textContent = 'Submitting...';
 
   try {
-    const res = await fetch(CONFIG.ZAPIER_INTAKE_WEBHOOK, {
+    const res = await fetch(CONFIG.BOOK_API, {
       method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
       keepalive: true
     });
-    if (!res.ok) throw new Error('Webhook returned ' + res.status);
+    if (!res.ok) throw new Error('Booking proxy returned ' + res.status);
   } catch (e) {
     console.error('Intake webhook failed:', e);
     errorEl.textContent =

@@ -30,6 +30,16 @@ const SLUG_LENGTH = 7;
 // someone reads a short link off paper.
 const ALPHABET = 'abcdefghijkmnpqrstuvwxyz23456789';
 
+// Destination host allowlist (audit finding H3 — open redirect). Short links
+// are only ever created for Google Meet sessions and our own pages; anything
+// else is rejected so a leaked API key can't turn l.workdecodedhq.com into a
+// phishing redirector.
+const ALLOWED_HOSTS = ['meet.google.com', 'workdecodedhq.com'];
+function hostAllowed(hostname: string): boolean {
+  const h = hostname.toLowerCase();
+  return ALLOWED_HOSTS.some((allowed) => h === allowed || h.endsWith(`.${allowed}`));
+}
+
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
@@ -105,11 +115,17 @@ export async function POST(req: NextRequest) {
       { status: 400, headers: CORS }
     );
   }
-  // Basic URL validation — must be http(s)
+  // URL validation — must be http(s) AND on the destination allowlist.
   try {
     const parsed = new URL(url);
     if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
       throw new Error('non-http');
+    }
+    if (!hostAllowed(parsed.hostname)) {
+      return NextResponse.json(
+        { error: `url host not allowed; must be one of: ${ALLOWED_HOSTS.join(', ')} (or a subdomain)` },
+        { status: 400, headers: CORS }
+      );
     }
   } catch {
     return NextResponse.json(
