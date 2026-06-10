@@ -211,8 +211,9 @@ Rule (INV-0): on Accept, create an invoice only when `Session Price > 0`. INV-1 
 - **Bot defense** — `/api/book` validates and rate-limits but has no CAPTCHA; add Turnstile/hCaptcha if junk bookings appear.
 - `validate-code` formula "escaping" is ineffective; the input allowlist is the real defense (don't loosen it). It also still returns more metadata than needed (M4).
 
-**Ownership risk (relevant to "airtight transfer")**
+**Ownership risk (relevant to "airtight transfer") — DEFERRED by decision 2026-06-10**
 - Zapier is on **Michelle's personal account**; Airtable is connected via **Jose's personal account**; Calendar lives on `hello@`. None are owned by a neutral business entity. A truly airtight transfer means re-creating/re-authing these connections under business-owned accounts (see §12).
+- **Status:** explicitly left out of scope for this handoff (Jose's call). The system is fully functional as-is; this is a *risk acceptance*, not an oversight. Revisit §12 if/when Michelle sets up business-owned accounts — until then, nobody should rotate or disconnect the personal-account connections, or every Zap breaks.
 
 ---
 
