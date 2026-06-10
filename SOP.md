@@ -51,7 +51,7 @@ There is no automation for this today — it's manual:
 3. Tell the client — no automatic SMS goes out for changes.
 4. If an invoice was already sent and the session is cancelled, void it in Square and update the Invoices row.
 
-⚠️ Editing an Accepted session re-fires the "New or Updated Record" triggers. The dedup guards (`Meet Link exists` / `does not exist`) protect against duplicate calendar events and confirmations, but stay alert after edits — check Zap History if anything looks doubled.
+Editing an Accepted session re-fires the "New or Updated Record" triggers, but all three SMS Zaps now carry dedup guards (Meet Link for SS-1v2, the `Reminder … Scheduled` checkboxes for SS-2/SS-3), so edits won't duplicate sends. Still glance at Zap History after unusual edits.
 
 ### 1.6 Feedback
 
@@ -100,7 +100,7 @@ Things that will bite you:
 1. Editing a Zap creates a **draft**; nothing changes until you click **Publish**.
 2. **Never click "Test step" on a Twilio or Square step** unless you intend a real send/invoice. Filters and delays are safe to test.
 3. **The "new field" gotcha:** a newly added Airtable field won't appear in a Zap's field picker until you re-sample the trigger — trigger step → Test → "Find new records" → pick a record where the field is populated → Continue.
-4. **Respect the dedup guards.** SS-1v2 fires only when `Status = Accepted` AND `Meet Link does not exist`. SS-2/SS-3 require `Meet Link exists`. Removing these guards re-creates the June 2026 runaway loop (6 duplicate calendar events + texts from one booking).
+4. **Respect the dedup guards.** SS-1v2 fires only when `Status = Accepted` AND `Meet Link does not exist`. SS-2/SS-3 additionally require their `Reminder 24h/1h Scheduled` checkbox to be **unchecked**, and each Zap checks its box *before* its delay step — that's what makes record edits safe. Removing any of these guards re-creates the June 2026 duplicate-SMS incidents. To deliberately re-send a reminder, untick the session's checkbox once.
 5. Dates pasted into Delay Until fields must be ISO-8601 with a trailing `Z` (the Airtable formula fields already output this). Twilio `To` = `+1` + 10-digit phone.
 
 ### 3.3 Airtable changes
@@ -122,10 +122,10 @@ Things that will bite you:
 
 ### 3.5 Known issues you inherit (priority order)
 
-1. **INV-2 (paid invoice → package code) is broken** — wrong code format, blank session counts, and it fires for non-package invoices. Keep it OFF until rebuilt. Packages cannot launch until this is fixed.
+1. **INV-2 (paid invoice → package code) is broken and OFF** (since 2026-06-10) — wrong code format, blank session counts, and it fired for non-package invoices. Rebuild it (filter on `Package Type contains "pack"`, random `WD-XXXX-XXXX`, set `Sessions Purchased`, checkbox dedup) before packages launch.
 2. **Record-ID-as-auth** on `/api/session`, `/api/intake`, `/api/feedback` — anyone with an Airtable record ID can read client intake PII. Planned fix: signed expiring tokens.
 3. **No CAPTCHA on `/api/book`** — validation + rate limiting only. Add Turnstile/hCaptcha if junk bookings appear.
-4. **Session Type option sprawl** (see §3.3).
-5. **Reminder dedup** relies on `Meet Link exists`; a `Reminder Sent` checkbox would be sturdier if reminders ever duplicate.
+
+*(Resolved 2026-06-10: reminder duplicate-send loop — fixed with `Reminder … Scheduled` checkbox guards; Session Type option sprawl — consolidated to lowercase canonical set + two legacy labels.)*
 
 Full detail: runbook §11–12, `AUDIT-2026-06-08.md`.
