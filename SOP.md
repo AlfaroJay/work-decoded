@@ -87,6 +87,14 @@ Things that will bite you:
 - Env vars live in Netlify site settings: `AIRTABLE_PAT`, `GOOGLE_SERVICE_ACCOUNT_JSON`, `GOOGLE_CALENDAR_ID`, `SHORTENER_API_KEY`, `ZAPIER_INTAKE_WEBHOOK`. Rotating any of these requires a redeploy to take effect.
 - Everything client-facing is **Eastern Time**, formatted by Airtable formula fields (`Session Date Pretty` / `Session Time Pretty`). Don't reformat dates in code.
 
+### 3.1b The marketing site (Squarespace)
+
+`www.workdecodedhq.com` is a separate Squarespace site. Three non-obvious things:
+
+- The **header nav and the `/book` → `book.workdecodedhq.com` redirect live in Code Injection** (Settings → Advanced → Code Injection). If that redirect script is ever removed, the `/book` page falls back to a stale embedded copy of the form — don't remove it.
+- The **footer is a global code block** (edit any page → footer section → double-click the CODE block). The Connect links (site, Instagram) were fixed 2026-06-10; LinkedIn was removed.
+- The old **Acuity scheduler (`workdecodedhq.as.me`) is still live** and bypasses Airtable completely. Bookings made there won't appear in the Sessions table and get no automations. If a session "doesn't exist" in Airtable, check Acuity.
+
 ### 3.2 Editing Zaps safely
 
 1. Editing a Zap creates a **draft**; nothing changes until you click **Publish**.
