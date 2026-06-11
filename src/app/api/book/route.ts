@@ -85,6 +85,28 @@ export async function POST(req: NextRequest) {
     return bad('Malformed request body.');
   }
 
+  // ---- Bot defense (fail-open: absent fields never block a booking) -------
+  // 1. Honeypot: the form ships an off-screen "website" input no human sees.
+  //    If it arrives with a value, a form-filling bot completed the page.
+  // 2. Time-trap: the form stamps when it rendered; a full intake completed
+  //    in under 5 seconds is not a human.
+  // Both cases return a fake success (so bots don't learn to adapt) and
+  // nothing is forwarded to Zapier. Real failures stay loud; only confirmed
+  // bot signatures are silently dropped, and each drop is logged.
+  const hp = data.hpWebsite;
+  if (typeof hp === 'string' && hp.trim() !== '') {
+    console.warn('[Book] Honeypot tripped — submission dropped');
+    return NextResponse.json({ ok: true, bookingCode: data.bookingCode ?? null });
+  }
+  if (typeof data.formRenderedAt === 'string' && data.formRenderedAt !== '') {
+    const renderedAt = Date.parse(data.formRenderedAt);
+    if (!Number.isNaN(renderedAt) && Date.now() - renderedAt < 5000) {
+      console.warn('[Book] Time-trap tripped (form submitted <5s after render) — submission dropped');
+      return NextResponse.json({ ok: true, bookingCode: data.bookingCode ?? null });
+    }
+  }
+  // --------------------------------------------------------------------------
+
   // Required fields present + non-empty.
   for (const key of REQUIRED) {
     const v = data[key];
@@ -99,8 +121,11 @@ export async function POST(req: NextRequest) {
   }
 
   // Shallow copy so we normalize without mutating the parsed body. Field NAMES
-  // are preserved — only values are cleaned.
+  // are preserved — only values are cleaned. The bot-defense fields are
+  // internal and never forwarded to the Zap.
   const payload: Record<string, unknown> = { ...data };
+  delete payload.hpWebsite;
+  delete payload.formRenderedAt;
 
   payload.email = (data.email as string).trim();
 

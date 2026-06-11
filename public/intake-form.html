@@ -327,6 +327,13 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
   <!-- SECTION 1: CONTACT INFO -->
   <div class="section">
     <div class="section-title">Your information</div>
+    <!-- Honeypot: invisible to humans (hidden off-screen, aria-hidden,
+         tabindex=-1), but naive form-filling bots will populate it. /api/book
+         silently drops any submission where this has a value. -->
+    <div aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;height:0;overflow:hidden;">
+      <label for="hp-website">Website</label>
+      <input type="text" id="hp-website" name="website" tabindex="-1" autocomplete="off"/>
+    </div>
     <div class="two-col">
       <div class="field"><label>First name <span class="req">*</span></label><input type="text" id="fname" placeholder="First name"/></div>
       <div class="field"><label>Last name <span class="req">*</span></label><input type="text" id="lname" placeholder="Last name"/></div>
@@ -755,6 +762,10 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 /* ============================================================
    WORK DECODED INTAKE FORM
    ============================================================ */
+// Bot defense: timestamp when the form was rendered. Sent with the payload so
+// /api/book can reject submissions completed faster than humanly possible.
+window.__wdFormRenderedAt = new Date().toISOString();
+
 const CONFIG = {
   // Bookings POST to a same-origin server proxy (/api/book) which validates +
   // forwards to Zapier server-side. The Zapier catch-hook URL is no longer in
@@ -1566,6 +1577,10 @@ async function submitForm() {
     clientId,
     bookingCode,
     submittedAt:          new Date().toISOString(),
+
+    // Bot defense (validated by /api/book): honeypot + form render time.
+    hpWebsite:            (document.getElementById('hp-website') || {}).value || '',
+    formRenderedAt:       window.__wdFormRenderedAt || '',
 
     // Section 1 — your info
     firstName:            val('fname'),
