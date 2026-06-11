@@ -35,7 +35,7 @@ Form (Netlify site) → /api/book → Zapier → Airtable (Pending)
 
 **Day 3 — guided live accept.** With Jose/Michelle present, accept a real (or test) booking per SOP §1.2 and run the full verification checklist. Note how long each automation takes to fire (~2–5 min polling).
 
-**Day 4 — break-glass drills.** Practice, without executing: where the OFF toggle is on each Zap; where Netlify rollback lives; how to read an errored Zap run; where Twilio shows a failed SMS. Walk SOP §3.4 line by line and locate every screen it mentions.
+**Day 4 — break-glass drills.** Practice, without executing: where the OFF toggle is on each Zap; where Netlify rollback lives; how to read an errored Zap run; where Twilio shows a failed SMS. Walk SOP §3.5 (the emergency playbook) line by line and locate every screen it mentions.
 
 **Day 5 — solo with checkpoint.** Run the weekly check (SOP Part 2) yourself and write down anything that looks off. Review findings together.
 
@@ -43,7 +43,7 @@ Form (Netlify site) → /api/book → Zapier → Airtable (Pending)
 
 ## 4. Week 2 — maintain
 
-**Zapier literacy.** Open each LIVE Zap (runbook §6 lists all eight with IDs) in the editor *without publishing anything*. For each, identify: trigger, filter (find the dedup guard), and action steps. Read SOP §3.2 before touching anything.
+**Zapier literacy.** Open each LIVE Zap (runbook §6 lists them all with IDs) in the editor *without publishing anything*. For each, identify: trigger, filter (find the dedup guard), and action steps. Read SOP §3.3 before touching anything.
 
 **Codebase tour.** Clone the repo. Key map:
 
@@ -57,7 +57,7 @@ Form (Netlify site) → /api/book → Zapier → Airtable (Pending)
 
 **Exercise:** make a trivial copy change on a branch, push it, find the Netlify deploy preview, verify it, and delete the branch without merging. That's the whole safe-change loop with zero risk.
 
-**Exercise:** in Airtable, on a *test* record, change `Session Type` and watch `Session Price` recompute. Now read the price formula and the option-sprawl warning (SOP §3.3) — you'll understand why that formula is fragile.
+**Exercise:** in Airtable, on a *test* record, change `Session Type` and watch `Session Price` recompute. Now read the price formula and SOP §3.4 — the formula is keyed to the option names, which is why the canonical set in NAMING.md matters.
 
 ## 5. Things that will bite you (memorize these five)
 
@@ -73,7 +73,7 @@ Form (Netlify site) → /api/book → Zapier → Airtable (Pending)
 - **Dedup guard** — a Zap filter (e.g. `Meet Link does not exist`) that stops a Zap re-firing when a record is edited.
 - **SS-1/2/3** — confirmation / 24-hour / 1-hour SMS Zaps. **INV-0/1/2** — invoice creation / Square send / package-code Zaps. **PKG-1/2/3** — unbuilt package SMS Zaps.
 - **Booking code** — `WD-XXXX-XXXX`, the client-facing reference generated at booking.
-- **Package code** — prepaid multi-session code (feature not yet launched; INV-2 is broken — see SOP §3.5).
+- **Package code** — prepaid multi-session code (`PKG-XXXX-XXXX`), issued automatically by INV-2 when a pack invoice is paid (see SOP §1.4).
 - **Deploy preview** — Netlify build of a non-main branch at a temporary URL; production is only ever `main`.
 - **A2P 10DLC** — US carrier registration that lets the Twilio toll-free number send business SMS; why every text ends "Reply STOP to opt out."
 

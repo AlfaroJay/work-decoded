@@ -1,16 +1,14 @@
-# Work Decoded — Transfer Runbook
+# Work Decoded — System Runbook
 
-**Purpose:** everything a new operator/engineer needs to take this system over cold — accounts, architecture, every automation, the data model, how to run it day-to-day, what's fragile, and what's still pending. Current as of **2026-06-10**, reconciled against the live Airtable base, Netlify site, and git state that day (see §13 Changelog).
+**Purpose:** everything an operator/engineer needs to run this system — accounts, architecture, every automation, the data model, day-to-day operations, and troubleshooting. Current as of **2026-06-10**; the full pipeline was verified end-to-end on this date.
 
-> Companion docs: `NAMING.md` (**canonical nomenclature — names/spellings used everywhere**), `SOP.md` (Nick's day-to-day + maintainer procedures), `TRAINING.md` (Nick's onboarding plan), `scripts/AUTOMATION-AND-TEMPLATES.md` (flow + all message copy), `scripts/setup-twilio-sms.js` (canonical SMS copy), `AUDIT-2026-06-08.md` (audit findings + fixes). Where this runbook and older handoff docs disagree, **this runbook wins** — it reflects the live state.
->
-> **2026-06-10 (late):** all pre-launch **test data was purged** from the base (Sessions, Clients, Invoices, Follow-Up Tasks, Code Activity Log; Consultants left for review). Session tiers are now **Title Case** (`Standard/Premier/Crisis/Discovery`) — `/api/book` normalizes the form's lowercase values. Historic references in this doc to lowercase tiers, legacy options, or specific test records describe a state that no longer exists.
+> Companion docs: `NAMING.md` (canonical nomenclature — names and spellings used everywhere), `SOP.md` (day-to-day + maintainer procedures), `TRAINING.md` (onboarding plan), `scripts/AUTOMATION-AND-TEMPLATES.md` (flow + all message copy), `scripts/setup-twilio-sms.js` (canonical SMS copy). Where docs disagree, **this runbook wins**.
 
 ---
 
 ## 1. What this system is
 
-A consulting business ("Work Decoded") that sells short workplace-advisory sessions. A client books on the website → the booking lands in Airtable → a human (Michelle) accepts it → automations send confirmations/reminders by SMS, create the Google Meet + calendar event, and invoice via Square. Feedback is collected after the session.
+A consulting business ("Work Decoded") that sells short workplace-advisory sessions. A client books on the website → the booking lands in Airtable → a human (Michelle) accepts it → automations send confirmations/reminders by SMS, create the Google Meet + calendar event, and invoice via Square. Feedback is collected after the session. Pre-paid multi-session packages are supported via redeemable package codes.
 
 **The one manual gate:** Michelle sets a Session's `Status` → **Accepted**. That single change fires the confirmation SMS, the calendar/Meet event, and the paid-tier invoice.
 
@@ -21,13 +19,14 @@ A consulting business ("Work Decoded") that sells short workplace-advisory sessi
 ```
 Client books on the site (/book → intake-form.html)
         │  posts to /api/book (server proxy: validates, rate-limits,
-        │  forwards to the Zapier catch-hook — hook URL is now a server
-        │  env var, no longer exposed in client code; live 2026-06-10)
+        │  bot-screens, normalizes the tier to Title Case, then forwards
+        │  to the Zapier catch-hook — hook URL lives in a server env var)
         ▼
-[Zap] WorkDecoded Intake → Airtable CRM  (LIVE)
+[Zap] WorkDecoded Intake → Airtable CRM  (LIVE, v15)
   • Create Client record
   • Create Session record (Status = Pending)        ← waits for Michelle
-  • Send client confirmation email + consultant email
+  • Send branded client email + consultant email
+    (consultant email carries a SIGNED feedback link — see §8)
         │
         ▼
 Michelle reviews → sets Session Status = Accepted     ← THE manual gate
@@ -36,7 +35,7 @@ Michelle reviews → sets Session Status = Accepted     ← THE manual gate
         │     • Create Google Calendar event + Google Meet
         │     • Write Meet Link + Event ID back to the Session
         │     • Send SS-1 confirmation SMS
-        │     (guard: only if Meet Link is empty → fires once)
+        │     (guard: only fires while Meet Link is empty → fires once)
         │
         └─►[Zap] INV-0: Accepted → Create Invoice  (if Session Price > 0)
               • Create Invoices row (Status=Pending, Due Date=Session Date)
@@ -47,34 +46,41 @@ Michelle reviews → sets Session Status = Accepted     ← THE manual gate
                 • Write Square Invoice ID back; Status → Sent
         │
         ▼
-[Zap] SS-2 (24h before) → reminder SMS
-[Zap] SS-3 (1h before)  → reminder SMS WITH Meet link
+[Zap] SS-2 (24h before) → reminder SMS     (checkbox guard → fires once)
+[Zap] SS-3 (1h before)  → reminder SMS WITH Meet link  (same guard)
         │
         ▼
 Session happens on Google Meet
         │
         ▼
-Calendar event ends → [Zap] Post-Session → consultant feedback request (email + /feedback)
+Calendar event ends → [Zap] Post-Session → consultant feedback request
+                      (email carries a SIGNED feedback link)
         │
         ▼
-Invoice paid in Square → [Zap] INV-2 → if a package, issue a Package Code
+Invoice paid in Square → [Zap] INV-2 → if a package ("…pack"), issue a
+                         PKG-XXXX-XXXX code, mark the invoice, email the
+                         client, and log to Code Activity Log
 ```
+
+Bookings with a session date **under 24 hours away** get their "24-hour" reminder immediately on Accept (the delay target is already past) — expected behavior, not a bug.
 
 ---
 
-## 3. Accounts & access (⚠️ read this before a real transfer)
+## 3. Accounts & access
 
 | System | Account / identifier | Notes |
 |---|---|---|
-| **Zapier** | Michelle Williams — **personal** account, logged in as `support@workdecodedhq.com` | ⚠️ All Zaps live here. For an airtight transfer, move them to a business-owned Zapier account (see §12). |
-| **Airtable** | Base `appG108B0ALyLJ4A3` "Work Decoded - Client Records". Zapier connects via **`jose@thealphacreative.com`** (AlphaCreative business account, used in 17 Zaps), an invited collaborator on Work Decoded's base. | ✅ No transfer issue — the base belongs to Work Decoded; AlphaCreative is a collaborator (confirmed by Jose 2026-06-10). |
-| **Twilio** | Toll-free **+18555500594**, A2P 10DLC verified. | `To` must be `+1` + 10 digits (E.164). `From` = `+18555500594`. SMS is sent by Zapier's Twilio steps, not by the website. |
-| **Square** | Sends the actual invoices. | INV-1 creates + publishes; INV-2 reacts to paid. |
-| **Google Calendar** | `hello@workdecodedhq.com` (America/New_York). | Service account has **read-only** here for the site's availability check; SS-1v2 creates events via Zapier's Google Calendar connection. To delete events you must do it by hand in the Calendar UI. |
+| **Zapier** | Michelle Williams — personal account, logged in as `support@workdecodedhq.com` | All Zaps live here. Consolidating to a business-owned account is accepted future work, not a blocker. Until then, do not rotate or disconnect its app connections — every Zap depends on them. |
+| **Airtable** | Base `appG108B0ALyLJ4A3` "Work Decoded - Client Records" (owned by Work Decoded). Zapier connects via `jose@thealphacreative.com` (AlphaCreative business account, invited collaborator; used in 17 Zaps). | No ownership issue. |
+| **Twilio** | Toll-free **+18555500594**, A2P 10DLC verified. | `To` must be `+1` + 10 digits (E.164). `From` = `+18555500594`. SMS is sent by Zapier's Twilio steps, not by the website. Texts only go to clients who opted in (`SMS Consent` checkbox, enforced by the SMS Zaps). |
+| **Square** | Sends the actual invoices. | INV-1 creates + publishes; INV-2 reacts to paid invoices. |
+| **Google Calendar** | `hello@workdecodedhq.com` (America/New_York). | The site's service account has **read-only** access for availability checks; SS-1v2 creates events via Zapier's Google Calendar connection. Deleting/moving events must be done by hand in the Calendar UI. |
 | **Netlify** | Site `workdecodedhq` (`8ff8a701-45db-4ad2-ad59-5f8254204eb2`). | Deploys from GitHub `main`. Branch pushes get deploy previews. |
 | **GitHub** | `AlfaroJay/work-decoded` | Production branch: `main`. |
+| **Squarespace** | Marketing site `www.workdecodedhq.com`. | Custom nav + the `/book`→`book.workdecodedhq.com` redirect live in **Code Injection**; the footer is a **global code block**. |
+| **Acuity** | `workdecodedhq.as.me` (legacy scheduler, still live). | Bookings made there import to Airtable via the "New Acuity appointment to Airtable" Zap, but bypass the SMS/invoice pipeline. Treat any Acuity booking as out-of-band. |
 
-**Env vars** (Netlify site settings; see `.env.local.example`): `AIRTABLE_PAT`, `GOOGLE_SERVICE_ACCOUNT_JSON`, `GOOGLE_CALENDAR_ID` (=`hello@workdecodedhq.com`), `SHORTENER_API_KEY`, and `ZAPIER_INTAKE_WEBHOOK` (the intake catch-hook URL — server-side only since 2026-06-10; it is no longer hardcoded in `public/intake-form.html`).
+**Netlify env vars** (site settings; see `.env.local.example`): `AIRTABLE_PAT`, `GOOGLE_SERVICE_ACCOUNT_JSON`, `GOOGLE_CALENDAR_ID` (=`hello@workdecodedhq.com`), `SHORTENER_API_KEY`, `ZAPIER_INTAKE_WEBHOOK` (the intake catch-hook URL — server-side only), `LINK_SIGNING_SECRET` (HMAC secret for consultant links; must match the Zapier Code steps — see §8). Env-var changes require a redeploy to reach the API routes.
 
 ---
 
@@ -82,11 +88,15 @@ Invoice paid in Square → [Zap] INV-2 → if a package, issue a Package Code
 
 - **Repo:** `AlfaroJay/work-decoded`, deploys from `main` to Netlify. Node 20.
 - **Routes that take real traffic:** `/book` → `public/intake-form.html` (the live form); `/feedback` → `public/feedback-form.html`. Rewrites are in `next.config.js`.
-- **API routes** (`src/app/api/*`): `availability` (Google Calendar free/busy), `validate-code` (package-code lookup), `submit`/`intake`/`session`/`feedback`/`shorten`, `legal/[slug]`, and `r/[slug]` (URL-shortener redirect).
-- **Intake path (since 2026-06-10):** the form posts to **`/api/book`**, a same-origin server proxy that validates required fields, caps free-text length, rate-limits per IP (10/min, fail-open), and forwards the unchanged JSON payload to the Zapier catch-hook (`ZAPIER_INTAKE_WEBHOOK` env var). **Do not rename payload keys in `/api/book`** — the intake Zap's trigger mapping depends on the exact field names. `src/app/api/submit/route.ts` and `src/components/DateTimePicker.tsx` remain dead code (rate-limited but unused).
-- All public API routes now carry per-IP rate limiting (`src/lib/rateLimit.ts`, fail-open).
-- **Booking reference code:** `WD-XXXX-XXXX`, generated client-side and stored on the Session (`Booking Code`).
-- **Date/time standard:** everything the client/consultant sees reads "Monday, June 8 at 4:45 PM ET", sourced from Airtable formula fields `Session Date Pretty` / `Session Time Pretty` (always Eastern).
+- **API routes** (`src/app/api/*`):
+  - `book` — the booking proxy. Validates required fields, screens bots (honeypot + render-time trap, both fail-open and silently dropped when tripped), normalizes the tier to Title Case, rate-limits per IP, forwards the unchanged payload to the Zapier catch-hook. **Do not rename payload keys** — the intake Zap's trigger mapping depends on the exact field names.
+  - `availability` — Google Calendar free/busy for the date picker. DST-aware ET offsets. Fails closed (an error means "no slots", never "all slots").
+  - `validate-code` — package-code lookup. Input allowlist `^[A-Z0-9-]{4,32}$` is the security boundary; don't loosen it.
+  - `session` / `intake` / `feedback` — consultant-facing reads/writes, authenticated by **signed, expiring tokens** (§8). Bare Airtable record IDs are rejected with 401.
+  - `shorten` + `r/[slug]` — branded URL shortener (`l.workdecodedhq.com`); destinations restricted to `meet.google.com` and `*.workdecodedhq.com`.
+  - `submit` — dead code (the form posts to `book`); kept rate-limited but unused, safe to delete with care.
+- All public routes carry per-IP rate limiting (`src/lib/rateLimit.ts`, fail-open).
+- **Date/time standard:** everything client/consultant-facing reads "Monday, June 8 at 4:45 PM ET", sourced from Airtable formula fields `Session Date Pretty` / `Session Time Pretty` (always Eastern).
 
 ---
 
@@ -96,31 +106,38 @@ Invoice paid in Square → [Zap] INV-2 → if a package, issue a Package Code
 | Field | ID | Notes |
 |---|---|---|
 | Session ID | `fld2yMRCaBypYQF8k` | autonumber |
-| Status | `fldEQ8J8Qj8KZOsNG` | singleSelect; **"Accepted" fires everything** |
-| Session Type | `fld6RIbB9L3Rbv8bR` | singleSelect (see option-sprawl note in §11) |
+| Status | `fldEQ8J8Qj8KZOsNG` | singleSelect Pending/Accepted/Completed/Cancelled; **"Accepted" fires everything**; intake sets Pending |
+| Session Type | `fld6RIbB9L3Rbv8bR` | singleSelect: `Standard` / `Premier` / `Crisis` / `Discovery` (Title Case — see NAMING.md) |
 | Session Date | `fld3phAqfSQxhMpoX` | dateTime (UTC instant) |
-| Session Price | `fldXCwW3Q1eSwHycF` | formula: Standard 100 / Premier 125 / Crisis 175 / Discovery 0; 0 if package code |
+| Session Price | `fldXCwW3Q1eSwHycF` | formula: Standard 100 / Premier 125 / Crisis 175 / Discovery 0; 0 if package code; honors Price Override |
 | Session End | `fldFMj1RNqe5wRzhX` | formula ISO-8601 UTC = start + 15min(Discovery)/30min |
 | Reminder 24h Time | `fldDgK8zzUDoPjgEM` | formula ISO-8601 UTC = Session Date − 24h → SS-2 Delay Until |
 | Reminder 1h Time | `fldPsOZeOTlVSWQ8L` | formula ISO-8601 UTC = Session Date − 1h → SS-3 Delay Until |
-| Meet Link | `fldI53l7edokb9uKE` | url; set by SS-1v2 on Accept; used by SS-3 + dedup guards |
-| Google Calendar Event ID | `fldqST96z4MDiycwS` | set by SS-1v2 |
-| Booking Code | `fldpfpNSsZOndgJng` | WD-XXXX-XXXX |
+| Reminder 24h Scheduled | `fldnPZKjDYUeJoH30` | checkbox; **SS-2 dedup guard** — set by the Zap before its delay; untick to deliberately re-send |
+| Reminder 1h Scheduled | `fldKNjlPF6C6rgFrO` | checkbox; **SS-3 dedup guard** — same pattern |
+| SMS Consent | `fldogTAlo7CwFFRto` | checkbox from the form; SMS Zaps only text when true |
+| Meet Link | `fldI53l7edokb9uKE` | url; set by SS-1v2 on Accept; used by SS-3 + the SS-1v2 fire-once guard |
+| Google Calendar Event ID | `fldqST96z4MDiycwS` | set by SS-1v2; joins the post-session Zap back to this row |
+| Booking Code | `fldpfpNSsZOndgJng` | client-facing reference, `WD-XXXX-XXXX` |
 | Session Date Pretty | `fldnUroYIy49ZXEzU` | "Tuesday, June 9" |
 | Session Time Pretty | `fldEJ24bOeibUd3Mn` | "9:00 AM ET" |
+| Price Override | `fld6ACBELaaFsZqK4` | currency; manual price for custom quotes (e.g. post-Discovery invoice) |
 | First Name (from Client) | `fldILNCXJFwTmuJjZ` | lookup |
 | Phone (from Client) | `fldOOpywFzikb3qmq` | lookup (10-digit; prefix `+1` for Twilio) |
 | Client | `fldYUcVGJIyOA64CZ` | link → Clients |
 | Invoices | `fldBJaNg8Yp4GfQbF` | link → Invoices |
 
 ### Clients — `tblv8GHs4Ui6MivvJ`
-First Name `fldfDAKjntoogVqfV` · Phone `fldAmKpo0NhU6MXxY` · Email `fldNwChPv09T8Ln79` (plus full intake fields: employer, industry, issue type, situation, legal categories, etc.).
+First Name `fldfDAKjntoogVqfV` · Phone `fldAmKpo0NhU6MXxY` · Email `fldNwChPv09T8Ln79`, plus the full intake (employer, industry, situation, legal categories, consents, etc.) and `Intake Brief` (formula — the consultant email body).
 
 ### Invoices — `tblDsLqu5xQTXJnDf`
-Invoice Number `fldbhgfIaEE1jPwrP` · Client `fldwwI5yYPpRePJCp` · Session `fldTQbQFOHDSXbzAB` · Amount `fld7zJWGd68pYOZSF` · Status `fldCtwEix0czYxvBx` (Draft/Pending/Sent/Paid) · Invoice Date `fld5iZIvMM505ulyz` · **Due Date `fldF0su5R9sKOmawO`** (now set by INV-0) · Square Invoice ID `fldm827e6WFfmGC31` · Package Type `fldTakl3KFTLY8OCN`.
+Invoice Number `fldbhgfIaEE1jPwrP` (format `WD-YYYY-NNN`) · Client `fldwwI5yYPpRePJCp` · Session `fldTQbQFOHDSXbzAB` · Amount `fld7zJWGd68pYOZSF` · Status `fldCtwEix0czYxvBx` (Draft/Pending/Sent/Paid) · Invoice Date `fld5iZIvMM505ulyz` · Due Date `fldF0su5R9sKOmawO` (set by INV-0 = session date) · Square Invoice ID `fldm827e6WFfmGC31` · Package Type `fldTakl3KFTLY8OCN` · **Package Code Issued** `fldzvvymDqC8b5K8D` (checkbox; INV-2 dedup guard — set by the Zap when a code is issued).
 
 ### Package Codes — `tblljv2xBOHUgV6S9`
-Code `fldeUcZZnU6PwgBG9` · Client `fldHeLOO2vHAWsIqU` (link) · Package Type `fldO8hH4nwzs0SjcK` · Sessions Purchased `fld3zSvuIuVmWKzsp` · Issued `fld1MFtLXPHiDtyzL` · Expires `fldfvTRwRC5RuyZog` · plus `Sessions` (redeemed links) and `Notes`.
+Code `fldeUcZZnU6PwgBG9` (format `PKG-XXXX-XXXX`) · Client `fldHeLOO2vHAWsIqU` · Package Type `fldO8hH4nwzs0SjcK` · Sessions Purchased `fld3zSvuIuVmWKzsp` · Issued `fld1MFtLXPHiDtyzL` · Expires `fldfvTRwRC5RuyZog` (blank = never, per the marketing-site promise) · Sessions (redeemed links) · Notes.
+
+### Code Activity Log — `tbls5B0UqhnriI28g`
+Audit trail of code issuance/redemption events, written by the Zaps.
 
 ---
 
@@ -128,18 +145,17 @@ Code `fldeUcZZnU6PwgBG9` · Client `fldHeLOO2vHAWsIqU` (link) · Package Type `f
 
 | Zap | ID | State | What it does |
 |---|---|---|---|
-| WorkDecoded Intake → Airtable CRM | `360012684` (v14) | **LIVE** | Booking form → Client + Session records + branded client email + consultant email. (Calendar step was removed — now on Accept.) ⚠️ Leaves Session `Status` **empty** (blank = pending); see NAMING.md §2. Verified 2026-06-10: receives Title Case tiers from `/api/book` and writes them correctly. |
-| **SS-1v2: Accepted → Calendar + SMS** | `366933187` (v2) | **LIVE** | On Accept: Google Calendar event + Meet, saves Meet Link, sends SS-1 SMS. **Filter: `Status = Accepted` AND `Meet Link does not exist`** (dedup guard added 2026-06-08). |
-| **INV-0: Accepted → Create Invoice** | `367782983` (v2) | **LIVE** | On Accept + `Session Price > 0` + no existing invoice → create Invoices row. **Now sets `Due Date = Session Date`** (added 2026-06-08). |
-| **INV-1: Invoice Request → Square** | `367637945` (v2) | **LIVE** | Pending invoice → Square: find/create customer, create invoice, **publish** (emails it), write Square ID back. **Publish step now sends `Content-Type: application/json`** (fixed 2026-06-08). |
-| INV-2: Invoice Paid → Package Code | `367640419` | **OFF** (2026-06-10) | Paid invoice → issues a Package Code. ⚠️ **Buggy — turned OFF until rebuilt; see §11.** |
-| **SS-2: 24-Hour Reminder SMS** | `367789675` | **LIVE** (v3 2026-06-10) | Trigger → filter (`Status=Accepted` AND `Meet Link exists` AND **`Reminder 24h Scheduled` is false**) → **Airtable Update Record: check `Reminder 24h Scheduled`** → Delay Until `Reminder 24h Time` → SS-2 SMS. The checkbox is set BEFORE the delay, so later record edits can never schedule a duplicate. |
-| **SS-3: 1-Hour Reminder SMS** | `367805536` | **LIVE** (v2 2026-06-10) | Same structure with `Reminder 1h Scheduled`; SS-3 SMS **with the Meet link**. |
-| Post-Session → Consultant Feedback | `363446853` + `361193654` | **LIVE** | Feedback request after the session. Confirmed working — leave alone. |
-
-**OFF / not in use:**
-- Old reminder skeletons (replaced today, safe to delete): SS-2 `366924136`, SS-3 `366926614`.
-- Package SMS skeletons (not built — confirm packages are actually being sold first): PKG-1 `366927461`, PKG-2 `366927973`, PKG-3 `366928327`.
+| WorkDecoded Intake → Airtable CRM | `360012684` (v15) | **LIVE** | Booking form → Client + Session (Status=Pending) + branded client email + consultant email with the intake brief and a **signed** feedback link (Code step, §8). |
+| SS-1v2: Accepted → Calendar + SMS | `366933187` | **LIVE** | On Accept: Google Calendar event + Meet, saves Meet Link, sends SS-1 SMS. Filter: `Status = Accepted` AND `Meet Link does not exist` → fires once. |
+| INV-0: Accepted → Create Invoice | `367782983` | **LIVE** | On Accept + `Session Price > 0` + no existing invoice → create Invoices row with `Due Date = Session Date`. |
+| INV-1: Invoice Request → Square | `367637945` | **LIVE** | Pending invoice → Square: find/create customer, create invoice, publish (emails it), write Square ID back, Status → Sent. |
+| INV-2: Invoice Paid → Package Code + Email | `367640419` (v2) | **LIVE** | Paid **pack** invoice (filter: `Package Type contains "pack"` AND `Package Code Issued is false`) → generate `PKG-XXXX-XXXX` (Code step), create the Package Codes row with Sessions Purchased, **mark the invoice issued**, email the code to the client, log the event. Single-session invoices never produce codes. |
+| SS-2: 24-Hour Reminder SMS | `367789675` (v3) | **LIVE** | On Accept (+ Meet Link exists + `Reminder 24h Scheduled` is false) → **check the box** → Delay Until `Reminder 24h Time` → SS-2 SMS. The box is set before the delay, so record edits can never schedule duplicates. |
+| SS-3: 1-Hour Reminder SMS | `367805536` (v2) | **LIVE** | Same structure with `Reminder 1h Scheduled`; SS-3 SMS includes the Meet link. |
+| Post-Session → Consultant Feedback Reminder | `363446853` (v7) | **LIVE** | Calendar event ends → find the Session → mint a **signed** feedback link (Code step, §8) → email the consultant. Skips if feedback was already submitted (grace-window filter). |
+| WorkDecoded Feedback → Airtable Sessions | `361193654` | **LIVE** | Legacy webhook path that records feedback into the Session row. |
+| New Acuity appointment to Airtable | — | **LIVE** | Legacy import: Acuity bookings → Airtable records (no SMS/invoice automation). |
+| PKG-1/2/3 (package SMS flows) | `366927461` / `366927973` / `366928327` | OFF (skeletons) | Build when packages launch and there's real volume to message. |
 
 ---
 
@@ -148,7 +164,7 @@ Code `fldeUcZZnU6PwgBG9` · Client `fldHeLOO2vHAWsIqU` (link) · Package Type `f
 Merge fields from Airtable: name = `First Name (from Client)`, time = `Session Time Pretty`, date = `Session Date Pretty`, Meet link = `Meet Link`. Every message ends "Reply STOP to opt out." (A2P compliance).
 
 ```
-SS-1 (Accept, live):
+SS-1 (on Accept):
 Work Decoded: Hi {First Name}! Your session is confirmed for {Date} at {Time}. We're ready for you — see you then! Reply STOP to opt out.
 
 SS-2 (24h):
@@ -162,110 +178,87 @@ PKG-1/2/3: see scripts/AUTOMATION-AND-TEMPLATES.md §3 (not yet live).
 
 ---
 
-## 8. Pricing & invoice logic
+## 8. Signed consultant links (how link auth works)
+
+Consultant-facing pages (`/api/session`, `/api/intake`, `/api/feedback`, and the pages that call them) require a **signed, expiring token** in the `t` query parameter. A bare Airtable record ID is rejected with 401.
+
+- **Format:** `recXXXXXXXXXXXXXX.<expiresUnix>.<sig>` where `sig` = first 32 hex chars of HMAC-SHA256 over `recordId.expires`, keyed by `LINK_SIGNING_SECRET`. TTL is 60 days.
+- **Verifier:** `src/lib/signedToken.ts` (the file documents the matching generator).
+- **Minters:** two "Run Javascript" Code steps in Zapier — one in the intake Zap (consultant email) and one in the Post-Session Zap (feedback reminder). Both embed the same secret.
+- **Rotating the secret:** generate a new value → update `LINK_SIGNING_SECRET` in Netlify → trigger a redeploy → update the constant in **both** Zapier Code steps → publish both Zaps. Links sent before rotation stop working (consultants can use the link in their most recent email).
+- A consultant reporting "Invalid or expired link" should be sent a fresh link: easiest is re-running the relevant Zap step, or minting a token with the documented snippet.
+
+---
+
+## 9. Pricing & invoice logic
 
 | Tier | Price | Invoice |
 |---|---|---|
-| Discovery | $0 | Manual, **after** the call (custom Square invoice) |
+| Discovery | $0 | Manual, **after** the call (set `Price Override` on the session or create a Pending Invoices row with an amount + due date — INV-1 sends it) |
 | Standard | $100 | Auto on Accept |
 | Premier | $125 | Auto on Accept |
 | Crisis | $175 | Auto on Accept |
 | Package-code session | $0 (pre-paid) | No invoice |
 
-Rule (INV-0): on Accept, create an invoice only when `Session Price > 0`. INV-1 then publishes it in Square with **Payment due date = the session date** (set via the Invoice's Due Date, populated by INV-0).
+Rule (INV-0): on Accept, create an invoice only when `Session Price > 0`. INV-1 publishes it in Square with payment due = the session date.
+
+**Packages:** a paid invoice whose `Package Type` contains "pack" triggers INV-2, which issues a `PKG-XXXX-XXXX` code (NAMING.md §3), emails it to the client, and logs the event. The `Package Code Issued` checkbox on the invoice guarantees one code per invoice.
 
 ---
 
-## 9. Operating procedures (day-to-day)
+## 10. Operating procedures (day-to-day)
 
-**Accept a booking →** In Airtable Sessions, set the session's `Status` = `Accepted`. Within ~5 min you should see: SS-1 confirmation text, a Google Calendar event + Meet on `hello@workdecodedhq.com`, and (for paid tiers) a Square invoice emailed to the client. SS-2/SS-3 reminders are scheduled automatically.
+See `SOP.md` for the full procedures. The essentials:
 
-**Send a Discovery (post-call) invoice →** Discovery is $0 and isn't auto-invoiced. After the call, create a Pending Invoices row with the custom amount (and a Due Date) → INV-1 sends it via Square.
+**Accept a booking →** In Airtable Sessions, set `Status` = `Accepted`. Within ~5 min: SS-1 confirmation text, a Google Calendar event + Meet on `hello@workdecodedhq.com`, and (for paid tiers) a Square invoice emailed to the client. SS-2/SS-3 reminders schedule automatically and can each fire only once per session.
 
-**Verify a send →** Zapier → Zap History, filter by the Zap. SMS delivery also shows in the Twilio Console. Calendar events appear on `hello@workdecodedhq.com`.
+**Verify a send →** Zapier → Zap History, filter by the Zap. SMS delivery shows in the Twilio Console. Calendar events appear on `hello@workdecodedhq.com`.
 
-**⚠️ The "new field" gotcha (important):** a newly added Airtable field won't appear inside a Zap until you **re-sample the trigger** — open the trigger step → Test → "Find new records" → pick a record where that field is populated → Continue. This bites every time you add a field that a downstream step needs.
+**The "new field" gotcha:** a newly added Airtable field won't appear inside a Zap until you re-sample the trigger (trigger step → Test → "Find new records" → pick a record where that field is populated). Note that **unchecked checkboxes are invisible** to Zapier sampling — populate the field on a record first.
 
-**Other Zapier gotchas:** paste ISO-8601 with a trailing `Z` into Delay/date fields (the formula fields already output that). To clear a mapped token: click into the field, Cmd+A, Backspace. Twilio `To` = `+1` + 10 digits.
+**Other Zapier gotchas:** paste ISO-8601 with a trailing `Z` into Delay/date fields (the formula fields already output that). Twilio `To` = `+1` + 10 digits. Never click "Test step" on a Twilio/Square step unless you intend a real send.
 
 ---
 
-## 10. Safe-change workflow (so you never break live bookings)
+## 11. Safe-change workflow (so you never break live bookings)
 
 1. Work on a **branch**, never directly on `main`. Push it → Netlify builds a **deploy preview** (production untouched).
 2. Test on the preview URL: submit throwaway bookings, walk the date picker.
 3. Make changes **additive and backwards-compatible** first; remove the old path only after the new one is proven in production.
-4. Merge to `main` only after the preview checks out. Netlify has instant rollback if needed.
-5. For Zaps: edit creates a draft; **Publish** turns it live. Test steps that don't send (filters, delays) freely; **never** click "Test step" on a Twilio/Square step unless you intend a real send.
+4. Merge to `main` only after the preview checks out. Netlify has instant rollback.
+5. For Zaps: edit creates a draft; **Publish** turns it live. Test steps that don't send (filters, delays, code, Airtable lookups) freely; **never** "Test step" on Twilio/Square steps casually (it really sends).
+6. Env-var changes need a redeploy to take effect (an empty commit works).
 
 ---
 
-## 11. Known issues, risks & tech debt
+## 12. Known limitations & hardening backlog (forward-looking)
 
-**Automation**
-- ✅ **Reminder duplicates — FIXED 2026-06-10 (evening).** The "New or Updated Record" trigger re-fired on every edit of an Accepted session; on 2026-06-09 this sent the 24h and 1h reminders **twice each** (SS-2 runs 12:42+12:56 am, SS-3 runs 12:42+12:56 am — confirmed in Zap History). Fix: added `Reminder 24h Scheduled` / `Reminder 1h Scheduled` checkboxes to Sessions; both Zaps now require the checkbox to be false AND check it **before** the delay step. Verified live: a bulk record edit at 5:34 pm produced only Filtered runs. If a reminder must be re-sent manually, untick the relevant checkbox (that single edit will schedule it again).
-- **🟠 INV-2 turned OFF 2026-06-10** after re-misfiring on 2026-06-09 (issued `WD-VV7UEIKP` / `WD-OXQWEIKP` for **Single Session** invoices — wrong format, no session count, non-package invoices). The 3 bad/demo code rows were deleted. **Leave OFF until rebuilt** with: filter `Package Type contains "pack"`, a real random `WD-XXXX-XXXX` generator, `Sessions Purchased` set, and a dedup guard (same checkbox pattern as the reminders). Packages cannot launch until then.
-- ✅ **Session Type consolidated 2026-06-10.** Canonical set is now lowercase `standard` / `premier` / `crisis` / `discovery` (what the form sends) plus two legacy labels kept for historical Acuity rows: `Initial Consultation`, `Follow-Up`. The case-duplicates (`Standard`, `Premier`, `Premiere`, `Crisis`) were migrated (11 records, prices verified unchanged) and the options deleted. Note the price formula was already case-insensitive (`SWITCH(LOWER(...))`), so this was hygiene, not a bug fix.
-
-**Website / security** (documented in `AUDIT-2026-06-08.md`; status updated 2026-06-10)
-- ✅ **Fixed 2026-06-10 (merged to `main`):** intake now proxied server-side via `/api/book` (C1, partially — see below); per-IP rate limiting on all public routes (H2); DST offset bug in `/api/availability` (M1); URL-shortener destination host allowlist (H3).
-- **Record-ID-as-auth** on `/api/session`, `/api/intake`, `/api/feedback` still exposes client PII to anyone with a record ID (rate limiting now slows enumeration, but the fix is signed/expiring tokens) — **top remaining security item (H1)**.
-- **Bot defense** — `/api/book` validates and rate-limits but has no CAPTCHA; add Turnstile/hCaptcha if junk bookings appear.
-- `validate-code` formula "escaping" is ineffective; the input allowlist is the real defense (don't loosen it). It also still returns more metadata than needed (M4).
-
-**Ownership risk (relevant to "airtight transfer") — DEFERRED by decision 2026-06-10**
-- Zapier is on **Michelle's personal account**; Calendar lives on `hello@`. **Airtable is NOT an issue** — the base is Work Decoded's and the Zapier connection uses Jose's AlphaCreative *business* account as an invited collaborator (corrected 2026-06-10; earlier drafts wrongly called this a personal-account risk).
-- **Status:** remaining items (Zapier account, calendar ownership) explicitly left out of scope for this handoff (Jose's call). The system is fully functional as-is; this is a *risk acceptance*, not an oversight. Until any migration, nobody should rotate or disconnect the existing connections, or the Zaps break.
+- **Bot defense** on `/api/book` is honeypot + render-time trap + rate limiting. If junk bookings ever appear, the escalation path is a vendor CAPTCHA (Turnstile / reCAPTCHA / hCaptcha) — single integration point in `/api/book` plus a widget on the form.
+- **INV-2's trigger leg** (Square "New Paid Invoice") gets its first real exercise when a customer actually pays a pack invoice — watch Zap History after the first package sale. Every downstream step is individually verified.
+- **PKG-1/2/3 SMS flows** are unbuilt skeletons; build them when packages have real volume.
+- **Account consolidation:** Zapier lives on a personal account and the calendar on `hello@` — accepted as-is. If consolidating later: move/re-auth every Zap connection under business credentials, rotate all secrets, and re-run a full test booking (see §13).
+- **`validate-code`** returns slightly more metadata than strictly needed; the input allowlist is the real boundary.
+- **Acuity** remains a live side-door for bookings (imported to Airtable, no automations). Retire it when Michelle is ready.
 
 ---
 
-## 12. Transfer checklist (to hand this off cleanly)
+## 13. Full pipeline test (run after any major change)
 
-1. **Zapier:** move the Zaps to a business-owned Zapier account (Zapier "Transfer Zaps", or recreate). Re-auth the Airtable, Twilio, Square, Google connections under business credentials. Confirm each Zap is ON afterward.
-2. **Airtable:** add the business account as base owner; re-point the Zapier Airtable connection to it; rotate the `AIRTABLE_PAT` and update it in Netlify.
-3. **Google:** confirm the service account key and `hello@` calendar access carry over; rotate `GOOGLE_SERVICE_ACCOUNT_JSON` if needed.
-4. **Twilio / Square:** confirm business ownership and that A2P registration + the invoice templates remain valid.
-5. **GitHub / Netlify:** transfer repo ownership; confirm Netlify build hooks + all env vars (`AIRTABLE_PAT`, `GOOGLE_SERVICE_ACCOUNT_JSON`, `GOOGLE_CALENDAR_ID`, `SHORTENER_API_KEY`).
-6. **Secrets:** rotate every key after the people-change.
-7. Re-run a full **test booking** end-to-end after the transfer and confirm SMS + calendar + invoice all fire.
-
----
-
-## 13a. Changelog — work done 2026-06-10 (pre-handoff solidification)
-
-- **Verified live state** against this runbook: Airtable base schema + data, Netlify env vars + deploys, git branches, and the production form.
-- **Merged `security/rate-limiting` + `security/intake-proxy` to `main`** (deployed): the form now posts to `/api/book`; the Zapier hook URL moved to the `ZAPIER_INTAKE_WEBHOOK` env var (already set in Netlify 2026-06-09); per-IP rate limiting live on all public API routes.
-- **Fixed the `/api/availability` DST bug (M1):** ET offset now derived per-date via `Intl` instead of hardcoded `-04:00`.
-- **Added URL-shortener destination allowlist (H3):** only `meet.google.com` and `*.workdecodedhq.com`.
-- **Found new INV-2 damage:** two malformed codes (`WD-VV7UEIKP`, `WD-OXQWEIKP`) issued 2026-06-09 for *Single Session* invoices — see §11; INV-2 should be turned OFF until rebuilt.
-- **Wrote `SOP.md` + `TRAINING.md`** for Nick (operator + maintainer handoff).
-- Committed this runbook + the audit to the repo (they were previously untracked).
-- **Marketing-site (Squarespace) link audit + fixes:**
-  - All footer Quick Links, legal cross-links, pricing CTAs, and the AlphaCreative credit verified working. All CTAs route to `workdecodedhq.com/book`, which the header code-injection script redirects to `book.workdecodedhq.com` (the Netlify form).
-  - **Fixed:** footer "Connect" links were dead `#` placeholders → `WorkDecodedHQ.com` now links home, `Instagram` → `https://www.instagram.com/workdecodedhq` (account verified live), `LinkedIn` **removed** (no page exists). The footer is a **global code block** in the Squarespace footer section.
-  - **Removed:** an orphaned Acuity booking lightbox (hidden modal loading `workdecodedhq.as.me` on every page with no button that opens it) from the sitewide footer code injection.
-  - **Discovery-call tracking verified for Michelle:** discovery bookings made through the intake form ARE tracked in Airtable (8 $0-tier sessions on record), and setting one to Accepted DOES generate the Calendar event + Meet link — confirmed on session #30 (Accepted 2026-06-02, Meet link present). SS-1v2 doesn't branch on tier, so $0 sessions behave exactly like paid ones minus the invoice (INV-0 filters on `Session Price > 0`).
-  - **Leftovers to clean manually:** (1) the Squarespace `/book` page still contains a stale embed of `work-decoded.vercel.app/intake-form.html` beneath the redirect — unreachable by visitors, but the **old Vercel project should be deleted/disabled** so stale direct links die (and note: if it auto-deploys from GitHub `main`, its `/api/book` has no env vars and would fail anyway). (2) The **Acuity account (`workdecodedhq.as.me`) is still live** — bookings made there bypass Airtable entirely; Michelle chose to leave it running for now, so treat any Acuity booking as out-of-band. (3) Footer "How Can We Help" links to `#how-we-help`, which only works on the homepage.
-
-**Still pending (manual, needs Zapier/Calendar/Square login):** turn OFF + rebuild INV-2; delete bad package codes `WD-VV7UEIKP` / `WD-OXQWEIKP` / `WD-DEMO-TEST`; delete 5 duplicate Jun 9 calendar events; delete old skeleton Zaps `366924136` / `366926614`; void the test $125 Square invoice; consolidate Session Type options; run one end-to-end test booking through the new `/api/book` path.
-
----
-
-## 13. Changelog — work done 2026-06-08
-
-- **SS-1v2 dedup guard** added (`Meet Link does not exist`) — stopped a runaway loop that had created 6 duplicate calendar events / texts for a test booking.
-- **INV-0** now sets invoice `Due Date = Session Date`.
-- **INV-1** publish step fixed (`Content-Type: application/json`) — invoices now actually send; the test invoice was delivered.
-- **SS-2 + SS-3** reminder Zaps built, dedup-guarded, and published ON.
-- **Airtable cleanup:** 2 malformed package codes + 4 orphan Session rows deleted.
-- **Rate limiting** implemented on all public API routes (branch `security/rate-limiting`, not yet merged — see `SHIP-rate-limiting.md`).
-
-**Still pending (manual):** delete 5 duplicate Jun 9 calendar events; delete old skeleton Zaps `366924136` / `366926614`; void the test $125 Square invoice; check Twilio for duplicate test texts; fix INV-2 before launching packages.
+1. Book via the live form (use a real phone you control, tick SMS consent; pick a time 60–90 min out for fast reminder turnaround).
+2. Verify in Airtable: Client + Session created, Status=Pending, tier in Title Case, price correct.
+3. Set Status=Accepted. Within ~5 min verify: SS-1 text, calendar event + Meet link (exactly one), invoice row → Square invoice emailed (Status=Sent + Square ID).
+4. Reminders: confirm `Reminder … Scheduled` boxes get checked and each text arrives once (for <24h bookings the 24h text arrives immediately).
+5. After the calendar event ends: consultant feedback email arrives; its link opens the feedback form (signed link works).
+6. Edit the accepted session (change any field) and confirm **no** duplicate texts/events/invoices result.
+7. Clean up: delete the Airtable rows (Session, Client, Invoice), delete the calendar event by hand, **void the Square invoice** in the Square dashboard.
 
 ---
 
 ## 14. Emergency / rollback
 
-- **A Zap is misbehaving:** turn it OFF (toggle in Zapier) — that stops it immediately without deleting anything. Check Zap History for the error.
+- **A Zap is misbehaving:** turn it OFF (toggle in Zapier) — instant, deletes nothing. Check Zap History for the error.
 - **A bad website deploy:** Netlify → Deploys → instant rollback to the previous build.
-- **Runaway duplicates (texts/events/invoices):** turn off the offending Zap first, then clean up the duplicates by hand (calendar events are manual; Airtable rows via the UI). The most likely culprit is a trigger re-firing on record edits — re-check the dedup filter.
+- **Duplicate texts/events/invoices:** turn the offending Zap OFF first, then clean up by hand (calendar events manually; Airtable rows via the UI). Check that the Zap's dedup guard (Meet-Link filter or `… Scheduled`/`… Issued` checkbox) is intact before turning it back on.
+- **Bookings failing on the site:** Netlify function logs for `/api/book`; confirm `ZAPIER_INTAKE_WEBHOOK` exists. The form shows clients a fallback message with `support@workdecodedhq.com`.
+- **Invoice never reached the client:** Zap History → INV-1 → read the error (usually a missing Due Date). Fix the row and use **"Replay errored steps"**, never a full replay (a full replay can duplicate the invoice).
+- **Consultant link says invalid/expired:** send a fresh signed link (§8).
