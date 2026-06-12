@@ -22,9 +22,10 @@ Canonical form: **Title Case** — `Standard`, `Premier`, `Crisis`, `Discovery`.
 |---|---|---|---|
 | Booking reference (client-facing receipt of a booking) | `WD-XXXX-XXXX` | `WD-K7Q2-9XAH` | intake form, client-side |
 | Package code (redeemable, pre-paid sessions) | `PKG-XXXX-XXXX` | `PKG-7K3R-92AX` | INV-2 Zap (Code step) when a pack invoice is paid |
-| Invoice number | `WD-YYYY-NNN` | `WD-2026-001` | INV-0 / manual; NNN resets yearly |
+| Invoice number | `WD-YYYY-NNN` | `WD-2026-001` | Airtable formula on the Invoices table (`Invoice Seq` autonumber + created year) — automatic for every row, whether INV-0 or a human created it. INV-1 passes it to Square, so Square and Airtable always show the same number. |
 
 - `X` = A–Z and 2–9 (no 0/O/1/I to avoid read-aloud mistakes).
+- `NNN` is a continuous sequence (it does **not** reset yearly) and may have gaps where rows were deleted or invoices voided — both are normal for the autonumber that backs it. Never type an invoice number by hand; the formula owns that field.
 - **Never** issue a package code with the `WD-` prefix — that namespace belongs to booking references. The `validate-code` allowlist (`^[A-Z0-9-]{4,32}$`) already accepts `PKG-`.
 - The retired `INV-YYYY-NNN` invoice format must not be used.
 

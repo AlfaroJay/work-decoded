@@ -35,7 +35,7 @@ Note: if the session is **less than 24 hours away**, the "24-hour" reminder text
 
 ### 1.3 Discovery calls ($0)
 
-Discovery sessions are free and are **not** auto-invoiced. If a paid follow-up is agreed on the call, invoice it **after** the call: add an **Invoices** row with the amount, the linked Client and Session, `Status = Pending`, and a **Due Date** → INV-1 picks it up and sends it via Square. (A missing Due Date is the classic reason an invoice silently fails to send.)
+Discovery sessions are free and are **not** auto-invoiced. If a paid follow-up is agreed on the call, invoice it **after** the call: add an **Invoices** row with the amount, the linked Client and Session, `Status = Pending`, and a **Due Date** → INV-1 picks it up and sends it via Square. (A missing Due Date is the classic reason an invoice silently fails to send.) Don't touch `Invoice Number` or `Invoice Seq` — the number (`WD-YYYY-NNN`) is assigned automatically and flows through to Square.
 
 ### 1.4 Packages
 
@@ -72,7 +72,7 @@ After the calendar event ends, the Post-Session Zap emails the consultant a feed
 
 1. **Zap History** — scan for errored runs across all Zaps. Errors don't announce themselves.
 2. **Sessions table** — any `Pending` sessions older than a business day? Accept or decline them.
-3. **Invoices table** — any rows stuck in `Pending` (no Square ID)? Usually a missing Due Date; fix the row and INV-1 retries on its next poll.
+3. **Invoices table** — any rows stuck in `Pending` (no Square ID)? If the row is missing a Due Date, add one and INV-1 picks it up on its next poll. If the row looks complete but INV-1 shows an **errored** run for it in Zap History, don't replay the run — delete the stuck row and create a fresh one with the same client/session/amount/due date (see §3.5). The fresh row sends within ~2 minutes; the new row's invoice number is assigned automatically.
 4. **Package Codes table** — every row should trace to a paid pack invoice (check `Package Code Issued` on the invoice) or a deliberate manual issue.
 5. **Netlify** — confirm the last production deploy is green.
 
@@ -127,7 +127,7 @@ Things that will bite you:
 | Duplicate texts / events / invoices | **Turn the offending Zap OFF first** (toggle in Zapier — instant, deletes nothing). Clean up duplicates by hand. Verify the Zap's dedup guard (filter + checkbox) is intact before re-enabling. |
 | Bad website deploy | Netlify → Deploys → rollback to previous build. |
 | Bookings failing on the site | Netlify function logs for `/api/book`; check `ZAPIER_INTAKE_WEBHOOK` exists. The form shows clients a fallback message with `support@workdecodedhq.com`. |
-| Invoice never reached the client | Zap History → INV-1 → read the error. Usually a missing Due Date (fix the row). Use **"Replay errored steps"**, not full replay (full replay can create a duplicate invoice). |
+| Invoice never reached the client | Zap History → INV-1 → read the error. Missing Due Date → fix the row and wait for the next poll. Any *errored* run (e.g. a Square error) → **do not replay it**: INV-1 reserves a Square order per Airtable row, and once a run errors that reservation is burned — replays will keep failing with "order ID is not valid." Instead, delete the stuck Invoices row and create a fresh one (same client, session, amount, due date). It sends on the next poll with its own new invoice number. Afterwards, check Square → Invoices → Drafts and delete any orphaned draft left by the failed attempt. |
 | A paid pack invoice didn't produce a code | Zap History → INV-2. Check the invoice's `Package Type` contains "pack" and `Package Code Issued` is unchecked, then replay errored steps. |
 | Unexpected Package Codes rows | Check the linked invoice's `Package Code Issued` and the Code Activity Log to trace the source; turn INV-2 OFF while investigating. |
 | SMS not arriving | Twilio Console → Monitor → delivery + A2P compliance flags. Confirm the client's `SMS Consent` is ticked (no consent = no texts, by design). |
