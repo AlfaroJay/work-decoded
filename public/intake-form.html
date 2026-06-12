@@ -716,6 +716,11 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
     <div class="legal-links-warning" id="legal-links-warning"></div>
   </div>
 
+  <!-- Cloudflare Turnstile (bot defense layer 3). Rendered explicitly by
+       initTurnstile() only when CONFIG.TURNSTILE_SITE_KEY is set, so the form
+       keeps working unchanged until the widget keys are configured. -->
+  <div id="turnstile-container" style="margin-top:1.25rem"></div>
+
   <div class="submit-row">
     <button class="btn-primary" id="btn-submit" onclick="submitForm()">Submit intake form</button>
     <button class="btn-secondary" onclick="clearForm()">Clear form</button>
@@ -766,6 +771,28 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#1a1a1a;padding:2r
 // /api/book can reject submissions completed faster than humanly possible.
 window.__wdFormRenderedAt = new Date().toISOString();
 
+/* ------------------------------------------------------------
+   CLOUDFLARE TURNSTILE (bot defense layer 3)
+   Loads + renders only when CONFIG.TURNSTILE_SITE_KEY is set, so
+   the form is unaffected until the keys are configured.
+   ------------------------------------------------------------ */
+let turnstileWidgetId = null;
+function initTurnstile() {
+  if (!CONFIG.TURNSTILE_SITE_KEY) return;
+  window.__wdTurnstileOnLoad = function () {
+    turnstileWidgetId = window.turnstile.render('#turnstile-container', {
+      sitekey: CONFIG.TURNSTILE_SITE_KEY,
+      theme: 'dark',
+      action: 'intake-booking'
+    });
+  };
+  const s = document.createElement('script');
+  s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?onload=__wdTurnstileOnLoad&render=explicit';
+  s.async = true;
+  s.defer = true;
+  document.head.appendChild(s);
+}
+
 const CONFIG = {
   // Bookings POST to a same-origin server proxy (/api/book) which validates +
   // forwards to Zapier server-side. The Zapier catch-hook URL is no longer in
@@ -776,6 +803,12 @@ const CONFIG = {
   // were blocked by the browser (no CORS headers), breaking availability.
   AVAILABILITY_API: '/api/availability',
   VALIDATE_CODE_API: '/api/validate-code',
+  // Cloudflare Turnstile SITE key (public, safe in client code). Leave empty
+  // to disable the widget entirely — /api/book also skips verification until
+  // its TURNSTILE_SECRET_KEY env var is set, so this can roll out in either
+  // order without blocking bookings. Paste the site key from the Cloudflare
+  // dashboard (Turnstile → widget for workdecodedhq.com) to enable.
+  TURNSTILE_SITE_KEY: '0x4AAAAAADjknhN1MlycKIFi',
   GOOGLE_CALENDAR_ID: 'hello@workdecodedhq.com'
 };
 
@@ -1546,6 +1579,14 @@ async function submitForm() {
     return;
   }
 
+  // --- Turnstile: require a completed challenge when the widget is enabled ---
+  if (turnstileWidgetId !== null && window.turnstile && !window.turnstile.getResponse(turnstileWidgetId)) {
+    errorEl.textContent = 'Please complete the security check above the Submit button before submitting.';
+    errorEl.style.display = 'block';
+    document.getElementById('turnstile-container').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
   // --- Build payload ---
   const clientId = generateClientId();
   const bookingCode = generateBookingCode();
@@ -1578,9 +1619,11 @@ async function submitForm() {
     bookingCode,
     submittedAt:          new Date().toISOString(),
 
-    // Bot defense (validated by /api/book): honeypot + form render time.
+    // Bot defense (validated by /api/book): honeypot + form render time +
+    // Turnstile token. All stripped server-side before forwarding to Zapier.
     hpWebsite:            (document.getElementById('hp-website') || {}).value || '',
     formRenderedAt:       window.__wdFormRenderedAt || '',
+    turnstileToken:       (turnstileWidgetId !== null && window.turnstile) ? (window.turnstile.getResponse(turnstileWidgetId) || '') : '',
 
     // Section 1 — your info
     firstName:            val('fname'),
@@ -1649,14 +1692,24 @@ async function submitForm() {
       body: JSON.stringify(payload),
       keepalive: true
     });
-    if (!res.ok) throw new Error('Booking proxy returned ' + res.status);
+    if (!res.ok) {
+      // Surface the server's reason when it gives one (e.g. a failed/expired
+      // Turnstile check), so the visitor knows it's retryable.
+      let serverReason = '';
+      try { serverReason = ((await res.json()) || {}).reason || ''; } catch (e2) {}
+      const err = new Error('Booking proxy returned ' + res.status);
+      err.serverReason = serverReason;
+      throw err;
+    }
   } catch (e) {
     console.error('Intake webhook failed:', e);
-    errorEl.textContent =
+    errorEl.textContent = (e && e.serverReason) ||
       'We had trouble submitting your form. Please try again, or email support@workdecodedhq.com and we\'ll get you scheduled directly.';
     errorEl.style.display = 'block';
     btn.disabled = false;
     statusEl.textContent = '';
+    // Turnstile tokens are single-use — reset so a retry gets a fresh one.
+    if (turnstileWidgetId !== null && window.turnstile) window.turnstile.reset(turnstileWidgetId);
     return;
   }
 
@@ -1961,6 +2014,9 @@ function wdShowRestoredToast() {
     setTimeout(wdAutosaveRestore, 50);
   }
 })();
+
+// Render the Turnstile widget (no-op until TURNSTILE_SITE_KEY is set).
+initTurnstile();
 
 </script>
 </body>

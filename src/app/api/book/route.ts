@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { rateLimit, rateLimitResponse } from '@/lib/rateLimit';
+import { rateLimit, rateLimitResponse, getClientIp } from '@/lib/rateLimit';
 
 /**
  * Server-side proxy for the public intake form.
@@ -50,6 +50,57 @@ const TIER_MAP: Record<string, string> = {
 
 function bad(reason: string, status = 400) {
   return NextResponse.json({ ok: false, error: 'invalid_submission', reason }, { status });
+}
+
+/**
+ * Cloudflare Turnstile verification (bot defense layer 3).
+ *
+ * Active only when TURNSTILE_SECRET_KEY is set, so the route keeps working
+ * unchanged until the widget is configured (and the form, in turn, only sends
+ * a token once its TURNSTILE_SITE_KEY is set — either side can deploy first).
+ *
+ * Failure semantics:
+ * - Secret configured + token missing/invalid → reject with a clear, retryable
+ *   error. Unlike the honeypot/time-trap (silent fake success), a Turnstile
+ *   failure can be a real human with an expired token, so the form must be
+ *   able to show "please retry".
+ * - The siteverify CALL itself erroring (network/Cloudflare outage) → fail
+ *   open with a log, same as the rate limiter: an infra hiccup never blocks
+ *   a real booking.
+ */
+async function verifyTurnstile(
+  token: unknown,
+  ip: string | null
+): Promise<{ ok: true } | { ok: false; reason: string }> {
+  const secret = process.env.TURNSTILE_SECRET_KEY;
+  if (!secret) return { ok: true }; // not configured — feature off
+
+  if (typeof token !== 'string' || token === '') {
+    return { ok: false, reason: 'Please complete the security check and try again.' };
+  }
+
+  try {
+    const body = new URLSearchParams({ secret, response: token });
+    if (ip) body.set('remoteip', ip);
+    const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body,
+    });
+    if (!res.ok) {
+      console.error('[Book] Turnstile siteverify returned', res.status, '— failing open');
+      return { ok: true };
+    }
+    const data = (await res.json()) as { success?: boolean; 'error-codes'?: string[] };
+    if (!data.success) {
+      console.warn('[Book] Turnstile verification failed:', data['error-codes']);
+      return { ok: false, reason: 'Security check failed or expired. Please complete it and try again.' };
+    }
+    return { ok: true };
+  } catch (err) {
+    console.error('[Book] Turnstile siteverify call failed:', (err as Error)?.message, '— failing open');
+    return { ok: true };
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -105,6 +156,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, bookingCode: data.bookingCode ?? null });
     }
   }
+  // 3. Cloudflare Turnstile (active only when TURNSTILE_SECRET_KEY is set).
+  //    See verifyTurnstile() for the fail-open/fail-closed semantics.
+  const ip = getClientIp(req);
+  const ts = await verifyTurnstile(data.turnstileToken, ip === 'unknown' ? null : ip);
+  if (!ts.ok) {
+    return NextResponse.json(
+      { ok: false, error: 'turnstile_failed', reason: ts.reason },
+      { status: 403 }
+    );
+  }
   // --------------------------------------------------------------------------
 
   // Required fields present + non-empty.
@@ -126,6 +187,7 @@ export async function POST(req: NextRequest) {
   const payload: Record<string, unknown> = { ...data };
   delete payload.hpWebsite;
   delete payload.formRenderedAt;
+  delete payload.turnstileToken;
 
   payload.email = (data.email as string).trim();
 
