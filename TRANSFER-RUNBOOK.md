@@ -22,7 +22,7 @@ Client books on the site (/book → intake-form.html)
         │  bot-screens, normalizes the tier to Title Case, then forwards
         │  to the Zapier catch-hook — hook URL lives in a server env var)
         ▼
-[Zap] WorkDecoded Intake → Airtable CRM  (LIVE, v15)
+[Zap] WorkDecoded Intake → Airtable CRM  (LIVE, v18)
   • Create Client record
   • Create Session record (Status = Pending)        ← waits for Michelle
   • Send branded client email + consultant email
@@ -145,7 +145,7 @@ Audit trail of code issuance/redemption events, written by the Zaps.
 
 | Zap | ID | State | What it does |
 |---|---|---|---|
-| WorkDecoded Intake → Airtable CRM | `360012684` (v15) | **LIVE** | Booking form → Client + Session (Status=Pending) + branded client email + consultant email with the intake brief and a **signed** feedback link (Code step, §8). |
+| WorkDecoded Intake → Airtable CRM | `360012684` (v18) | **LIVE** | Booking form → Client + Session (Status=Pending; `Code Used` linked when a package code was redeemed, which auto-prices the session $0) + branded client email + consultant email with the intake brief and a **signed** feedback link (Code step, §8). Tail steps (filter: package code exists): write a `Redeemed` entry to the Code Activity Log linked to the code, client, and session. |
 | SS-1v2: Accepted → Calendar + SMS | `366933187` | **LIVE** | On Accept: Google Calendar event + Meet, saves Meet Link, sends SS-1 SMS. Filter: `Status = Accepted` AND `Meet Link does not exist` → fires once. |
 | INV-0: Accepted → Create Invoice | `367782983` | **LIVE** | On Accept + `Session Price > 0` + no existing invoice → create Invoices row with `Due Date = Session Date`. |
 | INV-1: Invoice Request → Square | `367637945` | **LIVE** | Pending invoice → Square: find/create customer, create order, create invoice (passing Airtable's `Invoice Number` explicitly so numbers can never collide, even on simultaneous accepts), publish (emails it), write Square ID back, Status → Sent. No-resend guard: filtered out once `Square Invoice ID` exists. |

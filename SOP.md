@@ -41,7 +41,7 @@ Discovery sessions are free and are **not** auto-invoiced. If a paid follow-up i
 
 Pre-paid packages are sold via Square invoices whose `Package Type` contains "pack" (e.g. `Standard 3-pack`). When the client **pays**, INV-2 automatically issues a `PKG-XXXX-XXXX` code, emails it to the client, marks the invoice (`Package Code Issued`), and logs the event. One code per invoice, guaranteed by the checkbox guard.
 
-Clients redeem codes at booking; the session prices at $0 and links to the code. Code history lives in the **Code Activity Log** table.
+Clients redeem codes at booking: the intake Zap links the session to the code (`Code Used`), the session automatically prices at $0, and a `Redeemed` entry is written to the **Code Activity Log**. Remaining sessions = `Sessions Purchased` minus linked sessions, and the booking form shows the client "Session X of Y" live when they enter their code. The full issue-and-redeem history lives in the Code Activity Log table.
 
 ### 1.5 Verify a send / find out what happened
 
